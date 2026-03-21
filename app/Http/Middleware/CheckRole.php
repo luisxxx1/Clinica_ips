@@ -1,0 +1,25 @@
+<?php
+
+namespace App\Http\Middleware;
+
+use Closure;
+use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\Response;
+
+class CheckRole
+{
+    /**
+     * Handle an incoming request.
+     *
+     * @param  Closure(Request): (Response)  $next
+     */
+   public function handle(Request $request, Closure $next, string $role)
+{
+    // Usamos el método hasRole que corregimos en el modelo User
+    if (!$request->user() || !$request->user()->hasRole($role)) {
+        abort(403, 'No tienes permiso para acceder a esta área.');
+    }
+
+    return $next($request);
+}
+}

@@ -8,31 +8,33 @@ return new class extends Migration
 {
     /**
      * Run the migrations.
-     * Añade la columna role_id a la tabla de usuarios existente.
      */
     public function up(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            // Creamos la llave foránea que apunta a la tabla 'roles'
-            // La ponemos después del email para mantener el orden visual
+            // Se mantiene el nullable() para no romper registros existentes.
+            // Una vez ejecutada, deberías asignar roles y luego podrías 
+            // hacer otra migración para quitar el nullable si lo deseas.
             $table->foreignId('role_id')
                   ->after('email')
-                  ->nullable() // Permite nulos temporalmente para evitar conflictos
+                  ->nullable() 
                   ->constrained('roles')
-                  ->onDelete('cascade');
+                  ->onDelete('set null'); // Cambiado a 'set null' para no borrar al usuario si el rol desaparece
         });
     }
 
     /**
      * Reverse the migrations.
-     * Elimina la columna y la relación si decidimos revertir la migración.
      */
     public function down(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            // Primero eliminamos la restricción de llave foránea
+            // Es buena práctica usar el nombre completo de la relación si da problemas
             $table->dropForeign(['role_id']);
-            // Luego eliminamos la columna
+        });
+
+        Schema::table('users', function (Blueprint $table) {
+            // Borramos la columna en un callback separado para asegurar compatibilidad
             $table->dropColumn('role_id');
         });
     }

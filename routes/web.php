@@ -9,58 +9,54 @@ use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
-| Web Routes - Snake_DEV System
+| Web Routes
 |--------------------------------------------------------------------------
 */
 
-// Redirección inicial al Login
-Route::get('/', function () {
-    return redirect()->route('login');
-});
+Route::get('/', fn() => redirect()->route('login'));
 
-// Dashboard Principal
-Route::get('/dashboard', [DashboardController::class, 'index'])
-    ->middleware(['auth', 'verified'])
-    ->name('dashboard');
+// Dashboard unificado
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
-Route::middleware('auth')->group(function () {
-
-    /* |--- PERFIL DE USUARIO ---| */
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-
-    /* |--- MÓDULO DE ADMINISTRACIÓN & BRANDING ---| */
-    Route::prefix('admin')->name('admin.')->group(function () {
-        Route::get('/settings', [AdminSettingsController::class, 'index'])->name('settings');
-        Route::post('/settings/update-branding', [AdminSettingsController::class, 'updateBranding'])->name('update_branding');
-        Route::patch('/settings/user/{user}', [AdminSettingsController::class, 'updateUser'])->name('user.update');
-        Route::post('/reset-access', [AdminSettingsController::class, 'resetAccess'])->name('reset_access');
-        Route::get('/roles/colors', [AdminSettingsController::class, 'editRoleColors'])->name('role_colors');
-        Route::delete('/users/{user}/permissions', [AdminSettingsController::class, 'revokePermissions'])->name('users.revoke');
+    /* PERFIL DEL USUARIO */
+    Route::controller(ProfileController::class)->group(function () {
+        Route::get('/profile', 'edit')->name('profile.edit');
+        Route::patch('/profile', 'update')->name('profile.update');
+        Route::delete('/profile', 'destroy')->name('profile.destroy');
     });
 
-    /* |--- MÓDULO DE ESTUDIANTES (CLIENTES) ---| */
+    /* ADMINISTRACIÓN Y AJUSTES */
+    Route::prefix('admin')->name('admin.')->middleware('role:Administrador')->group(function () {
+        Route::controller(AdminSettingsController::class)->group(function () {
+            Route::get('/settings', 'index')->name('settings');
+            Route::post('/settings/update-branding', 'updateBranding')->name('update_branding');
+            Route::patch('/settings/user/{user}', 'updateUser')->name('user.update');
+            Route::post('/reset-access', 'resetAccess')->name('reset_access');
+            Route::get('/roles/colors', 'editRoleColors')->name('role_colors');
+            Route::delete('/users/{user}/permissions', 'revokePermissions')->name('users.revoke');
+        });
+    });
+
+    /* GESTIÓN DE ESTUDIANTES */
     Route::get('/students/search', [StudentController::class, 'search'])->name('students.search');
     Route::resource('students', StudentController::class);
 
-    /* |--- MÓDULO DE CIRCUITO MÉDICO ---| */
+    /* CIRCUITO MÉDICO (Evaluaciones y Reportes) */
     
-    // 1. Rutas Estáticas (Deben ir antes que los parámetros dinámicos {medical_exam})
-    Route::get('/medical-exams/history', [MedicalExamController::class, 'history'])->name('medical_exams.history');
+    // IMPORTANTE: Las rutas estáticas (/history) van ANTES que las dinámicas (/{medical_exam})
+    Route::prefix('medical-exams')->name('medical_exams.')->controller(MedicalExamController::class)->group(function () {
+        Route::get('/history', 'history')->name('history'); // Si estuviera abajo, Laravel creería que "history" es un ID
+        Route::get('/{medical_exam}/evaluate', 'evaluate')->name('evaluate');
+        Route::post('/{medical_exam}/result', 'storeResult')->name('store_result');
+        Route::get('/{medical_exam}/report', 'report')->name('report'); // Simplifiqué el nombre del método a 'report'
+        Route::patch('/{medical_exam}/finish', 'finish')->name('finish');
+    });
 
-    // 2. Rutas de Acción Específicas
-    // IMPORTANTE: El nombre del parámetro '{medical_exam}' debe ser idéntico al del Controlador
-    Route::get('/medical-exams/{medical_exam}/evaluate', [MedicalExamController::class, 'evaluate'])->name('medical_exams.evaluate');
-    Route::post('/medical-exams/{medical_exam}/result', [MedicalExamController::class, 'storeResult'])->name('medical_exams.store_result');
-    Route::get('/medical-exams/{medical_exam}/report', [MedicalExamController::class, 'generateReport'])->name('medical_exams.report');
-    Route::patch('/medical-exams/{medical_exam}/finish', [MedicalExamController::class, 'finish'])->name('medical_exams.finish');
-
-    // 3. Recurso Base (Mantiene index, create, show, etc.)
+    // Resource para rutas estándar: index, create, store, show, edit, update, destroy
     Route::resource('medical-exams', MedicalExamController::class)
-        ->parameters(['medical-exams' => 'medical_exam']);
+        ->parameters(['medical-exams' => 'medical_exam'])
         ->names('medical_exams');
-
 });
 
 require __DIR__.'/auth.php';

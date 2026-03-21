@@ -3,17 +3,18 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Student extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     /**
      * Atributos asignables masivamente.
-     * Incluye ahora toda la información del Estudiante y su Acudiente.
      */
     protected $fillable = [
         // Datos del Estudiante
@@ -41,43 +42,68 @@ class Student extends Model
     | Relaciones Eloquent
     |-------------------------------------------------------------------------- */
 
+    /**
+     * Historial completo de procesos médicos.
+     */
     public function medicalExams(): HasMany
     {
         return $this->hasMany(MedicalExam::class);
     }
 
+    /**
+     * El examen que está actualmente en proceso (no completado).
+     */
     public function currentExam(): HasOne
     {
-        return $this->hasOne(MedicalExam::class)->where('status', '!=', 'completado')->latestOfMany();
+        return $this->hasOne(MedicalExam::class)
+            ->where('status', '!=', 'completado')
+            ->latestOfMany();
     }
 
     /* |--------------------------------------------------------------------------
-    | Helpers / Accessors (Para el Index y Show)
+    | Accessors & Mutators (Sintaxis Moderna)
     |-------------------------------------------------------------------------- */
 
     /**
      * Nombre completo del estudiante.
-     * Uso: {{ $student->full_name }}
+     * Uso: $student->full_name
      */
-    public function getFullNameAttribute(): string
+    protected function fullName(): Attribute
     {
-        return "{$this->first_name} {$this->last_name}";
+        return Attribute::make(
+            get: fn () => "{$this->first_name} {$this->last_name}",
+        );
     }
 
     /**
      * Nombre completo del acudiente.
-     * Uso: {{ $student->guardian_full_name }}
+     * Uso: $student->guardian_full_name
      */
-    public function getGuardianFullNameAttribute(): string
+    protected function guardianFullName(): Attribute
     {
-        return "{$this->guardian_name} {$this->guardian_lastname}";
+        return Attribute::make(
+            get: fn () => "{$this->guardian_name} {$this->guardian_lastname}",
+        );
     }
 
     /**
-     * Documento formateado: "TI - 1005974974"
+     * Documento formateado con mayúsculas.
+     * Uso: $student->full_document
      */
-    public function getFullDocumentAttribute(): string
+    protected function fullDocument(): Attribute
     {
-        return "{$this->document_type} - {$this->document_number}";
+        return Attribute::make(
+            get: fn () => strtoupper("{$this->document_type} - {$this->document_number}"),
+        );
+    }
+
+    /**
+     * Mutator para asegurar que los nombres siempre se guarden con la primera letra en mayúscula.
+     */
+    protected function firstName(): Attribute
+    {
+        return Attribute::make(
+            set: fn (string $value) => mb_convert_case(trim($value), MB_CASE_TITLE, "UTF-8"),
+        );
     }
 }

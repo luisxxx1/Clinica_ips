@@ -12,9 +12,16 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            // Añadimos los campos necesarios para la configuración de Snake_DEV
-            $table->string('job_title')->nullable()->after('email'); // Para el cargo (ej. Odontólogo)
-            $table->string('ui_color')->default('#3b82f6')->after('job_title'); // Para el color de identidad
+            // Agregamos campos de personalización después del email
+            $table->string('job_title')
+                  ->nullable()
+                  ->after('email')
+                  ->comment('Cargo específico del profesional (ej. Especialista en Optometría)');
+
+            $table->string('ui_color', 20)
+                  ->default('#3b82f6') // Azul por defecto (Tailwind blue-500)
+                  ->after('job_title')
+                  ->comment('Color hexadecimal para la identidad visual del usuario');
         });
     }
 
@@ -24,7 +31,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            // Eliminamos los campos en caso de hacer rollback
+            // Eliminamos las columnas si se revierte la migración
             $table->dropColumn(['job_title', 'ui_color']);
         });
     }

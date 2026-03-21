@@ -11,16 +11,28 @@ return new class extends Migration
      */
     public function up(): void
     {
+        // 1. Tabla de Roles (Necesaria para identificar si es Medico, Psico, etc.)
+        Schema::create('roles', function (Blueprint $table) {
+            $table->id();
+            $table->string('name')->unique(); // 'Medico', 'Psicologo', 'Admin'
+            $table->string('color')->default('blue'); // Para la UI
+            $table->timestamps();
+        });
+
+        // 2. Tabla de Usuarios con relación a Roles
         Schema::create('users', function (Blueprint $table) {
             $table->id();
             $table->string('name');
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
+            // Relación con Roles
+            $table->foreignId('role_id')->constrained('roles')->onDelete('cascade');
             $table->rememberToken();
             $table->timestamps();
         });
 
+        // 3. Tablas estándar de Laravel
         Schema::create('password_reset_tokens', function (Blueprint $table) {
             $table->string('email')->primary();
             $table->string('token');
@@ -42,8 +54,9 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('users');
-        Schema::dropIfExists('password_reset_tokens');
         Schema::dropIfExists('sessions');
+        Schema::dropIfExists('password_reset_tokens');
+        Schema::dropIfExists('users');
+        Schema::dropIfExists('roles'); // Borrar roles al final
     }
 };

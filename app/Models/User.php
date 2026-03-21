@@ -2,42 +2,31 @@
 
 namespace App\Models;
 
-use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 
 class User extends Authenticatable
 {
-    /** @use HasFactory<UserFactory> */
     use HasFactory, Notifiable;
 
-    /**
-     * Atributos asignables masivamente.
-     * Se integran los campos de la migración para identidad visual y cargos.
-     */
     protected $fillable = [
         'name',
         'email',
         'password',
         'role_id',
-        'job_title', // Cargo profesional (ej: CEO, Odontólogo)
-        'ui_color',  // Color personalizado para el avatar y badges
+        'job_title', 
+        'ui_color',  
     ];
 
-    /**
-     * Atributos ocultos para la serialización.
-     */
     protected $hidden = [
         'password',
         'remember_token',
     ];
 
-    /**
-     * Conversión de tipos de atributos.
-     */
     protected function casts(): array
     {
         return [
@@ -47,38 +36,54 @@ class User extends Authenticatable
     }
 
     /* |--------------------------------------------------------------------------
-    | Relaciones Eloquent - Arquitectura Snake_DEV
-    |--------------------------------------------------------------------------
-    */
+    | Relaciones Eloquent
+    |-------------------------------------------------------------------------- */
 
-    /**
-     * Relación: Un usuario pertenece a un Rol (Administrador, Admisión, etc.).
-     * Crucial para la lógica del Sidebar y permisos de acceso.
-     */
     public function role(): BelongsTo
     {
         return $this->belongsTo(Role::class);
     }
 
     /**
-     * Relación: Un usuario (médico/especialista) gestiona múltiples exámenes.
+     * Resultados de exámenes realizados por este especialista.
      */
-    public function medicalExams(): HasMany
+    public function examResults(): HasMany
     {
-        return $this->hasMany(MedicalExam::class);
+        return $this->hasMany(ExamResult::class);
     }
 
     /* |--------------------------------------------------------------------------
-    | Helpers de Control de Acceso
-    |--------------------------------------------------------------------------
-    */
+    | Helpers & Accessors (Snake_DEV UX)
+    |-------------------------------------------------------------------------- */
 
     /**
-     * Verifica si el usuario tiene un rol específico para proteger rutas y botones.
+     * Genera las iniciales del usuario para el avatar si no tiene foto.
+     * Uso: {{ auth()->user()->initials }}
+     */
+    protected function initials(): Attribute
+    {
+        return Attribute::make(
+            get: function () {
+                $words = explode(' ', $this->name);
+                return strtoupper(substr($words[0], 0, 1) . (isset($words[1]) ? substr($words[1], 0, 1) : ''));
+            }
+        );
+    }
+
+    /**
+     * Verifica múltiples roles a la vez.
+     * Uso: if($user->hasAnyRole(['Médico', 'Psicólogo'])) ...
+     */
+    public function hasAnyRole(array $roles): bool
+    {
+        return $this->role && in_array(strtolower($this->role->name), array_map('strtolower', $roles));
+    }
+
+    /**
+     * Alias simple para verificar un solo rol.
      */
     public function hasRole(string $roleName): bool
     {
-        // Normalizamos a minúsculas para evitar errores de digitación en la BD
         return $this->role && strtolower($this->role->name) === strtolower($roleName);
     }
 }

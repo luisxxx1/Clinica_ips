@@ -12,87 +12,89 @@ class MedicalExam extends Model
 {
     use HasFactory;
 
-    /**
-     * Atributos asignables masivamente.
-     */
     protected $fillable = [
         'student_id',
-        'user_id',         // ID de la secretaria/admin que creó el circuito
-        'requested_areas', // Array JSON (odontologia, optometria, etc.)
-        'status',          // 'pendiente', 'en_proceso', 'completado'
+        'user_id',
+        'requested_areas',
+        'status', 
         'observations',
         'result_type',
     ];
 
-    /**
-     * Conversión de tipos.
-     * Crucial para que Laravel maneje el JSON de TiDB como un array de PHP.
-     */
     protected $casts = [
         'requested_areas' => 'array',
+        'created_at' => 'datetime', // Útil para filtros de fechas en reportes
     ];
 
     /* |--------------------------------------------------------------------------
     | Relaciones Eloquent
-    |--------------------------------------------------------------------------
-    */
+    |-------------------------------------------------------------------------- */
 
     public function student(): BelongsTo
     {
         return $this->belongsTo(Student::class);
     }
 
-    /**
-     * Usuario (Secretaria/Admin) que inició el circuito médico.
-     */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
-    /**
-     * Los resultados individuales cargados por cada médico especialista.
-     */
     public function results(): HasMany
     {
         return $this->hasMany(ExamResult::class);
     }
 
     /* |--------------------------------------------------------------------------
-    | Scopes (Filtros Inteligentes para la Bandeja de Pacientes)
-    |--------------------------------------------------------------------------
-    */
+    | Scopes (Filtros de Bandeja)
+    |-------------------------------------------------------------------------- */
 
-    /**
-     * Filtra los exámenes según el área asignada al médico logueado.
-     * Uso: MedicalExam::forArea('odontologia')->pendiente()->get();
-     */
     public function scopeForArea(Builder $query, string $area): Builder
     {
-        // Normalizamos a minúsculas para evitar errores de coincidencia
+        // Se asegura de que la consulta busque correctamente dentro del JSON
         return $query->whereJsonContains('requested_areas', strtolower($area));
     }
 
-    public function scopePendiente(Builder $query): Builder
+    public function scopePending(Builder $query): Builder
     {
-        return $query->where('status', 'pendiente');
+        return $query->whereIn('status', ['pendiente', 'en_proceso']);
     }
 
     /* |--------------------------------------------------------------------------
-    | Helpers de Lógica de Negocio
-    |--------------------------------------------------------------------------
-    */
+    | Lógica de Negocio (Helpers)
+    |-------------------------------------------------------------------------- */
 
-    public function isCompleted(): bool
+    /**
+     * Calcula el porcentaje de avance del circuito médico.
+     * Útil para barras de progreso en la interfaz.
+     */
+    public function getProgressPercentAttribute(): int
     {
-        return $this->status === 'completado';
+        $total = count($this->requested_areas ?? []);
+        if ($total === 0) return 0;
+
+        $completed = $this->results()->count();
+        return (int) (($completed / $total) * 100);
     }
 
     /**
-     * Verifica si un área específica (ej. 'odontologia') ya tiene un resultado guardado.
+     * Verifica si todas las áreas solicitadas ya tienen un resultado cargado.
+     */
+    public function checkCompletion(): bool
+    {
+        $requested = collect($this->requested_areas)->map(fn($a) => strtolower($a))->sort()->values();
+        $completed = $this->results()->pluck('area')->map(fn($a) => strtolower($a))->sort()->values();
+
+        // Si lo que se pidió es igual a lo que hay en la tabla de resultados
+        return $requested->every(fn($area) => $completed->contains($area));
+    }
+
+    /**
+     * Verifica si un área específica ya fue evaluada.
      */
     public function isAreaCompleted(string $areaName): bool
     {
-        return $this->results()->where('area', strtolower($areaName))->exists();
+        // Usamos una comparación simple de strings normalizados
+        return $this->results->contains('area', strtolower($areaName));
     }
 }

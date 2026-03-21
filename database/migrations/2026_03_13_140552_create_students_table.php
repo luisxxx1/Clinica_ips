@@ -12,28 +12,29 @@ return new class extends Migration
             $table->id();
 
             // --- DATOS DEL ESTUDIANTE ---
-            $table->string('document_type');      // RC, TI, CC
-            $table->string('document_number')->unique();
-            $table->string('first_name');
-            $table->string('last_name');
-            $table->integer('age');               // Nueva: Edad del niño
-            $table->string('gender');            // Nueva: Sexo
-            $table->string('previous_school');    // Nueva: Colegio anterior
-            $table->string('grade');              // Grado al que aplica
+            $table->string('document_type', 10); // RC, TI, CC, CE
+            $table->string('document_number', 30)->unique();
+            $table->string('first_name', 100);
+            $table->string('last_name', 100);
+            $table->integer('age');
+            $table->string('gender', 20);
+            $table->string('previous_school')->nullable(); // Nullable por si es primer ingreso
+            $table->string('grade', 50);
 
-            // --- DATOS DEL ACUDIENTE (Integrados) ---
-            $table->string('guardian_name');
-            $table->string('guardian_lastname');
-            $table->string('guardian_document');
+            // --- DATOS DEL ACUDIENTE ---
+            $table->string('guardian_name', 100);
+            $table->string('guardian_lastname', 100);
+            $table->string('guardian_document', 30);
             $table->integer('guardian_age');
-            $table->string('guardian_phone');
+            $table->string('guardian_phone', 30);
             $table->string('guardian_address');
-            $table->string('guardian_relationship'); // Parentesco
-            $table->string('guardian_email');
+            $table->string('guardian_relationship', 50);
+            $table->string('guardian_email', 100);
 
             $table->timestamps();
+            $table->softDeletes(); // Permite recuperar registros borrados
 
-            // Índices SnakeDev para velocidad en TiDB
+            // Índices para velocidad de búsqueda
             $table->index('document_number');
             $table->index(['last_name', 'first_name']);
         });

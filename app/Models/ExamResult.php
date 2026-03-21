@@ -40,45 +40,55 @@ class ExamResult extends Model
     }
 
     /* |--------------------------------------------------------------------------
-    | Accessors & Mutators (Corregidos para Snake_DEV)
+    | Accessors & Mutators
     |-------------------------------------------------------------------------- */
 
     /**
-     * IMPORTANTE: El nombre de la función debe ser igual al campo 'area'
+     * Normalización del nombre del área.
      */
     protected function area(): Attribute
     {
         return Attribute::make(
-            get: fn (string $value) => ucfirst($value),
-            set: fn (string $value) => strtolower($value),
+            get: fn (string $value) => ucfirst(str_replace('_', ' ', $value)), // Ej: medicina_general -> Medicina general
+            set: fn (string $value) => strtolower(trim($value)),
         );
     }
 
     /**
      * Accessor virtual para el IMC.
-     * Como no existe una columna 'imc', Laravel lo tratará como un atributo dinámico.
+     * Busca en diferentes niveles del JSON para mayor compatibilidad.
      */
     protected function imc(): Attribute
     {
         return Attribute::make(
-            get: fn () => $this->data['biometria']['imc'] ?? ($this->data['imc'] ?? 'N/A'),
+            get: function () {
+                return $this->data['biometria']['imc'] 
+                    ?? $this->data['antropometria']['imc'] 
+                    ?? $this->data['imc'] 
+                    ?? 'N/A';
+            },
         );
     }
 
     /**
-     * Accessor para obtener el color del estado del IMC
+     * Accessor para el color del estado del IMC (Tailwind Classes)
      */
     protected function statusColor(): Attribute
     {
         return Attribute::make(
             get: function () {
-                $status = $this->data['biometria']['imc_status'] ?? ($this->data['imc_status'] ?? '');
-                return match ($status) {
-                    'Normal' => 'text-green-600 bg-green-50',
-                    'Sobrepeso' => 'text-yellow-600 bg-yellow-50',
-                    'Obesidad' => 'text-red-600 bg-red-50',
-                    'Bajo Peso' => 'text-orange-600 bg-orange-50',
-                    default => 'text-slate-400 bg-slate-50',
+                // Buscamos el estado en el JSON
+                $status = $this->data['biometria']['imc_status'] 
+                    ?? $this->data['antropometria']['imc_status'] 
+                    ?? $this->data['imc_status'] 
+                    ?? 'Desconocido';
+
+                return match (trim($status)) {
+                    'Normal'      => 'text-green-700 bg-green-100 border-green-200',
+                    'Sobrepeso'   => 'text-yellow-700 bg-yellow-100 border-yellow-200',
+                    'Obesidad'    => 'text-red-700 bg-red-100 border-red-200',
+                    'Bajo Peso'   => 'text-orange-700 bg-orange-100 border-orange-200',
+                    default       => 'text-slate-500 bg-slate-100 border-slate-200',
                 };
             },
         );
@@ -88,9 +98,13 @@ class ExamResult extends Model
     | Métodos de Utilidad
     |-------------------------------------------------------------------------- */
 
+    /**
+     * Verifica si el resultado pertenece a un área específica.
+     */
     public function isArea(string $areaName): bool
     {
-        // Usamos $this->attributes['area'] para evitar el ucfirst del accessor al comparar
-        return strtolower($this->getRawOriginal('area')) === strtolower($areaName);
+        // Usamos getAttributes() para obtener el valor real de la base de datos (slug)
+        // y evitar interferencia con el ucfirst del Accessor.
+        return $this->getAttributes()['area'] === strtolower($areaName);
     }
 }

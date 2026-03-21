@@ -4,35 +4,48 @@ namespace Database\Seeders;
 
 use App\Models\User;
 use App\Models\Role;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 
 class DatabaseSeeder extends Seeder
 {
-    use WithoutModelEvents;
-
     /**
      * Seed the application's database.
-     * Orquestador principal para poblar la base de datos de la Clínica.
      */
     public function run(): void
     {
-        // 1. Ejecutamos la creación de roles (Admisión, Odontología, etc.)
+        // 1. Ejecutamos la creación de roles (Asegúrate de que RoleSeeder tenga los colores)
         $this->call(RoleSeeder::class);
 
-        // 2. Buscamos el ID del rol Administrador para asignarlo al usuario
+        // 2. Buscamos el ID del rol Administrador
         $adminRole = Role::where('name', 'Administrador')->first();
 
-        // 3. Creamos el usuario principal de acceso al sistema
-        User::factory()->create([
-            'name' => 'Juan Pablo - SnakeDev',
-            'email' => 'admin@clinicaips.com',
-            'password' => Hash::make('admin1234'), // Contraseña profesional encriptada
-            'role_id' => $adminRole->id,
-        ]);
+        // 3. Usamos updateOrCreate para que puedas correr el seeder varias veces sin errores
+        User::updateOrCreate(
+            ['email' => 'admin@clinicaips.com'], // Único por email
+            [
+                'name' => 'Juan Pablo - SnakeDev',
+                'password' => Hash::make('admin1234'),
+                'role_id' => $adminRole->id,
+                'job_title' => 'Director General / Desarrollador',
+                'ui_color' => '#1e293b', // Color Slate-800 para el admin
+                'email_verified_at' => now(),
+            ]
+        );
 
-        // Opcional: Si necesitas usuarios de prueba para otros roles en el futuro,
-        // puedes agregarlos aquí siguiendo la misma lógica.
+        // 4. (Opcional) Crear un usuario de Admisión para pruebas rápidas
+        $admisionRole = Role::where('name', 'Admisión')->first();
+        if ($admisionRole) {
+            User::updateOrCreate(
+                ['email' => 'recepcion@clinicaips.com'],
+                [
+                    'name' => 'Ana Recepción',
+                    'password' => Hash::make('recepcion123'),
+                    'role_id' => $admisionRole->id,
+                    'job_title' => 'Coordinadora de Admisiones',
+                    'ui_color' => '#10b981', // Emerald-500
+                ]
+            );
+        }
     }
 }
