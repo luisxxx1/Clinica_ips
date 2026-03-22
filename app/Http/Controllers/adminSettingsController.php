@@ -2,12 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
-use App\Models\Role;
-use App\Models\Student;
+use App\Models\{User, Role, Setting}; // Asegúrate de crear el modelo Setting
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\{Auth, Storage, Artisan};
 
 class AdminSettingsController extends Controller
 {
@@ -16,14 +13,17 @@ class AdminSettingsController extends Controller
      */
     public function index()
     {
-        // Seguridad: Solo el administrador tiene acceso
-        if (strtolower(Auth::user()->role->name) !== 'administrador') {
-            abort(403, 'No tienes permisos para acceder a esta sección.');
+        // El middleware 'role:Administrador' en las rutas ya hace este trabajo,
+        // pero dejarlo aquí es una buena segunda capa de seguridad.
+        if (Auth::user()->role->name !== 'Administrador') {
+            abort(403, 'Acceso denegado.');
         }
 
         return view('admin.settings', [
             'users' => User::with('role')->get(),
-            'roles' => Role::all()
+            'roles' => Role::all(),
+            // Recuperamos los ajustes de la BD como un array clave => valor
+            'settings' => Setting::pluck('value', 'key')->toArray() 
         ]);
     }
 
@@ -36,21 +36,16 @@ class AdminSettingsController extends Controller
             'name'      => 'required|string|max:255',
             'role_id'   => 'required|exists:roles,id',
             'job_title' => 'nullable|string|max:100',
-            'ui_color'  => 'nullable|string|max:7',
+            'ui_color'  => 'nullable|string|max:7', // Hexadecimal
         ]);
 
-        $user->update([
-            'name'      => $request->name,
-            'role_id'   => $request->role_id,
-            'job_title' => $request->job_title,
-            'ui_color'  => $request->ui_color,
-        ]);
+        $user->update($request->only(['name', 'role_id', 'job_title', 'ui_color']));
 
-        return back()->with('status', "Usuario {$user->name} actualizado con éxito.");
+        return back()->with('success', "Configuración de {$user->name} actualizada.");
     }
 
     /**
-     * ACTUALIZA EL BRANDING (Logo y Nombre de la I.P.S.)
+     * ACTUALIZA EL BRANDING (Logo y Nombre de la I.P.S.) Persistente
      */
     public function updateBranding(Request $request)
     {
@@ -59,56 +54,52 @@ class AdminSettingsController extends Controller
             'logo'          => 'nullable|image|mimes:png,jpg,jpeg|max:2048',
         ]);
 
-        // Guardar el nombre en la sesión o podrías usar una tabla de ajustes
-        session(['business_name' => $request->business_name]);
+        // Guardar nombre de la IPS de forma persistente
+        Setting::updateOrCreate(['key' => 'business_name'], ['value' => $request->business_name]);
 
         if ($request->hasFile('logo')) {
-            // Eliminar logo anterior si existe para ahorrar espacio
-            if (session('business_logo')) {
-                Storage::delete(session('business_logo'));
+            // 1. Obtener logo anterior de la BD
+            $oldPath = Setting::where('key', 'logo_path')->value('value');
+            
+            // 2. Eliminar archivo físico si existe
+            if ($oldPath && Storage::disk('public')->exists($oldPath)) {
+                Storage::disk('public')->delete($oldPath);
             }
 
-            // Guardar el nuevo logo en la carpeta pública
-            $path = $request->file('logo')->store('public/branding');
-            $url = Storage::url($path);
+            // 3. Guardar el nuevo logo (en la carpeta public/branding)
+            $path = $request->file('logo')->store('branding', 'public');
             
-            // Guardamos la URL en la sesión para acceso global rápido
-            session(['business_logo' => $url]);
+            // 4. Guardar la ruta en la base de datos
+            Setting::updateOrCreate(['key' => 'logo_path'], ['value' => $path]);
         }
 
-        return back()->with('status', 'Identidad visual de la I.P.S. actualizada.');
+        return back()->with('success', 'Identidad corporativa actualizada correctamente.');
     }
 
     /**
-     * RESTABLECER ACCESOS: Invalida las sesiones de otros usuarios.
+     * RESTABLECER ACCESOS
      */
     public function resetAccess()
     {
+        // Invalidar tokens de sesión y limpiar caché de seguridad
         User::where('id', '!=', Auth::id())->update(['remember_token' => null]);
+        Artisan::call('cache:clear');
         
-        return back()->with('status', 'Se han invalidado las sesiones de todos los usuarios.');
+        return back()->with('success', 'Sesiones externas invalidadas y caché del sistema limpia.');
     }
 
     /**
-     * EDITAR COLORES DE ROL: (En desarrollo)
-     */
-    public function editRoleColors()
-    {
-        return back()->with('status', 'Módulo de colores de rol en desarrollo.');
-    }
-
-    /**
-     * QUITAR PERMISOS: Cambia el rol al más básico.
+     * REVOCAR PERMISOS
      */
     public function revokePermissions(User $user)
     {
-        // No permitirse quitar permisos a uno mismo
         if ($user->id === Auth::id()) {
-            return back()->with('status', 'No puedes revocar tus propios permisos.');
+            return back()->with('error', 'No puedes revocar tus propios accesos.');
         }
 
+        // Asignamos el rol por defecto (ID 3 suele ser el más bajo)
         $user->update(['role_id' => 3]); 
         
-        return back()->with('status', "Permisos revocados para {$user->name}.");
+        return back()->with('success', "Se han limitado los permisos de {$user->name}.");
     }
 }

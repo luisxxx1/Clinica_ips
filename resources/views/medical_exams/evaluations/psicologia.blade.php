@@ -1,103 +1,65 @@
-<div class="py-2" x-data="psychoForm()">
-    <div class="max-w-5xl mx-auto">
-        
-        {{-- Encabezado --}}
-        <div class="mb-8 flex items-center justify-between">
+{{-- NOTA: Eliminamos layouts y sidebars manuales para evitar el doble slide --}}
+<div class="bg-white rounded-[3rem] shadow-2xl shadow-slate-200/50 border border-slate-100 overflow-hidden">
+    
+    {{-- HEADER DE PSICOLOGÍA --}}
+    <div class="p-10 border-b border-slate-50 bg-slate-50/30">
+        <div class="flex justify-between items-start">
             <div>
-                <h2 class="text-3xl font-black text-slate-800 tracking-tighter uppercase">
+                <h2 class="text-4xl font-black text-slate-900 tracking-tighter uppercase leading-none">
                     Valoración: <span class="text-purple-600">Psicología</span>
                 </h2>
-                <p class="text-slate-500 font-medium italic underline decoration-purple-200">
-                    Paciente: {{ $medical_exam->student->full_name }}
-                </p>
+                <div class="flex items-center mt-3 space-x-3">
+                    <p class="text-slate-500 font-bold text-sm uppercase tracking-tight">
+                        Paciente: <span class="text-slate-800">{{ $medical_exam->student->name }}</span>
+                    </p>
+                </div>
             </div>
             <div class="text-right">
-                <span class="text-[10px] font-bold text-slate-400 uppercase block">ID Estudiante</span>
-                <span class="font-mono font-bold text-slate-700">{{ $medical_exam->student->document_number }}</span>
+                <p class="text-[10px] font-black text-slate-300 uppercase tracking-widest">Documento</p>
+                <p class="text-xl font-black text-slate-800">{{ $medical_exam->student->document_number }}</p>
             </div>
         </div>
-
-        <form action="{{ route('medical_exams.store_result', $medical_exam) }}" method="POST" class="space-y-6">
-            @csrf
-            
-            {{-- 1. Esfera Cognitiva y Conductual --}}
-            <div class="bg-white p-8 rounded-[2.5rem] shadow-sm border border-slate-100">
-                <h3 class="text-lg font-black text-slate-800 mb-6 uppercase tracking-tighter flex items-center">
-                    <span class="w-7 h-7 bg-purple-100 text-purple-600 rounded-lg flex items-center justify-center mr-3 text-xs">1</span>
-                    Observación Conductual y Cognitiva
-                </h3>
-                
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    @php
-                        $aspectos = [
-                            'presentacion' => 'Presentación Personal',
-                            'lenguaje' => 'Lenguaje y Comunicación',
-                            'afecto' => 'Estado de Ánimo / Afecto',
-                            'atencion' => 'Atención y Concentración',
-                            'memoria' => 'Memoria',
-                            'sueño' => 'Hábitos de Sueño'
-                        ];
-                    @endphp
-
-                    @foreach($aspectos as $key => $label)
-                    <div class="bg-slate-50 p-4 rounded-2xl border border-transparent focus-within:border-purple-200 transition-all">
-                        <label class="text-[10px] font-bold text-slate-400 uppercase mb-2 block tracking-widest">{{ $label }}</label>
-                        <select name="result[{{ $key }}]" class="w-full border-none bg-transparent text-sm font-bold focus:ring-0 p-0 text-slate-700">
-                            <option value="Adecuado">Adecuado / Normal</option>
-                            <option value="Alterado">Alterado / Requiere observación</option>
-                            <option value="No Evaluable">No Evaluable</option>
-                        </select>
-                    </div>
-                    @endforeach
-                </div>
-            </div>
-
-            {{-- 2. Entrevista / Hallazgos --}}
-            <div class="bg-white p-8 rounded-[2.5rem] shadow-sm border border-slate-100">
-                <h3 class="text-lg font-black text-slate-800 mb-6 flex items-center tracking-tighter uppercase">
-                    <span class="w-7 h-7 bg-purple-100 text-purple-600 rounded-lg flex items-center justify-center mr-3 text-xs">2</span>
-                    Descripción de Hallazgos
-                </h3>
-                <div class="space-y-4">
-                    <div>
-                        <label class="text-[10px] font-black text-slate-400 uppercase mb-2 block tracking-widest">Motivo de consulta / Antecedentes Familiares</label>
-                        <textarea name="result[antecedentes_familiares]" rows="3" 
-                                  class="w-full bg-slate-50 border-none rounded-2xl text-sm focus:ring-2 focus:ring-purple-500 placeholder-slate-300" 
-                                  placeholder="Describa brevemente el entorno familiar y motivo de la valoración..."></textarea>
-                    </div>
-                    <div>
-                        <label class="text-[10px] font-black text-slate-400 uppercase mb-2 block tracking-widest">Relaciones Interpersonales</label>
-                        <textarea name="result[relaciones_sociales]" rows="2" 
-                                  class="w-full bg-slate-50 border-none rounded-2xl text-sm focus:ring-2 focus:ring-purple-500" 
-                                  placeholder="Relación con pares, figuras de autoridad, etc..."></textarea>
-                    </div>
-                </div>
-            </div>
-
-            {{-- Diagnóstico y Recomendaciones --}}
-            <div class="bg-slate-900 p-8 rounded-[2.5rem] shadow-xl">
-                <label class="text-[10px] font-black text-purple-400 uppercase mb-4 block tracking-widest">Concepto Psicológico y Recomendaciones</label>
-                <textarea name="notes" rows="4" required
-                          class="w-full bg-slate-800 border-none rounded-2xl text-white text-sm focus:ring-2 focus:ring-purple-500" 
-                          placeholder="Escriba el diagnóstico presuntivo o plan de intervención..."></textarea>
-                
-                <div class="flex justify-end pt-8">
-                    <button type="submit" class="bg-purple-600 text-white px-10 py-4 rounded-2xl font-black shadow-lg hover:bg-purple-500 hover:-translate-y-1 transition-all flex items-center text-sm">
-                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                        </svg>
-                        FINALIZAR VALORACIÓN PSICOLÓGICA
-                    </button>
-                </div>
-            </div>
-        </form>
     </div>
-</div>
 
-<script>
-    function psychoForm() {
-        return {
-            
-        }
-    }
-</script>
+    {{-- FORMULARIO --}}
+    <form action="{{ route('medical_exams.store_evaluation', $medical_exam) }}" method="POST" class="p-12 space-y-10">
+        @csrf
+
+        {{-- SECCIÓN: OBSERVACIONES CLÍNICAS --}}
+        <section>
+            <div class="flex items-center gap-4 mb-8">
+                <span class="w-10 h-10 bg-purple-50 text-purple-600 rounded-xl flex items-center justify-center font-black text-sm">01</span>
+                <h3 class="text-xl font-black text-slate-800 uppercase tracking-tight">Concepto de Aptitud Psicológica</h3>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                <div>
+                    <label class="block text-[10px] font-black text-slate-400 uppercase mb-3 ml-2 tracking-widest">Resultado</label>
+                    <select name="aptitud_psicologica" class="w-full bg-slate-50 border border-slate-100 rounded-2xl p-4 font-bold text-slate-700 focus:ring-2 focus:ring-purple-500/20">
+                        <option value="Apto">Apto</option>
+                        <option value="Apto con recomendaciones">Apto con recomendaciones</option>
+                        <option value="No apto">No apto</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-[10px] font-black text-slate-400 uppercase mb-3 ml-2 tracking-widest">Pruebas Aplicadas</label>
+                    <input type="text" name="pruebas" placeholder="Ej: Test de Bender, Figuras complejas" class="w-full bg-slate-50 border border-slate-100 rounded-2xl p-4 font-bold text-slate-700 focus:ring-2 focus:ring-purple-500/20">
+                </div>
+            </div>
+
+            <div class="bg-slate-50/50 rounded-[2.5rem] p-8 border border-slate-100">
+                <label class="block text-[10px] font-black text-slate-400 uppercase mb-4 ml-2 tracking-widest">Observaciones y Recomendaciones</label>
+                <textarea name="observations" rows="6" 
+                    placeholder="Describa los hallazgos de la evaluación psicológica..." 
+                    class="w-full bg-white border border-slate-100 rounded-2xl p-6 text-slate-700 placeholder:text-slate-400 focus:ring-2 focus:ring-purple-500/20 shadow-sm resize-none font-medium"></textarea>
+            </div>
+        </section>
+
+        {{-- BOTÓN --}}
+        <div class="pt-6">
+            <button type="submit" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-black py-6 rounded-[2rem] shadow-xl shadow-purple-100 transition-all uppercase tracking-[0.2em] text-sm">
+                Finalizar Evaluación de Psicología
+            </button>
+        </div>
+    </form>
+</div>

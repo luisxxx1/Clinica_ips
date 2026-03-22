@@ -1,56 +1,77 @@
 <x-app-layout>
-    <x-slot name="header">
-        <div class="flex justify-between items-center">
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                {{ __('Evaluación Médica:') }} <span class="text-blue-600">{{ $medical_exam->student->full_name }}</span>
-            </h2>
-            <span class="px-4 py-1 bg-slate-100 text-slate-600 rounded-full text-xs font-bold uppercase">
-                {{ Auth::user()->role->name }}
+    <div class="min-h-screen bg-slate-50/50">
+        <header class="bg-white border-b border-slate-100 p-6 flex items-center justify-between sticky top-0 z-40">
+            <h1 class="text-sm font-black text-slate-400 uppercase tracking-widest">Módulo de Evaluación</h1>
+            <div class="flex items-center gap-4">
+                <span class="text-[10px] font-bold bg-slate-100 text-slate-500 px-3 py-1 rounded-full uppercase">Estética SnakeDEV</span>
+                <img src="https://i.ibb.co/XfRzV8R/logo-ips.png" class="h-10 w-auto" alt="Logo IPS">
             </div>
-        </div>
-    </x-slot>
+        </header>
 
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            
-            {{-- 
-                DINAMISMO: 
-                Aquí cargamos el formulario que corresponda al rol del usuario.
-                Si el usuario es 'Medico', carga 'valoracion_medica.blade.php'.
-                Si es 'Psicologo', carga 'psicologia.blade.php'.
-            --}}
+        <div class="p-6 md:p-12">
+            <div class="max-w-5xl mx-auto">
+                @php
+                    $role = Auth::user()->role->name;
+                    
+                    /** * PRIORIDAD: Usamos $userArea si viene del controlador (más seguro), 
+                     * de lo contrario, aplicamos el match de respaldo.
+                     */
+                    $area = $userArea ?? Str::slug($role, '_');
+                    
+                    $view = match(true) {
+                        str_contains($area, 'medica') || str_contains($area, 'medico') 
+                            => 'medical_exams.evaluations.valoracion_medica',
+                        
+                        str_contains($area, 'psico') 
+                            => 'medical_exams.evaluations.psicologia',
+                        
+                        str_contains($area, 'fono') 
+                            => 'medical_exams.evaluations.fonoaudiologia',
+                        
+                        str_contains($area, 'opto') 
+                            => 'medical_exams.evaluations.optometria',
+                        
+                        str_contains($area, 'audio') 
+                            => 'medical_exams.evaluations.audiometria',
+                        
+                        str_contains($area, 'odonto') 
+                            => 'medical_exams.evaluations.odontologia',
+                        
+                        default => "medical_exams.evaluations.{$area}"
+                    };
+                @endphp
 
-            @php
-                $roleName = Auth::user()->role->name;
-                
-                $view = match($roleName) {
-                    'Medico', 'Medicina General' => 'medical_exams.evaluations.valoracion_medica',
-                    'Psicologo', 'Psicología'     => 'medical_exams.evaluations.psicologia',
-                    'Odontologo', 'Odontología'   => 'medical_exams.evaluations.odontologia',
-                    default => null
-                };
-            @endphp
-
-            @if($view && view()->exists($view))
-                @include($view)
-            @else
-                <div class="bg-red-50 border-l-4 border-red-400 p-4 rounded-md">
-                    <div class="flex">
-                        <div class="flex-shrink-0">
-                            <svg class="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
-                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+                @if(view()->exists($view))
+                    {{-- Contenedor principal con bordes suavizados SnakeDEV --}}
+                    <div class="bg-white p-8 md:p-12 rounded-[3rem] shadow-sm border border-slate-100">
+                        {{-- 
+                            IMPORTANTE: El @include debe pasar explícitamente el objeto 
+                            para que el formulario sepa a qué ID enviar el POST.
+                        --}}
+                        @include($view, [
+                            'medical_exam' => $medical_exam,
+                            'area' => $area
+                        ])
+                    </div>
+                @else
+                    <div class="bg-white p-12 rounded-[3.5rem] shadow-sm border border-slate-100 text-center">
+                        <div class="w-20 h-20 bg-red-50 text-red-500 rounded-3xl flex items-center justify-center mx-auto mb-6">
+                            <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                             </svg>
                         </div>
-                        <div class="ml-3">
-                            <p class="text-sm text-red-700">
-                                No se ha encontrado un formulario de evaluación para tu rol: <strong>{{ $roleName }}</strong>. 
-                                Contacta al administrador.
-                            </p>
+                        <h3 class="text-2xl font-black text-slate-800 uppercase tracking-tighter">Vista no encontrada</h3>
+                        <p class="text-slate-500 font-medium">
+                            No existe un formulario para el área: <span class="text-red-600 font-bold">"{{ $area }}"</span>.
+                            <br>
+                            <span class="text-xs text-slate-400">Ruta intentada: resources/views/{{ str_replace('.', '/', $view) }}.blade.php</span>
+                        </p>
+                        <div class="mt-8">
+                            <a href="{{ route('medical_exams.index') }}" class="text-xs font-black text-slate-400 uppercase tracking-widest hover:text-slate-900 transition-colors">← Volver a la bandeja</a>
                         </div>
                     </div>
-                </div>
-            @endif
-
+                @endif
+            </div>
         </div>
     </div>
 </x-app-layout>

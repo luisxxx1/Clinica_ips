@@ -9,22 +9,21 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-   public function up(): void
-{
-    if (!Schema::hasTable('roles')) { // <--- Agrega esta validación
-        Schema::create('roles', function (Blueprint $table) {
+    public function up(): void
+    {
+        Schema::create('settings', function (Blueprint $table) {
             $table->id();
-            $table->string('name')->unique();
-            $table->string('color')->default('slate'); 
+            $table->string('key')->unique(); // 'business_name', 'logo_path'
+            $table->text('value')->nullable();
             $table->timestamps();
         });
     }
-}
+
     /**
      * Reverse the migrations.
      */
     public function down(): void
     {
-        Schema::dropIfExists('roles');
+        Schema::dropIfExists('settings');
     }
 };

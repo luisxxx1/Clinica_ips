@@ -1,57 +1,82 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-slate-800 leading-tight">
-            {{ __('Panel de Control - I.P.S Crear Integral') }}
-        </h2>
+        <div class="flex justify-between items-center">
+            <h2 class="font-black text-xl text-slate-800 leading-tight uppercase tracking-tighter">
+                {{ __('Dashboard Operativo') }} <span class="text-blue-600 ml-2">|</span> <span class="text-slate-400 text-sm ml-2 font-bold italic">Crear Integral</span>
+            </h2>
+            <div class="text-[10px] font-black text-slate-400 uppercase tracking-widest bg-slate-100 px-3 py-1 rounded-full">
+                Sistema v2.0
+            </div>
+        </div>
     </x-slot>
 
-    <div class="py-12">
+    <div class="py-12 bg-slate-50/50 min-h-screen">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            {{-- Grid de Estadísticas Rápidas --}}
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-10">
                 
-                <div class="bg-white overflow-hidden shadow-sm rounded-2xl border border-slate-100 p-6">
-                    <div class="flex items-center">
-                        <div class="p-3 bg-blue-50 rounded-lg text-blue-600">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                {{-- Card: Pacientes --}}
+                <div class="bg-white overflow-hidden shadow-sm rounded-[2rem] border border-slate-200 p-8 hover:shadow-xl hover:shadow-blue-900/5 transition-all duration-300 group">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-1">Total Pacientes</p>
+                            <h3 class="text-3xl font-black text-slate-800 tracking-tighter">{{ $totalPacientes }}</h3>
                         </div>
-                        <div class="ml-4">
-                            <p class="text-sm font-medium text-slate-500 uppercase tracking-wider">Pacientes Registrados</p>
-                            <h3 class="text-2xl font-bold text-slate-800">{{ $totalPacientes }}</h3>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="bg-white overflow-hidden shadow-sm rounded-2xl border border-slate-100 p-6">
-                    <div class="flex items-center">
-                        <div class="p-3 bg-green-50 rounded-lg text-green-600">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                        </div>
-                        <div class="ml-4">
-                            <p class="text-sm font-medium text-slate-500 uppercase tracking-wider">Certificados Listos</p>
-                            <h3 class="text-2xl font-bold text-slate-800">{{ $totalCertificados }}</h3>
+                        <div class="p-4 bg-blue-50 text-blue-600 rounded-2xl group-hover:bg-blue-600 group-hover:text-white transition-colors duration-300">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
                         </div>
                     </div>
                 </div>
 
-                <div class="bg-white overflow-hidden shadow-sm rounded-2xl border border-slate-100 p-6">
-                    <div class="flex items-center">
-                        <div class="p-3 bg-orange-50 rounded-lg text-orange-600">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                {{-- Card: Certificados --}}
+                <div class="bg-white overflow-hidden shadow-sm rounded-[2rem] border border-slate-200 p-8 hover:shadow-xl hover:shadow-green-900/5 transition-all duration-300 group">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-1">Certificados Listos</p>
+                            <h3 class="text-3xl font-black text-slate-800 tracking-tighter">{{ $totalCertificados }}</h3>
                         </div>
-                        <div class="ml-4">
-                            <p class="text-sm font-medium text-slate-500 uppercase tracking-wider">Pendientes</p>
-                            <h3 class="text-2xl font-bold text-orange-600">{{ $pendientes }}</h3>
+                        <div class="p-4 bg-green-50 text-green-600 rounded-2xl group-hover:bg-green-600 group-hover:text-white transition-colors duration-300">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        </div>
+                    </div>
+                </div>
+
+                {{-- Card: Pendientes --}}
+                <div class="bg-white overflow-hidden shadow-sm rounded-[2rem] border border-slate-200 p-8 hover:shadow-xl hover:shadow-orange-900/5 transition-all duration-300 group">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-1">En Espera</p>
+                            <h3 class="text-3xl font-black text-orange-600 tracking-tighter">{{ $pendientes }}</h3>
+                        </div>
+                        <div class="p-4 bg-orange-50 text-orange-600 rounded-2xl group-hover:bg-orange-600 group-hover:text-white transition-colors duration-300">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div class="bg-white overflow-hidden shadow-sm rounded-2xl border border-slate-100 p-8">
-                <h4 class="text-lg font-bold text-slate-800 mb-6">Nuevos pacientes registrados</h4>
-                <div style="height: 350px;">
+            {{-- Sección de Gráfico --}}
+            <div class="bg-white overflow-hidden shadow-sm rounded-[2.5rem] border border-slate-200 p-10 relative">
+                <div class="flex justify-between items-center mb-10">
+                    <div>
+                        <h4 class="text-lg font-black text-slate-800 tracking-tight">Análisis de Crecimiento</h4>
+                        <p class="text-xs font-bold text-slate-400">Flujo mensual de registros de pacientes</p>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <span class="w-3 h-3 rounded-full bg-blue-600"></span>
+                        <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Nuevos Ingresos</span>
+                    </div>
+                </div>
+                
+                <div class="relative" style="height: 400px;">
                     <canvas id="pacientesChart"></canvas>
                 </div>
+            </div>
+
+            {{-- Footer Técnico --}}
+            <div class="mt-8 text-center">
+                <p class="text-[10px] font-black text-slate-300 uppercase tracking-[0.4em]">Powered by SnakeDev Engine</p>
             </div>
 
         </div>
@@ -60,33 +85,60 @@
     @push('scripts')
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
-        // Buscamos el elemento Canvas por su ID
-        const ctx = document.getElementById('pacientesChart').getContext('2d');
-        
-        // Creamos una nueva instancia del gráfico
-        new Chart(ctx, {
-            type: 'line', // Tipo línea (ideal para IPS/Salud)
-            data: {
-                labels: ['Ene', 'Feb', 'Mar', 'Abr'], // Eje X (meses)
-                datasets: [{
-                    label: 'Nuevos Pacientes',
-                    // MEZCLA: Ene y Feb son fijos, Mar usa el dato REAL de la base de datos
-                    data: [5, 12, {{ $totalPacientes }}, 15], 
-                    borderColor: '#2563eb', // Azul profesional
-                    backgroundColor: 'rgba(37, 99, 235, 0.1)', // Relleno transparente
-                    fill: true,
-                    tension: 0.4 // Curvatura suave de la línea
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false, // Permite que el gráfico crezca con su contenedor
-                plugins: {
-                    legend: {
-                        display: false // Ocultamos la leyenda para un diseño más limpio
+        document.addEventListener('DOMContentLoaded', function() {
+            const ctx = document.getElementById('pacientesChart').getContext('2d');
+            
+            // Gradiente para el relleno del gráfico
+            const gradient = ctx.createLinearGradient(0, 0, 0, 400);
+            gradient.addColorStop(0, 'rgba(37, 99, 235, 0.2)');
+            gradient.addColorStop(1, 'rgba(37, 99, 235, 0)');
+
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['Enero', 'Febrero', 'Marzo (Actual)', 'Abril'],
+                    datasets: [{
+                        label: 'Pacientes',
+                        data: [5, 12, {{ $totalPacientes }}, 15], 
+                        borderColor: '#2563eb',
+                        borderWidth: 4,
+                        pointBackgroundColor: '#ffffff',
+                        pointBorderColor: '#2563eb',
+                        pointBorderWidth: 3,
+                        pointRadius: 6,
+                        pointHoverRadius: 8,
+                        backgroundColor: gradient,
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: '#0f172a',
+                            titleFont: { size: 13, weight: 'bold' },
+                            bodyFont: { size: 12 },
+                            padding: 12,
+                            cornerRadius: 10,
+                            displayColors: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: { color: '#f1f5f9' },
+                            ticks: { font: { weight: 'bold', size: 11 }, color: '#94a3b8' }
+                        },
+                        x: {
+                            grid: { display: false },
+                            ticks: { font: { weight: 'bold', size: 11 }, color: '#94a3b8' }
+                        }
                     }
                 }
-            }
+            });
         });
     </script>
     @endpush

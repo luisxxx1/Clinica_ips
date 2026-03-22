@@ -1,130 +1,142 @@
-<x-app-layout>
-    <x-slot name="header">
-        <div class="flex justify-between items-center">
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight capitalize">
-                {{-- Mostramos el área actual del evaluador --}}
-                {{ __('Panel de Evaluación: ') }} <span class="text-blue-600">{{ $userArea }}</span>
-            </h2>
-            <div class="flex items-center space-x-3">
-                {{-- Badge con el Rol del usuario --}}
-                <span class="px-3 py-1 bg-blue-100 text-blue-800 text-xs font-bold rounded-full uppercase tracking-wider border border-blue-200">
-                    {{ Auth::user()->role->name }}
-                </span>
-                {{-- Contador de pacientes pendientes en tiempo real --}}
-                <span class="px-3 py-1 bg-gray-800 text-white text-xs font-bold rounded-full">
-                    {{ $pendingExams->count() }} {{ Str::plural('Paciente', $pendingExams->count()) }}
+@extends('layouts.app')
+
+@section('header')
+    <div class="flex justify-between items-center w-full">
+        <div class="flex items-center space-x-4">
+            <div class="p-3 bg-slate-900 rounded-2xl shadow-lg shadow-slate-200">
+                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path>
+                </svg>
+            </div>
+            <div>
+                <h2 class="font-black text-xl text-slate-800 leading-tight tracking-tighter uppercase">
+                    {{ __('Panel de Evaluación') }}
+                </h2>
+                <p class="text-[10px] font-black text-blue-600 uppercase tracking-[0.2em] flex items-center">
+                    <span class="w-2 h-2 bg-blue-600 rounded-full mr-2 animate-pulse"></span>
+                    Área: {{ $userArea }}
+                </p>
+            </div>
+        </div>
+
+        <div class="flex items-center space-x-3">
+            {{-- Rol del Profesional --}}
+            <span class="hidden md:inline-flex px-4 py-1.5 bg-white text-slate-500 text-[10px] font-black rounded-xl uppercase tracking-widest border border-slate-100 shadow-sm">
+                {{ Auth::user()->role->name }}
+            </span>
+            
+            {{-- Contador dinámico optimizado --}}
+            <div class="flex items-center bg-emerald-500 text-white px-5 py-2 rounded-2xl shadow-xl shadow-emerald-100 border border-emerald-400/20">
+                <span class="text-[11px] font-black tracking-widest uppercase">
+                    {{ $pendingExams->count() }} {{ Str::plural('Pendiente', $pendingExams->count()) }}
                 </span>
             </div>
         </div>
-    </x-slot>
+    </div>
+@endsection
 
-    <div class="py-12">
+@section('content')
+    <div class="py-8 bg-slate-50/50 min-h-screen">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             
-            {{-- Notificaciones de éxito --}}
+            {{-- Alertas con diseño SnakeDEV --}}
             @if (session('success'))
-                <div class="mb-6 bg-green-100 border-l-4 border-green-500 text-green-700 p-4 shadow-sm rounded-r-lg" role="alert">
-                    {{ session('success') }}
+                <div class="mb-8 flex items-center bg-white border-l-4 border-emerald-500 text-slate-800 px-6 py-4 rounded-2xl shadow-xl shadow-slate-200/50 animate-fade-in-down">
+                    <div class="p-2 bg-emerald-100 rounded-lg mr-4">
+                        <svg class="w-5 h-5 text-emerald-600" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
+                    </div>
+                    <span class="text-xs font-black uppercase tracking-tight">{{ session('success') }}</span>
                 </div>
             @endif
 
-            {{-- Notificaciones de error (Importante por si falla el acceso al examen) --}}
-            @if (session('error'))
-                <div class="mb-6 bg-red-100 border-l-4 border-red-500 text-red-700 p-4 shadow-sm rounded-r-lg" role="alert">
-                    {{ session('error') }}
-                </div>
-            @endif
-
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg border border-gray-200">
-                <div class="p-6 text-gray-900">
-                    <div class="flex items-center justify-between mb-6">
-                        <h3 class="text-lg font-bold text-gray-700">Estudiantes Pendientes de Valoración</h3>
-                        <div class="text-sm text-gray-500 italic">
-                            * Solo se muestran estudiantes con circuito médico activo para su área.
+            <div class="bg-white overflow-hidden shadow-2xl shadow-slate-200/60 rounded-[3rem] border border-slate-100">
+                <div class="p-10">
+                    <div class="flex flex-col md:flex-row md:items-center justify-between mb-10 gap-4">
+                        <div>
+                            <h3 class="text-2xl font-black text-slate-900 tracking-tighter uppercase">Lista de Espera</h3>
+                            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-[0.3em] mt-2 flex items-center">
+                                <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                                Central Operativa • Cali, Valle
+                            </p>
+                        </div>
+                        <div class="flex items-center space-x-2 bg-slate-50 px-5 py-2.5 rounded-2xl border border-slate-100">
+                            <span class="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em]">Bandeja Prioritaria</span>
                         </div>
                     </div>
 
-                    {{-- Estado vacío: Si no hay exámenes pendientes --}}
                     @if ($pendingExams->isEmpty())
-                        <div class="bg-gray-50 border border-dashed border-gray-300 text-gray-500 p-12 text-center rounded-xl">
-                            <svg class="mx-auto h-16 w-16 text-gray-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                            </svg>
-                            <p class="text-xl font-medium">¡Bandeja vacía!</p>
-                            <p class="text-gray-400">No hay pacientes pendientes para {{ $userArea }} en este momento.</p>
+                        <div class="py-24 text-center">
+                            <div class="inline-flex p-8 bg-slate-50 rounded-[2.5rem] mb-6 border border-slate-100 shadow-inner">
+                                <svg class="h-14 w-14 text-slate-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
+                            </div>
+                            <h4 class="text-2xl font-black text-slate-800 tracking-tighter uppercase">Sin pacientes en cola</h4>
+                            <p class="text-slate-400 font-bold text-xs uppercase tracking-widest mt-3">Buen trabajo, el área de {{ $userArea }} está despejada.</p>
                         </div>
                     @else
-                        {{-- Tabla de Pacientes --}}
-                        <div class="overflow-x-auto">
-                            <table class="min-w-full divide-y divide-gray-200">
-                                <thead class="bg-gray-50">
+                        <div class="overflow-hidden rounded-[2rem] border border-slate-100 shadow-sm">
+                            <table class="min-w-full divide-y divide-slate-100">
+                                <thead class="bg-slate-50/80">
                                     <tr>
-                                        <th class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Estudiante</th>
-                                        <th class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Documento</th>
-                                        <th class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Grado Escolar</th>
-                                        <th class="px-6 py-3 text-center text-xs font-bold text-gray-500 uppercase tracking-wider">Estado Circuito</th>
-                                        <th class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Fecha Orden</th>
-                                        <th class="px-6 py-3 text-right text-xs font-bold text-gray-500 uppercase tracking-wider">Acciones</th>
+                                        <th class="px-8 py-5 text-left text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Paciente</th>
+                                        <th class="px-8 py-5 text-left text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Identificación</th>
+                                        <th class="px-8 py-5 text-center text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Grado</th>
+                                        <th class="px-8 py-5 text-center text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Estado</th>
+                                        <th class="px-8 py-5 text-left text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Espera</th>
+                                        <th class="px-8 py-5 text-right text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Acción</th>
                                     </tr>
                                 </thead>
-                                <tbody class="bg-white divide-y divide-gray-200">
+                                <tbody class="bg-white divide-y divide-slate-50">
                                     @foreach ($pendingExams as $exam)
-                                        <tr class="hover:bg-blue-50/50 transition duration-150">
-                                            {{-- Datos del Estudiante con Avatar Inicial --}}
-                                            <td class="px-6 py-4 whitespace-nowrap">
+                                        <tr class="hover:bg-slate-50/50 transition-all duration-300 group">
+                                            <td class="px-8 py-6">
                                                 <div class="flex items-center">
-                                                    <div class="h-8 w-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold mr-3">
-                                                        {{ substr($exam->student->first_name, 0, 1) }}
+                                                    <div class="h-12 w-12 rounded-2xl bg-slate-900 flex items-center justify-center text-white font-black text-sm shadow-xl shadow-slate-200 group-hover:bg-blue-600 transition-colors duration-500">
+                                                        {{ substr($exam->student->first_name, 0, 1) }}{{ substr($exam->student->last_name, 0, 1) }}
                                                     </div>
-                                                    <div class="text-sm font-bold text-gray-900">
-                                                        {{ $exam->student->full_name }}
+                                                    <div class="ml-5">
+                                                        <div class="text-sm font-black text-slate-800 tracking-tighter uppercase group-hover:text-blue-600 transition-colors">
+                                                            {{ $exam->student->first_name }} {{ $exam->student->last_name }}
+                                                        </div>
+                                                        <span class="text-[9px] font-black text-slate-400 uppercase tracking-[0.15em] mt-1 block">ID: #EXAM-{{ $exam->id }}</span>
                                                     </div>
                                                 </div>
                                             </td>
-                                            {{-- Documento de Identidad --}}
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
-                                                <span class="font-mono bg-gray-100 px-2 py-1 rounded text-xs">
+                                            <td class="px-8 py-6">
+                                                <span class="text-[10px] font-bold text-slate-600 bg-slate-100 px-3 py-1.5 rounded-xl border border-slate-200/60 tracking-tight">
                                                     {{ $exam->student->document_type }}: {{ $exam->student->document_number }}
                                                 </span>
                                             </td>
-                                            {{-- Grado --}}
-                                            <td class="px-6 py-4 whitespace-nowrap">
-                                                <span class="px-2 py-1 bg-indigo-50 text-indigo-700 text-xs font-medium rounded border border-indigo-100">
-                                                    {{ $exam->student->grade ?? 'No asignado' }}
+                                            <td class="px-8 py-6 text-center">
+                                                <span class="px-3 py-1.5 bg-blue-50 text-blue-700 text-[10px] font-black rounded-xl border border-blue-100 uppercase tracking-widest">
+                                                    {{ $exam->student->grade ?? 'S/G' }}
                                                 </span>
                                             </td>
-                                            {{-- Badge de Estado con animación si está en proceso --}}
-                                            <td class="px-6 py-4 whitespace-nowrap text-center">
-                                                @if ($exam->status === 'en_proceso')
-                                                    <span class="px-2 py-1 text-xs font-semibold bg-yellow-100 text-yellow-800 rounded-full animate-pulse">
-                                                        ● En Proceso
-                                                    </span>
-                                                @else
-                                                    <span class="px-2 py-1 text-xs font-semibold bg-gray-100 text-gray-600 rounded-full">
-                                                        Pendiente Inicio
-                                                    </span>
-                                                @endif
+                                            <td class="px-8 py-6 text-center">
+                                                <div class="inline-flex items-center px-4 py-1.5 text-[9px] font-black rounded-full border {{ $exam->status === 'en_proceso' ? 'bg-amber-50 text-amber-600 border-amber-100' : 'bg-slate-50 text-slate-500 border-slate-200' }} uppercase tracking-[0.2em]">
+                                                    @if($exam->status === 'en_proceso')
+                                                        <span class="relative flex h-2 w-2 mr-2">
+                                                            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
+                                                            <span class="relative inline-flex rounded-full h-2 w-2 bg-amber-500"></span>
+                                                        </span>
+                                                    @endif
+                                                    {{ str_replace('_', ' ', $exam->status) }}
+                                                </div>
                                             </td>
-                                            {{-- Fecha y tiempo transcurrido --}}
-                                            <td class="px-6 py-4 whitespace-nowrap text-xs text-gray-500">
-                                                {{ $exam->created_at->diffForHumans() }}
-                                                <br>
-                                                <span class="text-[10px]">{{ $exam->created_at->format('d/m/Y h:i A') }}</span>
+                                            <td class="px-8 py-6">
+                                                <div class="text-[10px] font-black text-slate-700 uppercase tracking-tighter">
+                                                    {{ $exam->created_at->diffForHumans() }}
+                                                </div>
+                                                <div class="text-[9px] font-bold text-slate-400 mt-1 italic uppercase">{{ $exam->created_at->format('h:i A') }}</div>
                                             </td>
-                                            {{-- Acciones: Botón Evaluar --}}
-                                            <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                                {{-- 
-                                                    CORRECCIÓN CLAVE: 
-                                                    Pasamos el objeto completo $exam. Laravel extraerá el ID automáticamente.
-                                                    Se eliminó la lógica match() de la vista para mantenerla limpia;
-                                                    el controlador es quien debe decidir qué sección mostrar.
-                                                --}}
+                                            <td class="px-8 py-6 text-right">
                                                 <a href="{{ route('medical_exams.evaluate', $exam) }}"
-                                                   class="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-bold transition duration-150 shadow-sm">
-                                                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                                   class="inline-flex items-center px-6 py-3 bg-slate-900 hover:bg-blue-600 text-white text-[10px] font-black rounded-2xl transition-all duration-500 shadow-xl hover:shadow-blue-200/50 uppercase tracking-[0.2em] group/btn">
+                                                    <span>Iniciar Evaluación</span>
+                                                    <svg class="w-4 h-4 ml-2 group-hover/btn:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
                                                     </svg>
-                                                    EVALUAR
                                                 </a>
                                             </td>
                                         </tr>
@@ -135,6 +147,14 @@
                     @endif
                 </div>
             </div>
+
+            <div class="mt-12 text-center">
+                <p class="text-[9px] font-black text-slate-300 uppercase tracking-[0.5em] flex items-center justify-center">
+                    <span class="w-8 h-[1px] bg-slate-200 mr-4"></span>
+                    SnakeDEV Health Systems • Cali, CO
+                    <span class="w-8 h-[1px] bg-slate-200 ml-4"></span>
+                </p>
+            </div>
         </div>
     </div>
-</x-app-layout>
+@endsection

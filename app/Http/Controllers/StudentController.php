@@ -41,9 +41,7 @@ class StudentController extends Controller
         } catch (\Exception $e) {
             Log::error("Error en matrícula de estudiante: " . $e->getMessage());
             
-            return back()
-                ->withInput()
-                ->withErrors(['error' => 'No se pudo completar el registro: ' . $e->getLine()]);
+            return back()->withInput()->withErrors(['error' => 'Error real: ' . $e->getMessage()]);
         }
     }
 

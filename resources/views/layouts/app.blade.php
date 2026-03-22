@@ -18,15 +18,16 @@
     <body class="font-sans antialiased bg-slate-50" x-data="{ sidebarOpen: true }">
         <div class="min-h-screen flex overflow-hidden">
             
+            {{-- Sidebar --}}
             <aside 
                 :class="sidebarOpen ? 'w-64' : 'w-20'" 
-                class="bg-white border-r border-slate-200 transition-all duration-300 ease-in-out flex flex-col flex-shrink-0 shadow-sm z-20"
-                x-cloak>
+                class="bg-white border-r border-slate-200 transition-all duration-300 ease-in-out flex flex-col flex-shrink-0 shadow-sm z-20">
                 @include('layouts.navigation')
             </aside>
 
             <div class="flex-1 flex flex-col min-w-0 overflow-hidden">
                 
+                {{-- Navbar --}}
                 <header class="bg-white border-b border-slate-200 h-16 flex items-center justify-between px-4 shadow-sm z-10">
                     <div class="flex items-center space-x-4">
                         <button @click="sidebarOpen = !sidebarOpen" class="text-slate-500 hover:text-blue-600 focus:outline-none p-2 rounded-lg hover:bg-slate-100 transition">
@@ -41,14 +42,21 @@
                     </div>
 
                     @isset($header)
-                        <div class="hidden md:block font-semibold text-slate-700">
+                        <div class="hidden md:block font-semibold text-slate-700 uppercase tracking-wider text-sm">
                             {{ $header }}
                         </div>
                     @endisset
                 </header>
 
+                {{-- Contenido Principal Híbrido --}}
                 <main class="flex-1 overflow-y-auto p-6 bg-slate-50">
-                    {{ $slot }}
+                    {{-- 1. Soporte para @section('content') (Nuevas vistas como Medical Exams) --}}
+                    @yield('content')
+
+                    {{-- 2. Soporte para <x-app-layout> (Vistas de Dashboard y Registro) --}}
+                    @isset($slot)
+                        {{ $slot }}
+                    @endisset
                 </main>
             </div>
         </div>

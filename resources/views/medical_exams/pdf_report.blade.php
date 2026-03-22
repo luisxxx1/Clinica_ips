@@ -1,68 +1,172 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <meta charset="UTF-8">
     <style>
-        body { font-family: 'Helvetica', sans-serif; color: #334155; margin: 0; padding: 0; }
-        .header { background: #2563eb; color: white; padding: 30px; text-align: center; }
-        .content { padding: 30px; }
-        .section-title { font-size: 14px; font-weight: bold; background: #f1f5f9; padding: 8px; border-left: 5px solid #2563eb; margin: 20px 0 10px; color: #1e3a8a; }
-        table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
-        th, td { border: 1px solid #e2e8f0; padding: 10px; font-size: 11px; text-align: left; }
-        th { background: #f8fafc; font-weight: bold; width: 30%; }
-        .badge { background: #dbeafe; color: #1e40af; padding: 5px 10px; border-radius: 5px; font-weight: bold; }
+        /* Configuración de página para DomPDF */
+        @page { margin: 1.5cm 1cm; }
+        
+        body { 
+            font-family: 'Helvetica', Arial, sans-serif; 
+            color: #1e293b; 
+            margin: 0; 
+            padding: 0; 
+            line-height: 1.4;
+            font-size: 10px;
+        }
+
+        /* Encabezado Corporativo */
+        .header { 
+            background: #2563eb; 
+            color: white; 
+            padding: 25px; 
+            text-align: center;
+            border-bottom: 4px solid #1e3a8a;
+        }
+
+        .content { padding: 20px 30px; }
+
+        .section-title { 
+            font-size: 11px; 
+            font-weight: bold; 
+            background: #f8fafc; 
+            padding: 6px 10px; 
+            border-left: 4px solid #2563eb; 
+            margin: 15px 0 8px; 
+            color: #1e40af;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Estilo de Tablas */
+        table { width: 100%; border-collapse: collapse; margin-bottom: 15px; table-layout: fixed; }
+        th, td { border: 1px solid #e2e8f0; padding: 8px 10px; text-align: left; word-wrap: break-word; }
+        
+        th { 
+            background: #f1f5f9; 
+            font-weight: bold; 
+            color: #64748b; 
+            width: 30%; 
+            text-transform: uppercase;
+            font-size: 8px;
+        }
+
+        /* Badge de Estado Nutricional */
+        .badge { 
+            background: #dbeafe; 
+            color: #1e40af; 
+            padding: 3px 8px; 
+            border-radius: 4px; 
+            font-weight: bold; 
+            font-size: 9px;
+            text-transform: uppercase;
+        }
+
+        .signature-section { 
+            margin-top: 60px; 
+            text-align: center; 
+        }
+
+        .signature-line { 
+            border-top: 1px solid #94a3b8; 
+            width: 250px; 
+            margin: 0 auto; 
+            padding-top: 8px; 
+        }
+
+        .footer {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            text-align: center;
+            font-size: 8px;
+            color: #94a3b8;
+            border-top: 1px solid #f1f5f9;
+            padding-top: 5px;
+        }
     </style>
 </head>
 <body>
     <div class="header">
-        <h1 style="margin: 0; font-size: 22px;">I.P.S CREAR INTEGRAL S.A.S</h1>
-        <p style="margin: 5px 0 0; font-size: 12px; opacity: 0.8;">REPORTE DE VALORACIÓN MÉDICA INTEGRAL</p>
+        <h1 style="margin: 0; font-size: 18px; letter-spacing: 1px;">I.P.S CREAR INTEGRAL S.A.S</h1>
+        <p style="margin: 4px 0 0; font-size: 10px; opacity: 0.9; font-weight: bold; text-transform: uppercase;">Historia Clínica: Valoración Médica Integral</p>
     </div>
 
     <div class="content">
-        <div class="section-title">DATOS DEL PACIENTE</div>
-        <table>
-            <tr><th>Nombre Completo:</th><td>{{ $student->name }}</td></tr>
-            <tr><th>Identificación:</th><td>{{ $student->document_number }}</td></tr>
-        </table>
-
-        <div class="section-title">ESTADO NUTRICIONAL (IMC)</div>
+        <div class="section-title">Identificación del Paciente</div>
         <table>
             <tr>
-                <th>Peso:</th><td>{{ $data['peso'] }} kg</td>
-                <th>Talla:</th><td>{{ $data['talla'] }} cm</td>
+                <th>Nombre Completo:</th>
+                <td style="font-weight: bold; font-size: 11px;">{{ $student->first_name }} {{ $student->last_name }}</td>
             </tr>
             <tr>
-                <th>IMC:</th><td>{{ $data['imc'] }}</td>
-                <th>Resultado:</th><td><span class="badge">{{ $data['imc_status'] }}</span></td>
+                <th>Documento de Identidad:</th>
+                <td>{{ $student->document_type }} {{ $student->document_number }}</td>
             </tr>
         </table>
 
-        <div class="section-title">ANTECEDENTES RELEVANTES</div>
+        <div class="section-title">Parámetros Antropométricos (Nutrición)</div>
         <table>
-            @foreach(['enf' => 'Enfermedades', 'ale' => 'Alergias', 'cir' => 'Cirugías', 'ret' => 'Retraso Desarrollo'] as $k => $label)
+            <tr>
+                <th>Peso Corporal:</th>
+                <td>{{ $data['peso'] }} kg</td>
+                <th>Talla / Estatura:</th>
+                <td>{{ $data['talla'] }} cm</td>
+            </tr>
+            <tr>
+                <th>Índice de Masa Corporal:</th>
+                <td style="font-weight: bold;">{{ $data['imc'] }}</td>
+                <th>Interpretación:</th>
+                <td><span class="badge">{{ $data['imc_status'] }}</span></td>
+            </tr>
+        </table>
+
+        <div class="section-title">Antecedentes Personales</div>
+        <table>
+            @php
+                $antecedentes = [
+                    'enf' => 'Patológicos (Enfermedades)',
+                    'ale' => 'Alérgicos',
+                    'cir' => 'Quirúrgicos (Cirugías)',
+                    'ret' => 'Desarrollo Madurativo'
+                ];
+            @endphp
+            @foreach($antecedentes as $k => $label)
             <tr>
                 <th>{{ $label }}:</th>
-                <td>{{ $data['q_'.$k] }} - {{ $data['det_'.$k] ?? 'Ninguno' }}</td>
+                <td>
+                    <span style="font-weight: bold; color: {{ strtolower($data['q_'.$k]) == 'si' ? '#e11d48' : '#10b981' }};">
+                        {{ strtoupper($data['q_'.$k]) }}
+                    </span> 
+                    @if(isset($data['det_'.$k]) && $data['det_'.$k] != '')
+                        — {{ $data['det_'.$k] }}
+                    @endif
+                </td>
             </tr>
             @endforeach
         </table>
 
-        <div class="section-title">HALLAZGOS EXAMEN FÍSICO</div>
+        <div class="section-title">Hallazgos por Sistemas (Examen Físico)</div>
         <table>
-            @foreach(['cabeza', 'cuello', 'torax', 'abdomen', 'extremidades'] as $f)
+            @foreach(['cabeza' => 'Cabeza y Órganos de los Sentidos', 'cuello' => 'Cuello', 'torax' => 'Tórax (Ruidos Cardio-Pulmonares)', 'abdomen' => 'Abdomen', 'extremidades' => 'Extremidades'] as $slug => $label)
             <tr>
-                <th>{{ ucfirst($f) }}:</th>
-                <td>{{ $data['f_'.$f] ?: 'Normal / Sin hallazgos' }}</td>
+                <th>{{ $label }}:</th>
+                <td>{{ $data['f_'.$slug] ?: 'Normal. Sin evidencia de hallazgos patológicos.' }}</td>
             </tr>
             @endforeach
         </table>
 
-        <div style="margin-top: 80px; text-align: center;">
-            <p style="border-top: 1px solid #94a3b8; width: 250px; margin: 0 auto; padding-top: 10px; font-size: 11px;">
-                FIRMA DEL MÉDICO: {{ $doctor->name }}<br>
-                REGISTRO PROFESIONAL I.P.S CREAR INTEGRAL
-            </p>
+        <div class="signature-section">
+            <div class="signature-line">
+                <p style="margin: 0; font-size: 10px; font-weight: bold;">DR. {{ strtoupper($doctor->name) }}</p>
+                <p style="margin: 2px 0; font-size: 8px; color: #64748b;">REGISTRO MÉDICO PROFESIONAL</p>
+                <p style="margin: 0; font-size: 8px; color: #64748b;">I.P.S CREAR INTEGRAL S.A.S</p>
+            </div>
         </div>
+    </div>
+
+    <div class="footer">
+        Generado electrónicamente por <strong>Snake_DEV Health System</strong> | Jamundí, Valle del Cauca.
     </div>
 </body>
 </html>

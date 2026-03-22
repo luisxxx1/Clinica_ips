@@ -1,123 +1,102 @@
-<x-app-layout>
-    <div class="py-12">
-        <div class="max-w-5xl mx-auto sm:px-6 lg:px-8">
-            
-            {{-- Encabezado --}}
-            <div class="mb-8 flex items-center justify-between">
-                <div>
-                    <h2 class="text-3xl font-black text-slate-800 tracking-tighter uppercase">
-                        Valoración: <span class="text-teal-600">Optometría</span>
-                    </h2>
-                    <p class="text-slate-500 font-medium italic">Estudiante: {{ $medical_exam->student->full_name }}</p>
+{{-- NOTA: Este archivo NO debe tener layouts, solo el div principal --}}
+<div class="bg-white rounded-[3rem] shadow-2xl shadow-slate-200/50 border border-slate-100 overflow-hidden">
+    
+    {{-- HEADER DEL FORMULARIO --}}
+    <div class="p-10 border-b border-slate-50 bg-slate-50/30">
+        <div class="flex justify-between items-start">
+            <div>
+                <h2 class="text-4xl font-black text-slate-800 tracking-tighter uppercase mb-2">
+                    Valoración: <span class="text-teal-500">Optometría</span>
+                </h2>
+                {{-- Validamos el nombre del paciente --}}
+                <p class="text-slate-500 font-bold italic">Paciente: {{ $medical_exam->student->name ?? $medical_exam->student->first_name }}</p>
+            </div>
+            <div class="text-right">
+                <p class="text-[10px] font-black text-slate-300 uppercase tracking-widest">Documento</p>
+                <p class="text-xl font-black text-slate-800">{{ $medical_exam->student->document_number }}</p>
+            </div>
+        </div>
+    </div>
+
+    {{-- Formulario con la ruta maestra corregida --}}
+    <form action="{{ route('medical_exams.store_evaluation', $medical_exam) }}" method="POST" class="p-12 space-y-12">
+        @csrf
+
+        {{-- SECCIÓN 01: AGUDEZA VISUAL --}}
+        <section>
+            <div class="flex items-center gap-4 mb-10">
+                <span class="w-10 h-10 bg-teal-50 text-teal-500 rounded-xl flex items-center justify-center font-black text-sm">01</span>
+                <h3 class="text-xl font-black text-slate-800 uppercase tracking-tight">Agudeza Visual (Snellen)</h3>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                {{-- OJO DERECHO --}}
+                <div class="bg-slate-50/50 p-8 rounded-[2.5rem] border border-slate-100">
+                    <p class="text-center text-[10px] font-black text-teal-600 uppercase tracking-[0.2em] mb-6">Ojo Derecho (OD)</p>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-[9px] font-black text-slate-400 uppercase mb-2 ml-2">Lejana</label>
+                            <input type="text" name="od_lejana" value="20/" class="w-full bg-white border-none rounded-2xl p-4 font-bold text-slate-700 focus:ring-2 focus:ring-teal-500/20 shadow-sm">
+                        </div>
+                        <div>
+                            <label class="block text-[9px] font-black text-slate-400 uppercase mb-2 ml-2">Próxima</label>
+                            <input type="text" name="od_proxima" placeholder="0.50" class="w-full bg-white border-none rounded-2xl p-4 font-bold text-slate-700 focus:ring-2 focus:ring-teal-500/20 shadow-sm">
+                        </div>
+                    </div>
                 </div>
-                <div class="text-right">
-                    <span class="text-[10px] font-bold text-slate-400 uppercase block">ID Estudiante</span>
-                    <span class="font-mono font-bold text-slate-700">{{ $medical_exam->student->document_number }}</span>
+
+                {{-- OJO IZQUIERDO --}}
+                <div class="bg-slate-50/50 p-8 rounded-[2.5rem] border border-slate-100">
+                    <p class="text-center text-[10px] font-black text-teal-600 uppercase tracking-[0.2em] mb-6">Ojo Izquierdo (OI)</p>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-[9px] font-black text-slate-400 uppercase mb-2 ml-2">Lejana</label>
+                            <input type="text" name="oi_lejana" value="20/" class="w-full bg-white border-none rounded-2xl p-4 font-bold text-slate-700 focus:ring-2 focus:ring-teal-500/20 shadow-sm">
+                        </div>
+                        <div>
+                            <label class="block text-[9px] font-black text-slate-400 uppercase mb-2 ml-2">Próxima</label>
+                            <input type="text" name="oi_proxima" placeholder="0.50" class="w-full bg-white border-none rounded-2xl p-4 font-bold text-slate-700 focus:ring-2 focus:ring-teal-500/20 shadow-sm">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        {{-- SECCIÓN 02: HALLAZGOS --}}
+        <section>
+            <div class="flex items-center gap-4 mb-8">
+                <span class="w-10 h-10 bg-teal-50 text-teal-500 rounded-xl flex items-center justify-center font-black text-sm">02</span>
+                <h3 class="text-xl font-black text-slate-800 uppercase tracking-tight">Hallazgos Clínicos</h3>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                <div>
+                    <label class="block text-[10px] font-black text-slate-400 uppercase mb-3 ml-2 tracking-widest">Corrección Óptica</label>
+                    <select name="correccion_optica" class="w-full bg-slate-50 border-none rounded-2xl p-4 font-bold text-slate-700 focus:ring-2 focus:ring-teal-500/20">
+                        <option value="No usa">No usa</option>
+                        <option value="Usa permanentemente">Usa permanentemente</option>
+                        <option value="Usa para lectura">Usa para lectura</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-[10px] font-black text-slate-400 uppercase mb-3 ml-2 tracking-widest">Diagnóstico (CIE-10)</label>
+                    <input type="text" name="diagnostico" placeholder="Ej: H52.1 - Miopía" class="w-full bg-slate-50 border-none rounded-2xl p-4 font-bold text-slate-700 focus:ring-2 focus:ring-teal-500/20">
                 </div>
             </div>
 
-            <form action="{{ route('medical_exams.store_result', $medical_exam) }}" method="POST" class="space-y-6">
-                @csrf
-                
-                {{-- 1. Agudeza Visual --}}
-                <div class="bg-white p-8 rounded-[2.5rem] shadow-sm border border-slate-100">
-                    <h3 class="text-lg font-black text-slate-800 mb-6 uppercase tracking-tighter flex items-center">
-                        <span class="w-7 h-7 bg-teal-100 text-teal-600 rounded-lg flex items-center justify-center mr-3 text-xs">1</span>
-                        Capacidad Visual (Snellen)
-                    </h3>
-                    
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-left border-separate border-spacing-y-2">
-                            <thead>
-                                <tr class="text-[10px] font-black text-slate-400 uppercase tracking-widest">
-                                    <th class="px-4 pb-2">Ojo</th>
-                                    <th class="px-4 pb-2">Sin Corrección</th>
-                                    <th class="px-4 pb-2">Con Corrección</th>
-                                    <th class="px-4 pb-2">Cerca</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {{-- Ojo Derecho --}}
-                                <tr class="bg-slate-50 rounded-2xl">
-                                    <td class="px-4 py-4 font-bold text-slate-700 rounded-l-2xl">Ojo Derecho (OD)</td>
-                                    <td class="px-2 py-2">
-                                        <input type="text" name="results[agudeza][od_sc]" placeholder="20/" class="w-full border-none bg-white rounded-xl text-sm focus:ring-2 focus:ring-teal-500">
-                                    </td>
-                                    <td class="px-2 py-2">
-                                        <input type="text" name="results[agudeza][od_cc]" placeholder="20/" class="w-full border-none bg-white rounded-xl text-sm focus:ring-2 focus:ring-teal-500">
-                                    </td>
-                                    <td class="px-2 py-2 rounded-r-2xl">
-                                        <input type="text" name="results[agudeza][od_cerca]" placeholder="1.0" class="w-full border-none bg-white rounded-xl text-sm focus:ring-2 focus:ring-teal-500">
-                                    </td>
-                                </tr>
-                                {{-- Ojo Izquierdo --}}
-                                <tr class="bg-slate-50 rounded-2xl">
-                                    <td class="px-4 py-4 font-bold text-slate-700 rounded-l-2xl">Ojo Izquierdo (OI)</td>
-                                    <td class="px-2 py-2">
-                                        <input type="text" name="results[agudeza][oi_sc]" placeholder="20/" class="w-full border-none bg-white rounded-xl text-sm focus:ring-2 focus:ring-teal-500">
-                                    </td>
-                                    <td class="px-2 py-2">
-                                        <input type="text" name="results[agudeza][oi_cc]" placeholder="20/" class="w-full border-none bg-white rounded-xl text-sm focus:ring-2 focus:ring-teal-500">
-                                    </td>
-                                    <td class="px-2 py-2 rounded-r-2xl">
-                                        <input type="text" name="results[agudeza][oi_cerca]" placeholder="1.0" class="w-full border-none bg-white rounded-xl text-sm focus:ring-2 focus:ring-teal-500">
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
+            <div class="bg-slate-900 rounded-[2.5rem] p-8">
+                <label class="block text-[10px] font-black text-teal-400 uppercase mb-4 ml-2 tracking-widest">Observaciones y Recomendaciones</label>
+                {{-- Nombre 'observations' para que el controlador lo reciba correctamente --}}
+                <textarea name="observations" rows="4" placeholder="Escriba la conducta a seguir o formula médica..." 
+                          class="w-full bg-slate-800 border-none rounded-2xl p-6 text-white placeholder:text-slate-500 focus:ring-2 focus:ring-teal-500/40 resize-none font-medium" required></textarea>
+            </div>
+        </section>
 
-                {{-- 2. Hallazgos y Diagnóstico --}}
-                <div class="bg-white p-8 rounded-[2.5rem] shadow-sm border border-slate-100">
-                    <h3 class="text-lg font-black text-slate-800 mb-6 uppercase tracking-tighter flex items-center">
-                        <span class="w-7 h-7 bg-teal-100 text-teal-600 rounded-lg flex items-center justify-center mr-3 text-xs">2</span>
-                        Evaluación Clínica
-                    </h3>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div>
-                            <label class="text-[10px] font-black text-slate-400 uppercase mb-2 block tracking-widest">Bio-Microscopía (Anexos)</label>
-                            <textarea name="results[biomicroscopia]" rows="2" class="w-full bg-slate-50 border-none rounded-2xl text-sm focus:ring-2 focus:ring-teal-500" placeholder="Normal..."></textarea>
-                        </div>
-                        <div>
-                            <label class="text-[10px] font-black text-slate-400 uppercase mb-2 block tracking-widest">Motilidad Ocular</label>
-                            <textarea name="results[motilidad]" rows="2" class="w-full bg-slate-50 border-none rounded-2xl text-sm focus:ring-2 focus:ring-teal-500" placeholder="Ortoforia, versiones normales..."></textarea>
-                        </div>
-                    </div>
-                </div>
-
-                {{-- Cierre --}}
-                <div class="bg-slate-900 p-8 rounded-[2.5rem] shadow-xl">
-                    <div class="flex flex-col md:flex-row gap-6 items-start">
-                        <div class="flex-1 w-full">
-                            <label class="text-[10px] font-black text-teal-400 uppercase mb-4 block tracking-widest">Diagnóstico y Conducta</label>
-                            <textarea name="notes" rows="3" required
-                                      class="w-full bg-slate-800 border-none rounded-2xl text-white text-sm focus:ring-2 focus:ring-teal-500" 
-                                      placeholder="Escriba el diagnóstico (ej: Miopía, Astigmatismo) y recomendaciones..."></textarea>
-                        </div>
-                        
-                        <div class="w-full md:w-64">
-                            <label class="text-[10px] font-black text-teal-400 uppercase mb-4 block tracking-widest">¿Usa Lentes?</label>
-                            <div class="flex gap-4">
-                                <label class="flex-1 cursor-pointer">
-                                    <input type="radio" name="results[usa_lentes]" value="Si" class="peer hidden">
-                                    <div class="py-2 border-2 border-slate-700 rounded-xl text-center text-slate-400 peer-checked:border-teal-500 peer-checked:text-teal-500 transition-all">SÍ</div>
-                                </label>
-                                <label class="flex-1 cursor-pointer">
-                                    <input type="radio" name="results[usa_lentes]" value="No" checked class="peer hidden">
-                                    <div class="py-2 border-2 border-slate-700 rounded-xl text-center text-slate-400 peer-checked:border-teal-500 peer-checked:text-teal-500 transition-all">NO</div>
-                                </label>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="flex justify-end pt-8 border-t border-slate-800 mt-6">
-                        <button type="submit" class="bg-teal-600 text-white px-10 py-4 rounded-2xl font-black shadow-lg hover:bg-teal-500 hover:-translate-y-1 transition-all">
-                            GUARDAR VALORACIÓN OPTOMETRÍA
-                        </button>
-                    </div>
-                </div>
-            </form>
+        {{-- BOTÓN DE GUARDADO --}}
+        <div class="pt-6">
+            <button type="submit" class="w-full bg-teal-500 hover:bg-teal-600 text-white font-black py-6 rounded-[2rem] shadow-xl shadow-teal-100 transition-all uppercase tracking-[0.2em] text-sm">
+                Finalizar Evaluación de Optometría
+            </button>
         </div>
-    </div>
-</x-app-layout>
+    </form>
+</div>

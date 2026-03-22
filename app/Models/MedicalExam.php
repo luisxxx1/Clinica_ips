@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Str;
 
 class MedicalExam extends Model
 {
@@ -14,16 +15,17 @@ class MedicalExam extends Model
 
     protected $fillable = [
         'student_id',
-        'user_id',
-        'requested_areas',
-        'status', 
+        'user_id',         // El médico/admin que inició el examen
+        'requested_areas', // Array JSON
+        'status',          // pendiente, en_proceso, completado
         'observations',
         'result_type',
     ];
 
     protected $casts = [
         'requested_areas' => 'array',
-        'created_at' => 'datetime', // Útil para filtros de fechas en reportes
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
     ];
 
     /* |--------------------------------------------------------------------------
@@ -35,25 +37,23 @@ class MedicalExam extends Model
         return $this->belongsTo(Student::class);
     }
 
-    public function user(): BelongsTo
+    /**
+     * El usuario (profesional o admin) que creó el registro.
+     */
+    public function creator(): BelongsTo
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'user_id');
     }
 
     public function results(): HasMany
     {
-        return $this->hasMany(ExamResult::class);
+        // Vinculamos con MedicalResult (o ExamResult, verifica el nombre de tu modelo)
+        return $this->hasMany(ExamResult::class, 'medical_exam_id');
     }
 
     /* |--------------------------------------------------------------------------
-    | Scopes (Filtros de Bandeja)
+    | Scopes (Filtros)
     |-------------------------------------------------------------------------- */
-
-    public function scopeForArea(Builder $query, string $area): Builder
-    {
-        // Se asegura de que la consulta busque correctamente dentro del JSON
-        return $query->whereJsonContains('requested_areas', strtolower($area));
-    }
 
     public function scopePending(Builder $query): Builder
     {
@@ -61,40 +61,68 @@ class MedicalExam extends Model
     }
 
     /* |--------------------------------------------------------------------------
-    | Lógica de Negocio (Helpers)
+    | Accessors & Helpers (Lógica de Negocio)
     |-------------------------------------------------------------------------- */
 
     /**
-     * Calcula el porcentaje de avance del circuito médico.
-     * Útil para barras de progreso en la interfaz.
+     * Determina si todas las áreas solicitadas tienen un resultado cargado.
+     */
+    public function getIsReadyAttribute(): bool
+    {
+        $requested = $this->requested_areas;
+
+        if (empty($requested) || !is_array($requested)) {
+            return false;
+        }
+
+        // Cargamos los slugs de las áreas que ya tienen resultados
+        $completedAreas = $this->results->pluck('area')->toArray();
+
+        foreach ($requested as $area) {
+            // Normalizamos el nombre del área solicitada para comparar
+            $slug = Str::slug($area, '_');
+            if (!in_array($slug, $completedAreas)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Calcula el porcentaje de avance basado en las áreas evaluadas.
      */
     public function getProgressPercentAttribute(): int
     {
-        $total = count($this->requested_areas ?? []);
-        if ($total === 0) return 0;
+        $totalAreas = count($this->requested_areas ?? []);
+        if ($totalAreas === 0) return 0;
 
-        $completed = $this->results()->count();
-        return (int) (($completed / $total) * 100);
+        $completedCount = $this->results->count();
+        
+        $percent = ($completedCount / $totalAreas) * 100;
+        return (int) min($percent, 100);
     }
 
     /**
-     * Verifica si todas las áreas solicitadas ya tienen un resultado cargado.
-     */
-    public function checkCompletion(): bool
-    {
-        $requested = collect($this->requested_areas)->map(fn($a) => strtolower($a))->sort()->values();
-        $completed = $this->results()->pluck('area')->map(fn($a) => strtolower($a))->sort()->values();
-
-        // Si lo que se pidió es igual a lo que hay en la tabla de resultados
-        return $requested->every(fn($area) => $completed->contains($area));
-    }
-
-    /**
-     * Verifica si un área específica ya fue evaluada.
+     * Verifica si un área específica (por nombre o slug) ya fue evaluada.
      */
     public function isAreaCompleted(string $areaName): bool
     {
-        // Usamos una comparación simple de strings normalizados
-        return $this->results->contains('area', strtolower($areaName));
+        $slug = Str::slug($areaName, '_');
+        
+        // Usamos la colección cargada en memoria para evitar queries extra
+        return $this->results->contains('area', $slug);
+    }
+
+    /**
+     * Helper para obtener el color del badge de estado.
+     */
+    public function getStatusColorAttribute(): string
+    {
+        return match($this->status) {
+            'completado' => 'emerald',
+            'en_proceso' => 'amber',
+            default      => 'slate',
+        };
     }
 }
