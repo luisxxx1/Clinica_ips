@@ -16,24 +16,34 @@ class StudentService
     {
         return DB::transaction(function () use ($data) {
             // 1. Crear el Estudiante
-            // Usamos only() para asegurarnos de que solo entren datos de la tabla students
-            $student = Student::create($data);
+            // Filtramos el array para que solo pasen los datos que existen en la tabla students
+            // (Nombres, apellidos, documento, datos del acudiente, etc.)
+            $studentData = collect($data)->except(['requested_areas', 'observations'])->toArray();
+            $student = Student::create($studentData);
 
             // 2. Normalizar las áreas solicitadas
-            // Transformamos "Medicina General" en "medicina_general" para la lógica de la BD
-            $requestedAreas = $data['requested_areas'] ?? [];
-            
+            // Transformamos los nombres a slugs (ej: "Valoración Médica" -> "valoracion_medica")
+            $requestedAreas = $data['requested_areas'] ?? [
+                'valoracion_medica',
+                'odontologia',
+                'optometria',
+                'audiometria',
+                'fonoaudiologia',
+                'psicologia'
+            ];
+
             $normalizedAreas = collect($requestedAreas)
                 ->map(fn($area) => Str::slug($area, '_'))
-                ->filter() // Eliminamos valores vacíos si los hay
+                ->filter()
                 ->values()
                 ->toArray();
 
             // 3. Crear el Examen Médico (Circuito Inicial)
+            // Vinculamos el user_id del administrador que está logueado
             $student->medicalExams()->create([
-                'user_id'         => Auth::id() ?? 1, // Fallback al ID 1 (Admin) si no hay sesión
+                'user_id'         => Auth::id(),
                 'requested_areas' => $normalizedAreas,
-                'status'          => 'pendiente',
+                'status'          => 'en_proceso',
                 'observations'    => $data['observations'] ?? 'Inicio de proceso de ingreso.',
             ]);
 

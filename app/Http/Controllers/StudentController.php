@@ -78,7 +78,7 @@ class StudentController extends Controller
 
     public function search(Request $request)
     {
-        $query = $request->get('query');
+        $query = $request->input('query');
 
         if (empty($query)) {
             return response()->json([]);

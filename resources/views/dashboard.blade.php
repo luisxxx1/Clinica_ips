@@ -12,10 +12,10 @@
 
     <div class="py-12 bg-slate-50/50 min-h-screen">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            
+
             {{-- Grid de Estadísticas Rápidas --}}
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-10">
-                
+
                 {{-- Card: Pacientes --}}
                 <div class="bg-white overflow-hidden shadow-sm rounded-[2rem] border border-slate-200 p-8 hover:shadow-xl hover:shadow-blue-900/5 transition-all duration-300 group">
                     <div class="flex items-center justify-between">
@@ -68,7 +68,7 @@
                         <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Nuevos Ingresos</span>
                     </div>
                 </div>
-                
+
                 <div class="relative" style="height: 400px;">
                     <canvas id="pacientesChart"></canvas>
                 </div>
@@ -87,7 +87,7 @@
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const ctx = document.getElementById('pacientesChart').getContext('2d');
-            
+
             // Gradiente para el relleno del gráfico
             const gradient = ctx.createLinearGradient(0, 0, 0, 400);
             gradient.addColorStop(0, 'rgba(37, 99, 235, 0.2)');
@@ -99,7 +99,7 @@
                     labels: ['Enero', 'Febrero', 'Marzo (Actual)', 'Abril'],
                     datasets: [{
                         label: 'Pacientes',
-                        data: [5, 12, {{ $totalPacientes }}, 15], 
+                        data: [5, 12, {{ $totalPacientes }}, 15],
                         borderColor: '#2563eb',
                         borderWidth: 4,
                         pointBackgroundColor: '#ffffff',

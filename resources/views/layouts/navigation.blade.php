@@ -1,8 +1,8 @@
 @php
     $user = Auth::user();
     $roleName = Str::lower($user->role->name ?? 'invitado');
-    $userColor = $user->ui_color ?? '#3b82f6'; 
-    
+    $userColor = $user->ui_color ?? '#3b82f6';
+
     $colorClass = match($roleName) {
         'administrador' => 'bg-purple-100 text-purple-800 border-purple-200',
         'admisión', 'admision' => 'bg-green-100 text-green-800 border-green-200',
@@ -18,7 +18,7 @@
 @endphp
 
 <div class="flex flex-col h-full bg-white border-r border-slate-100">
-    
+
     {{-- BUSCADOR GLOBAL --}}
     <div class="px-4 pt-6 mb-4">
         <div x-show="sidebarOpen" class="relative group">
@@ -28,21 +28,21 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                     </svg>
                 </span>
-                <input type="text" name="search" value="{{ request('search') }}" placeholder="Buscar paciente..." 
+                <input type="text" name="search" value="{{ request('search') }}" placeholder="Buscar paciente..."
                        class="w-full py-2 pl-10 pr-4 text-xs font-medium bg-slate-50 border border-slate-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/10 focus:border-blue-500 focus:bg-white transition-all">
             </form>
         </div>
     </div>
 
     <nav class="flex-1 px-3 space-y-2 overflow-y-auto">
-        
+
         {{-- SECCIÓN GESTIÓN: Inicio y Registro --}}
         @if($isStaffAdministrativo)
             <div class="pt-2 pb-1 px-3" x-show="sidebarOpen">
                 <span class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Gestión</span>
             </div>
 
-            <a href="{{ route('dashboard') }}" 
+            <a href="{{ route('dashboard') }}"
                class="flex items-center p-3 rounded-xl transition group {{ request()->routeIs('dashboard') ? 'bg-blue-50 text-blue-600' : 'text-slate-600 hover:bg-slate-100' }}">
                 <svg class="w-6 h-6 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
@@ -50,7 +50,7 @@
                 <span x-show="sidebarOpen" class="ml-3 font-medium text-sm truncate uppercase tracking-tighter">Inicio</span>
             </a>
 
-            <a href="{{ route('students.index') }}" 
+            <a href="{{ route('students.index') }}"
                class="flex items-center p-3 rounded-xl transition group {{ request()->routeIs('students.*') ? 'bg-blue-50 text-blue-600' : 'text-slate-600 hover:bg-slate-100' }}">
                 <svg class="w-6 h-6 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
@@ -66,7 +66,7 @@
 
         {{-- BANDEJA: Oculta para Admisión Y para Administrador --}}
         @if(!$isAdmision && !$isAdmin)
-            <a href="{{ route('medical_exams.index') }}" 
+            <a href="{{ route('medical_exams.index') }}"
                class="flex items-center p-3 rounded-xl transition group {{ request()->routeIs('medical_exams.index') ? 'bg-blue-50 text-blue-600' : 'text-slate-600 hover:bg-slate-100' }}">
                 <svg class="w-6 h-6 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
@@ -76,7 +76,7 @@
         @endif
 
         {{-- HISTORIAL: Siempre visible para todos los roles autorizados --}}
-        <a href="{{ route('medical_exams.history') }}" 
+        <a href="{{ route('medical_exams.history') }}"
            class="flex items-center p-3 rounded-xl transition group {{ request()->routeIs('medical_exams.history') ? 'bg-blue-50 text-blue-600' : 'text-slate-600 hover:bg-slate-100' }}">
             <svg class="w-6 h-6 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -96,7 +96,7 @@
                     {{ substr($user->name, 0, 1) }}
                 @endif
             </div>
-            
+
             <div x-show="sidebarOpen" class="ml-3 overflow-hidden">
                 <p class="text-xs font-black text-slate-800 truncate uppercase tracking-tighter">{{ $user->name }}</p>
                 <span class="inline-block px-2 py-0.5 rounded text-[9px] font-black {{ $colorClass }} border mt-1 uppercase tracking-widest">

@@ -4,27 +4,39 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Student;
-// IMPORTANTE: Si aún no creas este modelo, el error 500 seguirá.
-use App\Models\MedicalExam; 
+use App\Models\MedicalExam;
 
 class DashboardController extends Controller
 {
     public function index()
     {
-        // Si la tabla medical_exams no existe en la DB, fallará.
-        // Para probar que el Dashboard cargue, puedes comentar las líneas de MedicalExam
         $totalPacientes = Student::count();
-        
-        // Verifica si la tabla existe antes de contar para evitar el Error 500
+
         try {
+            // Conteos para las Cards del Dashboard
             $totalCertificados = MedicalExam::where('status', 'completado')->count();
-            $pendientes = MedicalExam::where('status', '!=', 'completado')->count();
+            $pendientes = MedicalExam::where('status', 'en_proceso')->count();
+
+            // ESTA ES LA CONEXIÓN CLAVE:
+            // Obtenemos los exámenes que ya pasaron por los 6 médicos
+            // Cargamos 'student' y 'results' para que Admisión vea todo de una vez
+            $examenesListos = MedicalExam::with(['student', 'results.specialist'])
+                ->where('status', 'completado')
+                ->latest()
+                ->take(10) // Mostramos los últimos 10 terminados
+                ->get();
+
         } catch (\Exception $e) {
-            // Si falla porque no hay tabla, ponemos 0 para que la web cargue
             $totalCertificados = 0;
             $pendientes = 0;
+            $examenesListos = collect(); // Colección vacía para que no de error en la vista
         }
 
-        return view('dashboard', compact('totalPacientes', 'totalCertificados', 'pendientes'));
+        return view('dashboard', compact(
+            'totalPacientes',
+            'totalCertificados',
+            'pendientes',
+            'examenesListos'
+        ));
     }
 }
