@@ -1,88 +1,121 @@
 {{-- resources/views/medical_exams/evaluations/valoracion_medica.blade.php --}}
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Medicina General - Clinica_ips</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
-    <style>body { font-family: 'Inter', sans-serif; }</style>
-</head>
-<body class="bg-slate-50 text-slate-900">
 
-<div x-data="{ tab: 'bandeja' }" class="flex min-h-screen">
-    
-    {{-- SIDEBAR PERSONALIZADO (SIN GRÁFICAS) --}}
-    <aside class="w-64 bg-white border-r border-slate-200 flex flex-col p-6 sticky top-0 h-screen">
-        <div class="mb-10 flex items-center gap-2">
-            <div class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center text-white shadow-lg">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
-            </div>
-            <span class="font-black text-xl tracking-tighter">SnakeDEV</span>
-        </div>
+<div x-data="{ 
+    tab: 'evaluacion',
+    peso: '', 
+    talla: '',
+    get imc() {
+        if (!this.peso || !this.talla) return 0;
+        let t = this.talla / 100;
+        return (this.peso / (t * t)).toFixed(2);
+    },
+    get clasificacion() {
+        let val = this.imc;
+        if (val == 0) return 'ESPERANDO DATOS';
+        if (val < 18.5) return 'BAJO PESO';
+        if (val < 25) return 'NORMAL';
+        if (val < 30) return 'SOBREPESO';
+        return 'OBESIDAD';
+    }
+}" class="space-y-8">
 
-        <nav class="space-y-3 flex-1">
-            <button @click="tab = 'bandeja'" 
-                    :class="tab === 'bandeja' ? 'bg-blue-600 text-white shadow-xl shadow-blue-200' : 'text-slate-400 hover:bg-slate-50'"
-                    class="w-full flex items-center gap-3 p-4 rounded-2xl font-bold transition-all text-sm">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"/></svg>
-                Bandeja de Entrada
-            </button>
-
-            <button @click="tab = 'historial'" 
-                    :class="tab === 'historial' ? 'bg-blue-600 text-white shadow-xl shadow-blue-200' : 'text-slate-400 hover:bg-slate-50'"
-                    class="w-full flex items-center gap-3 p-4 rounded-2xl font-bold transition-all text-sm">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
-                Buscar Historial
-            </button>
-        </nav>
-
-        <div class="mt-auto p-4 bg-slate-900 rounded-3xl text-white">
-            <p class="text-[10px] font-bold text-blue-400 uppercase">Luis Jimenez</p>
-            <p class="text-[9px] text-slate-500 font-bold uppercase tracking-widest leading-none">CEO Medicina General</p>
-        </div>
-    </aside>
-
-    {{-- CONTENIDO PRINCIPAL --}}
-    <main class="flex-1 p-12">
+    {{-- CONTENEDOR DE EVALUACIÓN --}}
+    <div x-show="tab === 'evaluacion'" class="space-y-8">
         
-        {{-- SECCIÓN: BANDEJA --}}
-        <div x-show="tab === 'bandeja'">
-            <header class="mb-10">
-                <h1 class="text-4xl font-black uppercase tracking-tighter">Bandeja de Pacientes</h1>
-                <p class="text-slate-400 font-medium">Lista de espera para valoración médica.</p>
-            </header>
+        <header class="mb-6">
+            <h1 class="text-4xl font-black uppercase tracking-tighter text-slate-800">Valoración Médica</h1>
+            <p class="text-slate-400 font-medium">Paciente: <span class="text-blue-600 font-bold">{{ $medical_exam->student->name ?? 'No especificado' }}</span></p>
+        </header>
 
-            <div class="bg-white rounded-[2.5rem] shadow-sm border border-slate-100 overflow-hidden">
-                {{-- Aquí pones tu tabla de pacientes pendientes --}}
-                <div class="p-10 text-center border-2 border-dashed border-slate-100 m-6 rounded-[2rem]">
-                    <p class="text-slate-300 font-bold italic">Cargando pacientes de Clinica_ips...</p>
+        <form action="#" method="POST" class="space-y-8">
+            @csrf
+
+            {{-- 1. SECCIÓN DE PESO Y TALLA (VISTA 1) --}}
+            <div class="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm">
+                <h3 class="text-blue-600 font-black uppercase text-[10px] tracking-[0.2em] mb-6 flex items-center gap-3">
+                    <span class="w-6 h-1 bg-blue-600 rounded-full"></span> 1. Antropometría e IMC
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                    <div class="space-y-2">
+                        <label class="block text-[10px] font-black uppercase text-slate-400 ml-2">Peso (kg)</label>
+                        <input type="number" step="0.1" x-model="peso" name="peso" class="w-full border-none bg-slate-50 rounded-2xl p-4 font-bold text-slate-700 focus:ring-2 focus:ring-blue-500/20 shadow-sm" placeholder="0.0">
+                    </div>
+                    <div class="space-y-2">
+                        <label class="block text-[10px] font-black uppercase text-slate-400 ml-2">Talla (cm)</label>
+                        <input type="number" x-model="talla" name="talla" class="w-full border-none bg-slate-50 rounded-2xl p-4 font-bold text-slate-700 focus:ring-2 focus:ring-blue-500/20 shadow-sm" placeholder="0">
+                    </div>
+                    <div class="space-y-2">
+                        <label class="block text-[10px] font-black uppercase text-slate-400 ml-2">IMC Calculado</label>
+                        <div class="w-full bg-blue-50 text-blue-700 rounded-2xl p-4 font-black text-center border border-blue-100" x-text="imc"></div>
+                    </div>
+                    <div class="space-y-2">
+                        <label class="block text-[10px] font-black uppercase text-slate-400 ml-2">Clasificación</label>
+                        <div class="w-full rounded-2xl p-4 font-black text-center text-[10px] tracking-widest uppercase border border-slate-100" 
+                             :class="imc > 0 ? 'bg-slate-900 text-white' : 'bg-white text-slate-300'"
+                             x-text="clasificacion"></div>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        {{-- SECCIÓN: HISTORIAL --}}
-        <div x-show="tab === 'historial'" x-cloak>
-            <header class="mb-10 flex items-end justify-between">
-                <div>
-                    <h1 class="text-4xl font-black uppercase tracking-tighter">Historial</h1>
-                    <p class="text-slate-400 font-medium">Consulta de registros anteriores.</p>
-                </div>
-                <div class="relative">
-                    <input type="text" placeholder="Buscar por DNI..." class="bg-white border border-slate-200 rounded-2xl py-3 px-5 pl-12 font-bold focus:ring-2 focus:ring-blue-600 outline-none">
-                    <svg class="w-5 h-5 absolute left-4 top-3.5 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
-                </div>
-            </header>
+            {{-- 2. SECCIÓN DE CUESTIONARIO (VISTA 2) --}}
+            <div class="bg-white p-8 md:p-10 rounded-[2.5rem] border border-slate-100 shadow-sm space-y-8">
+                <h3 class="text-blue-600 font-black uppercase text-[10px] tracking-[0.2em] mb-6 flex items-center gap-3">
+                    <span class="w-6 h-1 bg-blue-600 rounded-full"></span> 2. Antecedentes Médicos
+                </h3>
 
-            <div class="bg-white rounded-[2.5rem] p-12 shadow-sm border border-slate-100 text-center">
-                <p class="text-slate-300 font-bold italic">No se han realizado búsquedas aún.</p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-8">
+                    {{-- Preguntas Sí/No --}}
+                    <div class="space-y-4">
+                        @foreach(['hospitalizado' => '¿Ha sido hospitalizado?', 'cirugias' => '¿Ha tenido cirugías?', 'medicamentos' => '¿Toma medicamentos?', 'alergias' => '¿Tiene alergias?'] as $key => $label)
+                        <div class="flex items-center justify-between p-4 bg-slate-50/50 rounded-2xl border border-transparent hover:border-slate-100 transition-all group">
+                            <span class="text-xs font-bold text-slate-600 group-hover:text-slate-900">{{ $label }}</span>
+                            <div class="flex gap-4">
+                                <label class="flex items-center gap-1 cursor-pointer">
+                                    <input type="radio" name="{{ $key }}" value="0" class="w-3 h-3 text-blue-600 border-slate-300 focus:ring-0">
+                                    <span class="text-[9px] font-black uppercase text-slate-400">No</span>
+                                </label>
+                                <label class="flex items-center gap-1 cursor-pointer">
+                                    <input type="radio" name="{{ $key }}" value="1" class="w-3 h-3 text-blue-600 border-slate-300 focus:ring-0">
+                                    <span class="text-[9px] font-black uppercase text-slate-400">Sí</span>
+                                </label>
+                            </div>
+                        </div>
+                        @endforeach
+                    </div>
+
+                    {{-- Checkboxes y Desarrollo --}}
+                    <div class="space-y-6">
+                        <div class="grid grid-cols-2 gap-3">
+                            @foreach(['Asma', 'Diabetes', 'Convulsiones', 'Corazón'] as $item)
+                            <label class="flex items-center p-3 bg-white border border-slate-100 rounded-xl cursor-pointer hover:bg-blue-50/50 transition-all group">
+                                <input type="checkbox" name="antecedentes[]" value="{{ Str::slug($item) }}" class="rounded text-blue-600 border-slate-200 focus:ring-0 w-3 h-3">
+                                <span class="ml-2 text-[10px] font-bold text-slate-500 group-hover:text-blue-700">{{ $item }}</span>
+                            </label>
+                            @endforeach
+                        </div>
+                        
+                        <div class="p-5 bg-blue-50/30 rounded-[2rem] border border-blue-100/50 space-y-4">
+                            <select name="nacimiento" class="w-full border-none bg-white rounded-xl text-xs font-bold text-slate-600 p-3 shadow-sm focus:ring-2 focus:ring-blue-500/20">
+                                <option value="">¿Tipo de nacimiento?</option>
+                                <option value="termino">A término</option>
+                                <option value="prematuro">Prematuro</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="pt-4">
+                    <label class="block text-[10px] font-black uppercase text-slate-400 tracking-widest ml-4 mb-3">Observaciones Generales</label>
+                    <textarea name="detalles" rows="3" class="w-full border-none bg-slate-50 rounded-[2rem] p-6 text-xs font-medium focus:ring-2 focus:ring-blue-500/10" placeholder="Escriba detalles adicionales..."></textarea>
+                </div>
             </div>
-        </div>
 
-    </main>
+            <div class="flex justify-end">
+                <button type="submit" class="bg-blue-600 text-white px-12 py-5 rounded-3xl font-black uppercase text-[10px] tracking-widest shadow-2xl shadow-blue-200 hover:scale-105 transition-all">
+                    Finalizar Valoración Médica
+                </button>
+            </div>
+        </form>
+    </div>
+
 </div>
-
-</body>
-</html>
