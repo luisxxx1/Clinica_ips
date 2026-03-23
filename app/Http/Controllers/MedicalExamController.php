@@ -255,11 +255,15 @@ class MedicalExamController extends Controller
             return back()->with('error', 'El examen no tiene valoraciones registradas para generar el reporte.');
         }
 
+        // ✅ CORRECCIÓN: Se añadieron opciones para permitir la carga de imágenes locales y externas
         $pdf = Pdf::loadView('medical_exams.reports.full_history', [
             'exam'  => $medical_exam,
             'title' => 'HISTORIA CLÍNICA INTEGRAL',
             'date'  => now()->format('d/m/Y h:i A'),
-        ])->setPaper('letter', 'portrait');
+        ])
+        ->setPaper('letter', 'portrait')
+        ->setOption('isRemoteEnabled', true)
+        ->setOption('isHtml5ParserEnabled', true);
 
         return $pdf->stream("HC_{$medical_exam->student->document_number}.pdf");
     }
