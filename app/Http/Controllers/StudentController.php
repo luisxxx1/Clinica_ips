@@ -19,7 +19,6 @@ class StudentController extends Controller
 
     public function index()
     {
-        // Usamos simplePaginate o paginate para mejorar el rendimiento si la tabla crece
         $students = Student::latest()->paginate(10);
         return view('students.index', compact('students'));
     }
@@ -33,21 +32,25 @@ class StudentController extends Controller
     {
         try {
             // El servicio se encarga de la transacción DB (Estudiante + MedicalExam)
+            // Asegúrate de que tu StudentService esté preparado para recibir:
+            // guardian_name, guardian_lastname, guardian_document, guardian_age,
+            // guardian_phone, guardian_relationship, guardian_address y guardian_email
             $this->studentService->registerWithMedicalCircuit($request->validated());
 
             return redirect()->route('students.index')
                 ->with('success', 'Estudiante matriculado y circuito iniciado con éxito.');
 
         } catch (\Exception $e) {
+            // Logueamos el error técnico para SnakeDev
             Log::error("Error en matrícula de estudiante: " . $e->getMessage());
-            
-            return back()->withInput()->withErrors(['error' => 'Error real: ' . $e->getMessage()]);
+
+            // Devolvemos el error real para que sepas si falta una columna en la DB
+            return back()->withInput()->withErrors(['error' => 'Error en el proceso: ' . $e->getMessage()]);
         }
     }
 
     public function show(Student $student)
     {
-        // Cargamos relaciones y ordenamos los exámenes por fecha
         $student->load(['medicalExams' => function($query) {
             $query->latest();
         }, 'medicalExams.results.user']);
@@ -63,7 +66,6 @@ class StudentController extends Controller
     public function update(StoreStudentRequest $request, Student $student)
     {
         try {
-            // Actualizamos los datos validados
             $student->update($request->validated());
 
             return redirect()->route('students.index')
@@ -74,14 +76,10 @@ class StudentController extends Controller
         }
     }
 
-    /**
-     * Buscador dinámico optimizado.
-     */
     public function search(Request $request)
     {
         $query = $request->get('query');
 
-        // Si no hay consulta, devolvemos vacío para evitar cargar toda la DB
         if (empty($query)) {
             return response()->json([]);
         }
@@ -92,7 +90,7 @@ class StudentController extends Controller
               ->orWhere('document_number', 'LIKE', "%{$query}%");
         })
         ->limit(10)
-        ->get(['id', 'first_name', 'last_name', 'document_number']); // Solo traemos campos necesarios
+        ->get(['id', 'first_name', 'last_name', 'document_number']);
 
         return response()->json($students);
     }

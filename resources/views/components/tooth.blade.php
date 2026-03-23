@@ -9,41 +9,55 @@
         right: 'white',
         center: 'white'
     },
-    {{-- Función para rotar colores por cada clic en una cara específica --}}
+
+    {{-- Función para rotar colores según la nueva lista de convenciones --}}
     toggleFace(face) {
-        const states = ['white', 'red', 'blue', 'gray'];
+        {{-- Orden: Sano, Caries/Partido, Sellante, Restauración, Ausente, Observación --}}
+        const states = ['white', 'red', 'green', 'blue', 'black', 'yellow'];
         let currentIndex = states.indexOf(this.faces[face]);
         this.faces[face] = states[(currentIndex + 1) % states.length];
     },
-    {{-- Colores dinámicos para el SVG --}}
+
+    {{-- Colores dinámicos para el SVG basados en tu lista --}}
     getColor(face) {
-        return {
-            'white': '#f8fafc', {{-- Sano --}}
-            'red': '#dc2626',   {{-- Caries --}}
-            'blue': '#2563eb',  {{-- Tratado --}}
-            'gray': '#4b5563'   {{-- Ausente --}}
-        }[this.faces[face]];
+        const colors = {
+            'white': '#ffffff',  {{-- Sano (Blanco) --}}
+            'red': '#ef4444',    {{-- Caries / Partido (Rojo) --}}
+            'green': '#22c55e',  {{-- Sellante (Verde) --}}
+            'blue': '#3b82f6',   {{-- Restauración (Azul) --}}
+            'black': '#000000',  {{-- Ausente (Negro) --}}
+            'yellow': '#eab308'  {{-- Observación (Amarillo) --}}
+        };
+        return colors[this.faces[face]] || '#ffffff';
     }
 }" class="flex flex-col items-center gap-1 group">
 
-    {{-- SVG interactivo que simula la carta dental --}}
+    {{-- SVG interactivo --}}
     <svg width="45" height="45" viewBox="0 0 100 100" class="drop-shadow-sm transition-transform group-hover:scale-110">
+        {{-- Cara Superior --}}
         <path @click="toggleFace('top')" :fill="getColor('top')" d="M10,10 L90,10 L70,30 L30,30 Z" stroke="#cbd5e1" stroke-width="2" class="cursor-pointer hover:opacity-80" />
 
+        {{-- Cara Derecha --}}
         <path @click="toggleFace('right')" :fill="getColor('right')" d="M90,10 L90,90 L70,70 L70,30 Z" stroke="#cbd5e1" stroke-width="2" class="cursor-pointer hover:opacity-80" />
 
+        {{-- Cara Inferior --}}
         <path @click="toggleFace('bottom')" :fill="getColor('bottom')" d="M10,90 L90,90 L70,70 L30,70 Z" stroke="#cbd5e1" stroke-width="2" class="cursor-pointer hover:opacity-80" />
 
+        {{-- Cara Izquierda --}}
         <path @click="toggleFace('left')" :fill="getColor('left')" d="M10,10 L10,90 L30,70 L30,30 Z" stroke="#cbd5e1" stroke-width="2" class="cursor-pointer hover:opacity-80" />
 
+        {{-- Centro --}}
         <rect @click="toggleFace('center')" :fill="getColor('center')" x="30" y="30" width="40" height="40" stroke="#cbd5e1" stroke-width="2" class="cursor-pointer hover:opacity-80" />
 
-        <text x="50" y="55" font-family="Arial" font-size="12" font-weight="bold" fill="#1e293b" text-anchor="middle" pointer-events="none">
+        {{-- Número del diente --}}
+        <text x="50" y="55" font-family="Arial" font-size="12" font-weight="bold"
+              :fill="faces.center === 'black' ? '#ffffff' : '#1e293b'"
+              text-anchor="middle" pointer-events="none">
             {{ $number }}
         </text>
     </svg>
 
-    {{-- Inputs ocultos para enviar el estado de cada cara al controlador --}}
+    {{-- Inputs ocultos para enviar los datos al servidor --}}
     <template x-for="(color, face) in faces">
         <input type="hidden" :name="'results[odontograma][{{ $number }}][' + face + ']'" :value="color">
     </template>

@@ -11,6 +11,38 @@ use Barryvdh\DomPDF\Facade\Pdf;
 class MedicalExamController extends Controller
 {
     /**
+     * MÉTODOS DE CONSULTA Y NAVEGACIÓN (SnakeDEV Engine)
+     */
+
+    /**
+     * Muestra el historial completo de evaluaciones (Vista Admin/Auditoría)
+     * Corregido: Variable $exams cambiada a $completedExams para tu vista.
+     */
+    public function history(Request $request)
+    {
+        $search = $request->input('search');
+        $status = $request->input('status');
+
+        // Cambiamos el nombre de la variable de $exams a $completedExams
+        // para que coincida con {{ $completedExams->total() }} de tu vista historial
+        $completedExams = MedicalExam::with(['student', 'results'])
+            ->when($search, function ($query, $search) {
+                $query->whereHas('student', function ($q) use ($search) {
+                    $q->where('name', 'LIKE', "%{$search}%")
+                      ->orWhere('document_number', 'LIKE', "%{$search}%");
+                });
+            })
+            ->when($status, function ($query, $status) {
+                $query->where('status', $status);
+            })
+            ->latest()
+            ->paginate(15)
+            ->withQueryString();
+
+        return view('medical_exams.history', compact('completedExams', 'search', 'status'));
+    }
+
+    /**
      * Normaliza los nombres de áreas a slugs consistentes.
      */
     private function getAreaSlug($roleName)
@@ -29,14 +61,12 @@ class MedicalExamController extends Controller
         $userArea = Auth::user()->role->name ?? 'Invitado';
         $userAreaSlug = $this->getAreaSlug($userArea);
 
-        // Optimizamos la consulta: Solo traemos lo que el especialista actual debe evaluar
         $pendingExams = MedicalExam::with(['student', 'results'])
             ->where('status', '!=', 'completado')
             ->where(function ($query) use ($userArea, $userAreaSlug) {
                 $query->whereJsonContains('requested_areas', $userAreaSlug)
                       ->orWhereJsonContains('requested_areas', $userArea);
             })
-            // Evitamos mostrar si este especialista ya guardó su parte (opcional, según flujo de la IPS)
             ->whereDoesntHave('results', function($q) use ($userAreaSlug) {
                 $q->where('area', $userAreaSlug);
             })
@@ -45,13 +75,12 @@ class MedicalExamController extends Controller
 
         return view('medical_exams.index', compact('pendingExams', 'userArea'));
     }
+
     /**
      * INICIA UN NUEVO CIRCUITO MÉDICO
-     * Este es el método que falta y causa el error 500.
      */
     public function store(Request $request)
     {
-        // 1. Validamos que el estudiante exista
         $request->validate([
             'student_id' => 'required|exists:students,id',
         ]);
@@ -59,8 +88,6 @@ class MedicalExamController extends Controller
         try {
             DB::beginTransaction();
 
-            // 2. Definimos las áreas que deben evaluar al estudiante.
-            // Puedes personalizar esta lista según lo que necesite la IPS.
             $areasRequeridas = [
                 'valoracion_medica',
                 'odontologia',
@@ -68,11 +95,10 @@ class MedicalExamController extends Controller
                 'fisioterapia'
             ];
 
-            // 3. Creamos el examen médico
             $exam = MedicalExam::create([
                 'student_id'      => $request->student_id,
-                'status'          => 'en_proceso', // Inicia inmediatamente
-                'requested_areas' => $areasRequeridas, // Se guarda como JSON
+                'status'          => 'en_proceso',
+                'requested_areas' => $areasRequeridas,
                 'created_by'      => Auth::id(),
             ]);
 
@@ -89,22 +115,27 @@ class MedicalExamController extends Controller
 
     /**
      * Formulario de evaluación dinámica.
+     * Corregido: Variable $medical_exam pasada como 'exam' para odontologia.blade.php
      */
     public function evaluate(MedicalExam $medical_exam)
     {
         $userArea = $this->getAreaSlug(Auth::user()->role->name);
 
-        // Seguridad: Verificar si el examen realmente requiere esta área
         if (!collect($medical_exam->requested_areas)->contains($userArea) && Auth::user()->role->name !== 'Administrador') {
             return redirect()->route('medical_exams.index')->with('error', 'Tu área no está asignada a este examen.');
         }
 
-        // Verificamos si existe la vista específica para el área
         if (!view()->exists("medical_exams.evaluations.{$userArea}")) {
             return back()->with('error', "No se encontró el formulario técnico para: {$userArea}");
         }
 
-        return view('medical_exams.evaluate', compact('medical_exam', 'userArea'));
+        $medical_exam->load('student');
+
+        // Cambiamos la clave a 'exam' para que {{ $exam->student->name }} funcione en Odontología
+        return view('medical_exams.evaluate', [
+            'exam' => $medical_exam,
+            'userArea'     => $userArea
+        ]);
     }
 
     /**
@@ -122,16 +153,13 @@ class MedicalExamController extends Controller
         try {
             DB::beginTransaction();
 
-            // Limpiamos los datos del request para quedarnos solo con los campos técnicos del formulario
             $evaluationData = $request->except(['_token', '_method', 'observations', 'notes', 'odontograma_imagen']);
 
-            // Manejo de Odontograma (Imagen Base64)
             if ($userArea === 'odontologia' && $request->filled('odontograma_imagen')) {
                 $path = $this->saveOdontogramaImage($request->odontograma_imagen, $medical_exam->id);
                 if ($path) $evaluationData['odontograma_path'] = $path;
             }
 
-            // Guardado o Actualización de resultados
             $medical_exam->results()->updateOrCreate(
                 ['area' => $userArea],
                 [
@@ -141,10 +169,8 @@ class MedicalExamController extends Controller
                 ]
             );
 
-            // Verificación de Cierre de Circuito
             $medical_exam->load('results');
-            
-            // Lógica: Si el número de resultados coincide con las áreas solicitadas, completamos.
+
             $requestedCount = count($medical_exam->requested_areas ?? []);
             $resultsCount = $medical_exam->results->count();
 
@@ -172,8 +198,7 @@ class MedicalExamController extends Controller
     public function report(MedicalExam $medical_exam)
     {
         $medical_exam->load(['student', 'results.specialist']);
-        
-        // Verificamos que tenga resultados para imprimir
+
         if ($medical_exam->results->isEmpty()) {
             return back()->with('error', 'El examen no tiene valoraciones registradas para generar el reporte.');
         }
@@ -195,11 +220,11 @@ class MedicalExamController extends Controller
         try {
             if (preg_match('/^data:image\/(\w+);base64,/', $base64String, $type)) {
                 $image = substr($base64String, strpos($base64String, ',') + 1);
-                $type = strtolower($type[1]); // png, jpg, etc
+                $type = strtolower($type[1]);
 
                 $image = base64_decode($image);
                 $fileName = "odontogramas/exam_{$examId}_" . now()->timestamp . ".{$type}";
-                
+
                 Storage::disk('public')->put($fileName, $image);
                 return $fileName;
             }

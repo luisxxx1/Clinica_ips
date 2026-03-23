@@ -51,7 +51,7 @@
                                     <x-input-label for="document_number" :value="__('Número Documento')" class="text-[10px] uppercase tracking-widest font-bold text-slate-400" />
                                     <x-text-input id="document_number" class="block mt-1 w-full rounded-xl border-slate-200 focus:ring-0" type="text" name="document_number" :value="old('document_number')" required />
                                 </div>
-                                
+
                                 <div>
                                     <x-input-label for="first_name" :value="__('Nombres')" class="text-[10px] uppercase tracking-widest font-bold text-slate-400" />
                                     <x-text-input id="first_name" class="block mt-1 w-full rounded-xl border-slate-200" type="text" name="first_name" :value="old('first_name')" required />
@@ -92,7 +92,7 @@
                             </div>
                         </div>
 
-                        {{-- SECCIÓN 2: INFORMACIÓN DEL ACUDIENTE --}}
+                        {{-- SECCIÓN 2: INFORMACIÓN DEL ACUDIENTE (CORREGIDA) --}}
                         <div class="pb-6">
                             <h3 class="text-xs font-black text-blue-600 mb-6 flex items-center uppercase tracking-[0.2em]">
                                 <span class="w-8 h-8 bg-blue-50 rounded-lg flex items-center justify-center mr-3">
@@ -113,6 +113,13 @@
                                     <x-input-label for="guardian_document" :value="__('Identificación')" class="text-[10px] uppercase tracking-widest font-bold text-slate-400" />
                                     <x-text-input id="guardian_document" class="block mt-1 w-full rounded-xl border-slate-200" type="text" name="guardian_document" :value="old('guardian_document')" required />
                                 </div>
+
+                                {{-- Campo de Edad del Acudiente --}}
+                                <div>
+                                    <x-input-label for="guardian_age" :value="__('Edad del Acudiente')" class="text-[10px] uppercase tracking-widest font-bold text-slate-400" />
+                                    <x-text-input id="guardian_age" class="block mt-1 w-full rounded-xl border-slate-200" type="number" name="guardian_age" :value="old('guardian_age')" required />
+                                </div>
+
                                 <div>
                                     <x-input-label for="guardian_phone" :value="__('Teléfono de contacto')" class="text-[10px] uppercase tracking-widest font-bold text-slate-400" />
                                     <x-text-input id="guardian_phone" class="block mt-1 w-full rounded-xl border-slate-200" type="text" name="guardian_phone" :value="old('guardian_phone')" required />
@@ -121,6 +128,13 @@
                                     <x-input-label for="guardian_relationship" :value="__('Parentesco')" class="text-[10px] uppercase tracking-widest font-bold text-slate-400" />
                                     <x-text-input id="guardian_relationship" class="block mt-1 w-full rounded-xl border-slate-200" type="text" name="guardian_relationship" :value="old('guardian_relationship')" required />
                                 </div>
+
+                                {{-- Campo de Dirección --}}
+                                <div class="md:col-span-2">
+                                    <x-input-label for="guardian_address" :value="__('Dirección de Residencia')" class="text-[10px] uppercase tracking-widest font-bold text-slate-400" />
+                                    <x-text-input id="guardian_address" class="block mt-1 w-full rounded-xl border-slate-200" type="text" name="guardian_address" :value="old('guardian_address')" required />
+                                </div>
+
                                 <div>
                                     <x-input-label for="guardian_email" :value="__('Correo Electrónico')" class="text-[10px] uppercase tracking-widest font-bold text-slate-400" />
                                     <x-text-input id="guardian_email" class="block mt-1 w-full rounded-xl border-slate-200" type="email" name="guardian_email" :value="old('guardian_email')" required />
