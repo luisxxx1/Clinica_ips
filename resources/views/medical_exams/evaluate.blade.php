@@ -11,32 +11,33 @@
         <div class="p-6 md:p-12">
             <div class="max-w-5xl mx-auto">
                 @php
-                    $role = Auth::user()->role->name;
-                    
-                    /** * PRIORIDAD: Usamos $userArea si viene del controlador (más seguro), 
-                     * de lo contrario, aplicamos el match de respaldo.
+                    /** * SOPORTE DINÁMICO SNAKEDEV:
+                     * Si el controlador manda 'exam', lo asignamos a $medical_exam para que el resto no falle.
                      */
+                    $medical_exam = $medical_exam ?? $exam;
+
+                    $role = Auth::user()->role->name;
                     $area = $userArea ?? Str::slug($role, '_');
-                    
+
                     $view = match(true) {
-                        str_contains($area, 'medica') || str_contains($area, 'medico') 
+                        str_contains($area, 'medica') || str_contains($area, 'medico')
                             => 'medical_exams.evaluations.valoracion_medica',
-                        
-                        str_contains($area, 'psico') 
+
+                        str_contains($area, 'psico')
                             => 'medical_exams.evaluations.psicologia',
-                        
-                        str_contains($area, 'fono') 
+
+                        str_contains($area, 'fono')
                             => 'medical_exams.evaluations.fonoaudiologia',
-                        
-                        str_contains($area, 'opto') 
+
+                        str_contains($area, 'opto')
                             => 'medical_exams.evaluations.optometria',
-                        
-                        str_contains($area, 'audio') 
+
+                        str_contains($area, 'audio')
                             => 'medical_exams.evaluations.audiometria',
-                        
-                        str_contains($area, 'odonto') 
+
+                        str_contains($area, 'odonto')
                             => 'medical_exams.evaluations.odontologia',
-                        
+
                         default => "medical_exams.evaluations.{$area}"
                     };
                 @endphp
@@ -44,11 +45,13 @@
                 @if(view()->exists($view))
                     {{-- Contenedor principal con bordes suavizados SnakeDEV --}}
                     <div class="bg-white p-8 md:p-12 rounded-[3rem] shadow-sm border border-slate-100">
-                        {{-- 
-                            IMPORTANTE: El @include debe pasar explícitamente el objeto 
-                            para que el formulario sepa a qué ID enviar el POST.
+                        {{--
+                            CORRECCIÓN FINAL:
+                            Enviamos ambas llaves para que cualquier sub-vista funcione sin importar
+                            si pide $exam o $medical_exam.
                         --}}
                         @include($view, [
+                            'exam' => $medical_exam,
                             'medical_exam' => $medical_exam,
                             'area' => $area
                         ])
