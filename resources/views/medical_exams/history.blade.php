@@ -74,12 +74,12 @@
                                         <td class="px-6 py-4">
                                             <div class="flex items-center">
                                                 <div class="h-11 w-11 rounded-2xl bg-slate-900 text-white flex items-center justify-center font-black text-xs shadow-lg mr-4 uppercase tracking-tighter">
-                                                    {{ substr($exam->student->name, 0, 2) }}
+                                                    {{ strtoupper(substr($exam->student->full_name ?? 'NA', 0, 2)) }}
                                                 </div>
                                                 <div>
-                                                    <span class="text-sm font-black text-slate-800 block leading-tight uppercase tracking-tight">{{ $exam->student->name }}</span>
+                                                    <span class="text-sm font-black text-slate-800 block leading-tight uppercase tracking-tight">{{ $exam->student->full_name ?? 'Estudiante no disponible' }}</span>
                                                     <span class="inline-flex items-center mt-1 text-[10px] text-slate-500 font-black px-2 py-0.5 bg-slate-100 rounded-lg border border-slate-200 uppercase tracking-tighter">
-                                                        CC: {{ $exam->student->document_number }}
+                                                        CC: {{ $exam->student->document_number ?? 'N/A' }}
                                                     </span>
                                                 </div>
                                             </div>
@@ -117,16 +117,23 @@
                                                 </a>
 
                                                 {{-- Botón PDF --}}
-                                                @if($exam->status === 'completado')
-                                                    <a href="{{ route('medical_exams.report', $exam) }}"
+                                                @if($exam->status === 'completado' && in_array(auth()->user()->role->name ?? '', ['Administrador', 'Admisión']))
+                                                    <a href="{{ route('medical_exams.unified_report', $exam) }}"
                                                        target="_blank"
                                                        class="flex items-center gap-2 px-4 py-2 bg-slate-900 border border-slate-900 rounded-xl text-white text-[10px] font-black hover:bg-blue-600 hover:border-blue-600 transition shadow-lg shadow-slate-200 uppercase tracking-widest"
-                                                       title="Descargar Historia Clínica">
+                                                       title="Descargar Reporte Unificado">
                                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
                                                         </svg>
-                                                        Reporte
+                                                        Reporte Unificado
                                                     </a>
+                                                @elseif($exam->status === 'completado')
+                                                    <button disabled class="flex items-center gap-2 px-4 py-2 bg-slate-50 border border-slate-100 rounded-xl text-slate-300 text-[10px] font-black cursor-not-allowed uppercase tracking-widest" title="Solo Administrador y Admisión">
+                                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                                                        </svg>
+                                                        Restringido
+                                                    </button>
                                                 @else
                                                     <button disabled class="flex items-center gap-2 px-4 py-2 bg-slate-50 border border-slate-100 rounded-xl text-slate-300 text-[10px] font-black cursor-not-allowed uppercase tracking-widest">
                                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

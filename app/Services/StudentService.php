@@ -40,10 +40,11 @@ class StudentService
 
             // 3. Crear el Examen Médico (Circuito Inicial)
             // Vinculamos el user_id del administrador que está logueado
+            // Estado inicial: 'pendiente' → cambiará a 'en_proceso' cuando un médico lo active
             $student->medicalExams()->create([
                 'user_id'         => Auth::id(),
                 'requested_areas' => $normalizedAreas,
-                'status'          => 'en_proceso',
+                'status'          => 'pendiente',
                 'observations'    => $data['observations'] ?? 'Inicio de proceso de ingreso.',
             ]);
 

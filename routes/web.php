@@ -9,6 +9,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // Dashboard Principal
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/followup', [DashboardController::class, 'followup'])
+        ->name('followup')
+        ->middleware('role:Administrador,Admisión');
 
     /* --- PERFIL DEL USUARIO --- */
     Route::controller(ProfileController::class)->group(function () {
@@ -53,10 +56,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::get('/{medical_exam}/evaluate', 'evaluate')->name('evaluate');
             Route::post('/{medical_exam}/evaluate', 'storeEvaluation')->name('store_evaluation');
             Route::get('/{medical_exam}/report', 'report')->name('report');
-            // ❌ ELIMINADA: Route::patch('/{medical_exam}/finish', 'finish')
-            //    El método finish() no existe. El cierre del circuito
-            //    ocurre automáticamente en storeEvaluation() cuando
-            //    las 6 áreas han evaluado al estudiante.
+            Route::get('/{medical_exam}/unified-report', 'downloadUnifiedReport')->name('unified_report')->middleware('role:Administrador,Admisión');
         });
 
     // 3. Recurso principal

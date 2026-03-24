@@ -24,7 +24,7 @@
             <span class="hidden md:inline-flex px-4 py-1.5 bg-white text-slate-500 text-[10px] font-black rounded-xl uppercase tracking-widest border border-slate-100 shadow-sm">
                 {{ Auth::user()->role->name }}
             </span>
-            
+
             {{-- Contador dinámico optimizado --}}
             <div class="flex items-center bg-emerald-500 text-white px-5 py-2 rounded-2xl shadow-xl shadow-emerald-100 border border-emerald-400/20">
                 <span class="text-[11px] font-black tracking-widest uppercase">
@@ -38,7 +38,7 @@
 @section('content')
     <div class="py-8 bg-slate-50/50 min-h-screen">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            
+
             {{-- Alertas con diseño SnakeDEV --}}
             @if (session('success'))
                 <div class="mb-8 flex items-center bg-white border-l-4 border-emerald-500 text-slate-800 px-6 py-4 rounded-2xl shadow-xl shadow-slate-200/50 animate-fade-in-down">
@@ -89,6 +89,7 @@
                                 </thead>
                                 <tbody class="bg-white divide-y divide-slate-50">
                                     @foreach ($pendingExams as $exam)
+                                        @if($exam->student) {{-- ✅ Validar que el estudiante existe --}}
                                         <tr class="hover:bg-slate-50/50 transition-all duration-300 group">
                                             <td class="px-8 py-6">
                                                 <div class="flex items-center">
@@ -140,6 +141,7 @@
                                                 </a>
                                             </td>
                                         </tr>
+                                        @endif
                                     @endforeach
                                 </tbody>
                             </table>

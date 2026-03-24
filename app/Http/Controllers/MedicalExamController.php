@@ -11,7 +11,7 @@ use Barryvdh\DomPDF\Facade\Pdf;
 class MedicalExamController extends Controller
 {
     /**
-     * Las 6 áreas del circuito médico.
+     * Las 6 Ã¡reas del circuito mÃ©dico.
      * Deben coincidir exactamente con los nombres de las vistas en:
      * resources/views/medical_exams/evaluations/{area}.blade.php
      */
@@ -25,11 +25,11 @@ class MedicalExamController extends Controller
     ];
 
     // -------------------------------------------------------------------------
-    // MÉTODOS DE CONSULTA Y NAVEGACIÓN
+    // MÃ‰TODOS DE CONSULTA Y NAVEGACIÃ“N
     // -------------------------------------------------------------------------
 
     /**
-     * Muestra el historial completo de evaluaciones (Vista Admin/Auditoría).
+     * Muestra el historial completo de evaluaciones (Vista Admin/AuditorÃ­a).
      */
     public function history(Request $request)
     {
@@ -37,9 +37,11 @@ class MedicalExamController extends Controller
         $status = $request->input('status');
 
         $completedExams = MedicalExam::with(['student', 'results'])
+            ->whereHas('student')
             ->when($search, function ($query, $search) {
                 $query->whereHas('student', function ($q) use ($search) {
-                    $q->where('name', 'LIKE', "%{$search}%")
+                    $q->where('first_name', 'LIKE', "%{$search}%")
+                      ->orWhere('last_name', 'LIKE', "%{$search}%")
                       ->orWhere('document_number', 'LIKE', "%{$search}%");
                 });
             })
@@ -55,7 +57,7 @@ class MedicalExamController extends Controller
 
     /**
      * Vista del ADMINISTRADOR:
-     * Muestra solo los exámenes donde los 6 médicos ya evaluaron al estudiante,
+     * Muestra solo los exÃ¡menes donde los 6 mÃ©dicos ya evaluaron al estudiante,
      * con todas las valoraciones cargadas para verlas completas.
      */
     public function dashboard(Request $request)
@@ -78,7 +80,7 @@ class MedicalExamController extends Controller
     }
 
     /**
-     * Normaliza los nombres de áreas a slugs consistentes.
+     * Normaliza los nombres de Ã¡reas a slugs consistentes.
      */
     private function getAreaSlug($roleName)
     {
@@ -89,7 +91,7 @@ class MedicalExamController extends Controller
     }
 
     /**
-     * Muestra la lista de exámenes pendientes según el área del médico autenticado.
+     * Muestra la lista de exÃ¡menes pendientes segÃºn el Ã¡rea del mÃ©dico autenticado.
      */
     public function index()
     {
@@ -105,6 +107,7 @@ class MedicalExamController extends Controller
             ->whereDoesntHave('results', function ($q) use ($userAreaSlug) {
                 $q->where('area', $userAreaSlug);
             })
+            ->whereHas('student') // âœ… Solo exÃ¡menes de estudiantes NO eliminados
             ->latest()
             ->get();
 
@@ -112,11 +115,11 @@ class MedicalExamController extends Controller
     }
 
     // -------------------------------------------------------------------------
-    // INICIA UN NUEVO CIRCUITO MÉDICO
+    // INICIA UN NUEVO CIRCUITO MÃ‰DICO
     // -------------------------------------------------------------------------
 
     /**
-     * Crea el examen y asigna las 6 áreas del circuito médico.
+     * Crea el examen y asigna las 6 Ã¡reas del circuito mÃ©dico.
      */
     public function store(Request $request)
     {
@@ -137,20 +140,21 @@ class MedicalExamController extends Controller
             DB::commit();
 
             return redirect()->route('medical_exams.index')
-                ->with('success', 'Circuito médico iniciado correctamente para el estudiante.');
+                ->with('success', 'Circuito mÃ©dico iniciado correctamente para el estudiante.');
 
         } catch (\Exception $e) {
             DB::rollBack();
-            return back()->with('error', 'No se pudo iniciar la evaluación: ' . $e->getMessage());
+            return back()->with('error', 'No se pudo iniciar la evaluaciÃ³n: ' . $e->getMessage());
         }
     }
 
     // -------------------------------------------------------------------------
-    // EVALUACIÓN POR ÁREA
+    // EVALUACIÃ“N POR ÃREA
     // -------------------------------------------------------------------------
 
     /**
-     * Muestra el formulario de evaluación según el área del médico autenticado.
+     * Muestra el formulario de evaluaciÃ³n segÃºn el Ã¡rea del mÃ©dico autenticado.
+     * Si el circuito estÃ¡ en 'pendiente', cambia a 'en_proceso' (primer acceso mÃ©dico).
      */
     public function evaluate(MedicalExam $medical_exam)
     {
@@ -161,11 +165,16 @@ class MedicalExamController extends Controller
             && Auth::user()->role->name !== 'Administrador'
         ) {
             return redirect()->route('medical_exams.index')
-                ->with('error', 'Tu área no está asignada a este examen.');
+                ->with('error', 'Tu Ã¡rea no estÃ¡ asignada a este examen.');
         }
 
         if (!view()->exists("medical_exams.evaluations.{$userArea}")) {
-            return back()->with('error', "No se encontró el formulario técnico para: {$userArea}");
+            return back()->with('error', "No se encontrÃ³ el formulario tÃ©cnico para: {$userArea}");
+        }
+
+        // âœ… Cambiar de 'pendiente' a 'en_proceso' cuando el primer mÃ©dico accede
+        if ($medical_exam->status === 'pendiente') {
+            $medical_exam->update(['status' => 'en_proceso']);
         }
 
         $medical_exam->load('student');
@@ -177,7 +186,7 @@ class MedicalExamController extends Controller
     }
 
     /**
-     * Guarda la valoración del médico y verifica si el circuito ya está completo.
+     * Guarda la valoraciÃ³n del mÃ©dico y verifica si el circuito ya estÃ¡ completo.
      */
     public function storeEvaluation(Request $request, MedicalExam $medical_exam)
     {
@@ -201,17 +210,17 @@ class MedicalExamController extends Controller
                 }
             }
 
-            // Guardar o actualizar la valoración de esta área
+            // Guardar o actualizar la valoraciÃ³n de esta Ã¡rea
             $medical_exam->results()->updateOrCreate(
                 ['area' => $userArea],
                 [
                     'user_id' => Auth::id(),
                     'data'    => $evaluationData,
-                    'notes'   => $request->notes ?? $request->observations ?? 'Evaluación realizada correctamente.',
+                    'notes'   => $request->notes ?? $request->observations ?? 'EvaluaciÃ³n realizada correctamente.',
                 ]
             );
 
-            // Recargar resultados y verificar si el circuito está completo
+            // Recargar resultados y verificar si el circuito estÃ¡ completo
             $medical_exam->load('results');
 
             $areasRequeridas  = collect($medical_exam->requested_areas ?? []);
@@ -219,14 +228,14 @@ class MedicalExamController extends Controller
             $areasFaltantes   = $areasRequeridas->diff($areasCompletadas);
 
             if ($areasFaltantes->isEmpty()) {
-                // ✅ Los 6 médicos ya evaluaron → circuito completo
+                // âœ… Los 6 mÃ©dicos ya evaluaron â†’ circuito completo
                 $medical_exam->update(['status' => 'completado']);
-                $msg = '¡Circuito médico completado! Todas las áreas han evaluado al estudiante.';
+                $msg = 'Â¡Circuito mÃ©dico completado! Todas las Ã¡reas han evaluado al estudiante.';
             } else {
-                // 🔄 Aún faltan médicos por evaluar
+                // ðŸ”„ AÃºn faltan mÃ©dicos por evaluar
                 $medical_exam->update(['status' => 'en_proceso']);
                 $restantes = $areasFaltantes->implode(', ');
-                $msg = "Valoración de {$userArea} guardada. Áreas pendientes: {$restantes}.";
+                $msg = "ValoraciÃ³n de {$userArea} guardada. Ãreas pendientes: {$restantes}.";
             }
 
             DB::commit();
@@ -236,8 +245,34 @@ class MedicalExamController extends Controller
         } catch (\Exception $e) {
             DB::rollBack();
             Log::error('Error en Evaluation: ' . $e->getMessage());
-            return back()->withInput()->with('error', 'Error procesando la evaluación médica.');
+            return back()->withInput()->with('error', 'Error procesando la evaluaciÃ³n mÃ©dica.');
         }
+    }
+    /**
+     * Descarga PDF unificado con todas las evaluaciones del circuito
+     */
+    public function downloadUnifiedReport(MedicalExam $medical_exam)
+    {
+        $roleName = Auth::user()->role->name ?? null;
+        if (!in_array($roleName, ['Administrador', 'Admisión'])) {
+            return back()->with('error', 'Solo Administrador y Admisión pueden descargar el reporte unificado.');
+        }
+
+        $medical_exam->load(['student', 'results.specialist']);
+
+        if ($medical_exam->status !== 'completado') {
+            return back()->with('error', 'El circuito mÃ©dico aÃºn no estÃ¡ completado.');
+        }
+
+        $filename = "reporte-integral_" .
+                   $medical_exam->student->first_name . "_" .
+                   $medical_exam->student->last_name . "_" .
+                   now()->format('d-m-Y_H-i') . ".pdf";
+
+        $pdf = Pdf::loadView('pdf.unified_report', ['exam' => $medical_exam])
+            ->setOption('margin-bottom', 0);
+
+        return $pdf->download($filename);
     }
 
     // -------------------------------------------------------------------------
@@ -245,7 +280,7 @@ class MedicalExamController extends Controller
     // -------------------------------------------------------------------------
 
     /**
-     * Genera el PDF con el historial clínico completo del estudiante.
+     * Genera el PDF con el historial clÃ­nico completo del estudiante.
      */
     public function report(MedicalExam $medical_exam)
     {
@@ -255,10 +290,10 @@ class MedicalExamController extends Controller
             return back()->with('error', 'El examen no tiene valoraciones registradas para generar el reporte.');
         }
 
-        // ✅ CORRECCIÓN: Se añadieron opciones para permitir la carga de imágenes locales y externas
+        // âœ… CORRECCIÃ“N: Se aÃ±adieron opciones para permitir la carga de imÃ¡genes locales y externas
         $pdf = Pdf::loadView('medical_exams.reports.full_history', [
             'exam'  => $medical_exam,
-            'title' => 'HISTORIA CLÍNICA INTEGRAL',
+            'title' => 'HISTORIA CLÃNICA INTEGRAL',
             'date'  => now()->format('d/m/Y h:i A'),
         ])
         ->setPaper('letter', 'portrait')
@@ -269,11 +304,11 @@ class MedicalExamController extends Controller
     }
 
     // -------------------------------------------------------------------------
-    // MÉTODOS PRIVADOS
+    // MÃ‰TODOS PRIVADOS
     // -------------------------------------------------------------------------
 
     /**
-     * Guarda la imagen del odontograma en almacenamiento público.
+     * Guarda la imagen del odontograma en almacenamiento pÃºblico.
      */
     private function saveOdontogramaImage($base64String, $examId)
     {
@@ -294,3 +329,6 @@ class MedicalExamController extends Controller
         }
     }
 }
+
+
+

@@ -23,6 +23,20 @@
                 </div>
             @endif
 
+            @if(session('error'))
+                <div class="mb-6 bg-white border-l-4 border-red-500 shadow-sm rounded-r-xl p-4 flex items-center" role="alert">
+                    <div class="flex-shrink-0">
+                        <svg class="h-5 w-5 text-red-500" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+                        </svg>
+                    </div>
+                    <div class="ml-3">
+                        <p class="text-sm font-bold text-red-800">Error</p>
+                        <p class="text-xs text-red-700">{{ session('error') }}</p>
+                    </div>
+                </div>
+            @endif
+
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-[2rem] border border-slate-200">
                 <div class="p-8 text-gray-900">
 
@@ -112,6 +126,11 @@
                                                 <a href="{{ route('students.edit', $student) }}" title="Editar" class="p-2 text-slate-400 hover:text-slate-900 hover:bg-slate-100 rounded-lg transition-colors">
                                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
                                                 </a>
+
+                                                {{-- Botón Eliminar --}}
+                                                <button onclick="openDeleteModal('{{ $student->id }}', '{{ $student->full_name }}')" title="Eliminar" class="p-2 text-red-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors">
+                                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                                                </button>
                                             </div>
                                         </td>
                                     </tr>
@@ -137,4 +156,65 @@
             </div>
         </div>
     </div>
+
+    {{-- Modal de Confirmación de Eliminación --}}
+    <div id="deleteModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div class="bg-white rounded-2xl shadow-2xl p-8 max-w-md w-full mx-4 animate-in fade-in scale-95 transition-all">
+            <div class="flex items-center justify-center w-12 h-12 mx-auto bg-red-100 rounded-full mb-4">
+                <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4v.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+            </div>
+
+            <h3 class="text-lg font-black text-slate-900 text-center mb-2">¿Eliminar estudiante?</h3>
+            <p class="text-sm text-slate-600 text-center mb-6">
+                Estás a punto de eliminar el registro de <strong id="studentName"></strong>. Esta acción no se puede deshacer.
+            </p>
+
+            <div class="flex gap-3">
+                <button onclick="closeDeleteModal()" class="flex-1 px-4 py-2 bg-slate-100 text-slate-700 font-bold rounded-lg hover:bg-slate-200 transition-colors">
+                    Cancelar
+                </button>
+                <button onclick="confirmDelete()" class="flex-1 px-4 py-2 bg-red-600 text-white font-bold rounded-lg hover:bg-red-700 transition-colors">
+                    Eliminar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    {{-- Formulario Oculto para DELETE --}}
+    <form id="deleteForm" method="POST" class="hidden">
+        @csrf
+        @method('DELETE')
+    </form>
+
+    <script>
+        let studentIdToDelete = null;
+
+        function openDeleteModal(studentId, studentName) {
+            studentIdToDelete = studentId;
+            document.getElementById('studentName').textContent = studentName;
+            document.getElementById('deleteModal').classList.remove('hidden');
+        }
+
+        function closeDeleteModal() {
+            document.getElementById('deleteModal').classList.add('hidden');
+            studentIdToDelete = null;
+        }
+
+        function confirmDelete() {
+            if (studentIdToDelete) {
+                const form = document.getElementById('deleteForm');
+                form.action = `{{ url('students') }}/${studentIdToDelete}`;
+                form.submit();
+            }
+        }
+
+        // Cerrar modal al presionar ESC
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                closeDeleteModal();
+            }
+        });
+    </script>
 </x-app-layout>

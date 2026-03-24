@@ -57,6 +57,14 @@
                 </svg>
                 <span x-show="sidebarOpen" class="ml-3 font-medium text-sm truncate uppercase tracking-tighter">Registrar Estudiante</span>
             </a>
+
+            <a href="{{ route('followup') }}"
+               class="flex items-center p-3 rounded-xl transition group {{ request()->routeIs('followup') ? 'bg-blue-50 text-blue-600' : 'text-slate-600 hover:bg-slate-100' }}">
+                <svg class="w-6 h-6 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-6m3 6V7m3 10v-3m3 7H6a2 2 0 01-2-2V5a2 2 0 012-2h12a2 2 0 012 2v14a2 2 0 01-2 2z" />
+                </svg>
+                <span x-show="sidebarOpen" class="ml-3 font-medium text-sm truncate uppercase tracking-tighter">Seguimiento Circuito</span>
+            </a>
         @endif
 
         {{-- SECCIÓN MÉDICA --}}
