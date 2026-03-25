@@ -15,166 +15,188 @@
             background: #f5f5f5;
         }
         .container {
-            max-width: 800px;
+            max-width: 900px;
             margin: 0 auto;
             background: white;
-            padding: 40px;
+            padding: 30px 40px;
         }
         .header {
             text-align: center;
-            margin-bottom: 30px;
-            border-bottom: 4px solid #0066cc;
-            padding-bottom: 25px;
+            margin-bottom: 25px;
+            border-bottom: 3px solid #0066cc;
+            padding-bottom: 20px;
         }
         .header-logo {
-            font-size: 12px;
+            font-size: 11px;
             color: #666;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
             font-weight: bold;
             text-transform: uppercase;
-            letter-spacing: 1px;
+            letter-spacing: 0.5px;
         }
         .header-title {
-            font-size: 28px;
+            font-size: 26px;
             font-weight: bold;
             color: #0066cc;
-            margin: 15px 0;
-            letter-spacing: 1px;
+            margin: 12px 0 8px 0;
+            letter-spacing: 0.5px;
         }
         .header-subtitle {
-            font-size: 14px;
+            font-size: 13px;
             color: #666;
-            margin: 10px 0;
-            font-weight: bold;
+            margin: 8px 0;
+            font-weight: normal;
         }
         .patient-card {
             background: linear-gradient(135deg, #0066cc 0%, #004499 100%);
             color: white;
-            padding: 25px;
-            margin-bottom: 30px;
-            border-radius: 10px;
-            box-shadow: 0 4px 15px rgba(0,102,204,0.2);
+            padding: 20px;
+            margin-bottom: 25px;
+            border-radius: 6px;
+            box-shadow: 0 2px 8px rgba(0,102,204,0.15);
         }
         .patient-card .label {
-            font-size: 11px;
-            opacity: 0.9;
+            font-size: 10px;
+            opacity: 0.85;
             text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 3px;
+            letter-spacing: 0.5px;
+            margin-bottom: 2px;
+            font-weight: bold;
         }
         .patient-card .value {
-            font-size: 16px;
+            font-size: 14px;
             font-weight: bold;
-            margin-bottom: 15px;
+            margin-bottom: 12px;
         }
         .patient-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 20px;
+            gap: 15px;
         }
         .patient-grid-item .label {
-            font-size: 10px;
-            opacity: 0.85;
+            font-size: 9px;
+            opacity: 0.8;
             text-transform: uppercase;
         }
         .patient-grid-item .value {
-            font-size: 14px;
+            font-size: 13px;
             font-weight: bold;
         }
         .section-break {
             page-break-after: always;
-            margin: 40px 0;
+            margin: 30px 0;
         }
         .specialty-section {
-            margin-bottom: 35px;
-            border: 2px solid #0066cc;
-            padding: 20px;
-            background: #f9fbff;
-            border-radius: 8px;
+            margin-bottom: 30px;
+            border: 1px solid #d0d0d0;
+            padding: 18px;
+            background: #fafafa;
+            border-radius: 6px;
             page-break-inside: avoid;
         }
         .specialty-header {
             background: #0066cc;
             color: white;
-            padding: 15px;
-            margin: -20px -20px 20px -20px;
-            border-radius: 6px 6px 0 0;
-            font-size: 16px;
+            padding: 12px 15px;
+            margin: -18px -18px 15px -18px;
+            border-radius: 5px 5px 0 0;
+            font-size: 15px;
             font-weight: bold;
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
         .specialty-badge {
-            background: rgba(255,255,255,0.3);
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 11px;
+            background: rgba(255,255,255,0.25);
+            padding: 3px 10px;
+            border-radius: 15px;
+            font-size: 10px;
             font-weight: bold;
         }
         .evaluation-content {
             font-size: 12px;
             line-height: 1.8;
         }
-        .data-row {
-            display: flex;
-            margin-bottom: 12px;
-            padding-bottom: 8px;
+        .evaluation-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            font-size: 11px;
+        }
+        .evaluation-table th {
+            background: #0066cc;
+            color: white;
+            padding: 12px;
+            text-align: left;
+            font-weight: bold;
+            border: none;
+        }
+        .evaluation-table td {
+            padding: 10px 12px;
             border-bottom: 1px solid #e0e0e0;
         }
-        .data-label {
+        .evaluation-table tr:nth-child(even) {
+            background: #f9fbff;
+        }
+        .evaluation-table tr:hover {
+            background: #f0f5ff;
+        }
+        .data-label-cell {
+            width: 35%;
             font-weight: bold;
-            width: 40%;
             color: #0066cc;
         }
-        .data-value {
-            width: 60%;
+        .data-value-cell {
+            width: 65%;
             color: #333;
         }
         .notes-box {
-            background: #fff3cd;
-            padding: 15px;
-            border-left: 4px solid #ffc107;
-            margin-top: 15px;
-            border-radius: 4px;
-            font-size: 11px;
-            line-height: 1.7;
+            background: #fffbea;
+            padding: 12px;
+            border-left: 3px solid #ffc107;
+            margin-top: 12px;
+            border-radius: 3px;
+            font-size: 10px;
+            line-height: 1.6;
         }
         .notes-title {
             font-weight: bold;
             color: #856404;
             display: block;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
             text-transform: uppercase;
-            font-size: 10px;
+            font-size: 9px;
         }
         .specialist-info {
-            background: #f0f0f0;
-            padding: 10px;
-            margin-top: 15px;
+            background: #f5f5f5;
+            padding: 10px 12px;
+            margin-top: 12px;
             border-radius: 4px;
             font-size: 10px;
-            color: #666;
+            color: #555;
             border-left: 3px solid #0066cc;
+            line-height: 1.5;
         }
         .footer {
-            margin-top: 50px;
+            margin-top: 40px;
             text-align: center;
-            font-size: 10px;
+            font-size: 9px;
             color: #999;
             border-top: 2px solid #e0e0e0;
-            padding-top: 20px;
+            padding-top: 15px;
+            line-height: 1.6;
         }
         .completion-badge {
-            display: inline-block;
-            background: #28a745;
+            display: block;
+            background: linear-gradient(135deg, #28a745 0%, #1fa833 100%);
             color: white;
-            padding: 10px 20px;
-            border-radius: 20px;
-            font-size: 12px;
+            padding: 12px 20px;
+            border-radius: 4px;
+            font-size: 11px;
             font-weight: bold;
             margin: 20px 0;
             text-align: center;
+            width: 100%;
         }
         table {
             width: 100%;
@@ -194,39 +216,43 @@
             color: #0066cc;
         }
         .summary-box {
-            background: #e8f1ff;
-            border: 2px solid #0066cc;
-            padding: 20px;
-            margin: 30px 0;
-            border-radius: 8px;
+            background: linear-gradient(135deg, #e8f1ff 0%, #f0f5ff 100%);
+            border: 1px solid #0066cc;
+            padding: 18px;
+            margin: 25px 0;
+            border-radius: 6px;
             text-align: center;
         }
         .summary-title {
-            font-size: 14px;
+            font-size: 13px;
             font-weight: bold;
             color: #0066cc;
-            margin-bottom: 10px;
+            margin-bottom: 12px;
             text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
         .areas-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
-            margin-top: 15px;
+            gap: 8px;
         }
         .area-item {
             background: white;
             padding: 10px;
             border: 1px solid #0066cc;
             border-radius: 4px;
-            font-size: 11px;
+            font-size: 10px;
             font-weight: bold;
             text-align: center;
             color: #0066cc;
         }
+        .area-item.completed {
+            background: #d4edda;
+            border-color: #28a745;
+            color: #155724;
+        }
         .area-item.completed::before {
             content: "✓ ";
-            color: #28a745;
             font-weight: bold;
         }
     </style>
@@ -302,22 +328,42 @@
 
                 <div class="evaluation-content">
                     @if(is_array($result->data) && count($result->data) > 0)
-                        @foreach($result->data as $key => $value)
-                            @if(!in_array($key, ['_token', 'odontograma_imagen']))
-                                <div class="data-row">
-                                    <div class="data-label">{{ ucfirst(str_replace(['_', 'OD', 'OI'], [' ', 'OJO DERECHO', 'OJO IZQUIERDO'], $key)) }}</div>
-                                    <div class="data-value">
-                                        @if(is_array($value))
-                                            {{ implode(', ', $value) }}
-                                        @elseif($key === 'odontograma_path' && !empty($value))
-                                            <em>[Imagen adjunta]</em>
-                                        @else
-                                            {{ $value ?? 'No registrado' }}
-                                        @endif
-                                    </div>
-                                </div>
-                            @endif
-                        @endforeach
+                        <table class="evaluation-table">
+                            <thead>
+                                <tr>
+                                    <th>Campo</th>
+                                    <th>Valor</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach($result->data as $key => $value)
+                                    @if(!in_array($key, ['_token', 'odontograma_imagen']))
+                                        <tr>
+                                            <td class="data-label-cell">{{ ucfirst(str_replace(['_', 'OD', 'OI'], [' ', 'OJO DERECHO', 'OJO IZQUIERDO'], $key)) }}</td>
+                                            <td class="data-value-cell">
+                                                @if($key === 'odontograma_path' && !empty($value))
+                                                    <em>[Imagen adjunta]</em>
+                                                @elseif(is_array($value))
+                                                    @php
+                                                        $formatted = [];
+                                                        foreach($value as $v) {
+                                                            if (is_array($v)) {
+                                                                $formatted[] = json_encode($v);
+                                                            } else {
+                                                                $formatted[] = (string)$v;
+                                                            }
+                                                        }
+                                                        echo implode(', ', $formatted);
+                                                    @endphp
+                                                @else
+                                                    {{ $value ?? 'No especificado' }}
+                                                @endif
+                                            </td>
+                                        </tr>
+                                    @endif
+                                @endforeach
+                            </tbody>
+                        </table>
                     @else
                         <p style="color: #999;"><em>No hay datos de evaluación registrados</em></p>
                     @endif
