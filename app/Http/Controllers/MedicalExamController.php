@@ -2,7 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\{MedicalExam, MedicalResult};
+use App\Models\MedicalExam;
+use App\Models\ExamResult; // Importante: Asegúrate de que el modelo se llame así
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\{Auth, DB, Storage, Log};
 use Illuminate\Support\Str;
@@ -121,7 +122,7 @@ class MedicalExamController extends Controller
 
         try {
             DB::beginTransaction();
-            $exam = MedicalExam::create([
+            MedicalExam::create([
                 'student_id'      => $request->student_id,
                 'status'          => 'en_proceso',
                 'requested_areas' => $this->areasDelCircuito,
@@ -155,7 +156,7 @@ class MedicalExamController extends Controller
     }
 
     /**
-     * GUARDA EVALUACIÓN (Corregido para Odontograma)
+     * GUARDA EVALUACIÓN
      */
     public function storeEvaluation(Request $request, MedicalExam $medical_exam)
     {
@@ -170,22 +171,38 @@ class MedicalExamController extends Controller
             DB::beginTransaction();
 
             $evaluationData = $request->input('results');
+            $chartPath = null;
+            $pta_od = null;
+            $pta_oi = null;
 
-            // Lógica específica para procesar la imagen del odontograma
+            // --- LÓGICA DE AUDIOMETRÍA ---
+            if ($userArea === 'audiometria') {
+                if ($request->filled('audiogram_base64')) {
+                    $chartPath = $this->saveMedicalImage($request->audiogram_base64, 'audiogramas', $medical_exam->id);
+                }
+                $pta_od = $this->calculatePTA($evaluationData, 'od');
+                $pta_oi = $this->calculatePTA($evaluationData, 'oi');
+            }
+
+            // --- LÓGICA DE ODONTOLOGÍA ---
             if ($userArea === 'odontologia' && !empty($evaluationData['odontograma_path'])) {
-                $path = $this->saveOdontogramaImage($evaluationData['odontograma_path'], $medical_exam->id);
+                $path = $this->saveMedicalImage($evaluationData['odontograma_path'], 'odontogramas', $medical_exam->id);
                 if ($path) {
-                    $evaluationData['odontograma_path'] = $path; // Reemplaza base64 por ruta de archivo
+                    $evaluationData['odontograma_path'] = $path; 
+                    $chartPath = $path; // Guardamos en chart_path para consistencia en reportes
                 }
             }
 
-            // Guardar o actualizar resultado
+            // Guardar o actualizar resultado (Usa chart_path según la migración)
             $medical_exam->results()->updateOrCreate(
                 ['area' => $userArea],
                 [
-                    'user_id' => Auth::id(),
-                    'data'    => $evaluationData,
-                    'notes'   => $request->notes,
+                    'user_id'    => Auth::id(),
+                    'data'       => $evaluationData,
+                    'notes'      => $request->notes,
+                    'chart_path' => $chartPath, // Corregido: antes decía chart_image
+                    'pta_od'     => $pta_od,
+                    'pta_oi'     => $pta_oi,
                 ]
             );
 
@@ -255,21 +272,38 @@ class MedicalExamController extends Controller
     }
 
     // -------------------------------------------------------------------------
-    // MÉTODOS PRIVADOS
+    // MÉTODOS PRIVADOS DE APOYO
     // -------------------------------------------------------------------------
 
-    private function saveOdontogramaImage($base64String, $examId)
+    private function calculatePTA($data, $ear)
+    {
+        $freqs = [500, 1000, 2000];
+        $sum = 0;
+        $count = 0;
+
+        foreach ($freqs as $f) {
+            $key = "dB_{$ear}_{$f}";
+            if (isset($data[$key]) && is_numeric($data[$key])) {
+                $sum += (float) $data[$key];
+                $count++;
+            }
+        }
+
+        return $count > 0 ? round($sum / $count, 2) : null;
+    }
+
+    private function saveMedicalImage($base64String, $folder, $examId)
     {
         try {
             if (Str::startsWith($base64String, 'data:image')) {
                 $image = base64_decode(preg_replace('#^data:image/\w+;base64,#i', '', $base64String));
-                $fileName = "odontogramas/exam_{$examId}_" . time() . ".png";
+                $fileName = "{$folder}/exam_{$examId}_" . time() . ".png";
                 Storage::disk('public')->put($fileName, $image);
                 return $fileName;
             }
             return null;
         } catch (\Exception $e) {
-            Log::error("Error Imagen Odonto: " . $e->getMessage());
+            Log::error("Error al guardar imagen en {$folder}: " . $e->getMessage());
             return null;
         }
     }

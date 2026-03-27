@@ -6,7 +6,7 @@
     <style>
         /* Configuración de márgenes de página */
         @page {
-            margin: 0; /* Control total vía body padding */
+            margin: 0;
         }
 
         * {
@@ -21,7 +21,6 @@
             color: #000;
             line-height: 1.3;
             background: white;
-            /* Espacios a los lados y extremos para que se vea aireado */
             padding: 1.2cm 1.8cm; 
         }
 
@@ -63,7 +62,7 @@
             font-weight: bold;
         }
 
-        /* TÍTULO CENTRADO ABAJO DEL LOGO */
+        /* TÍTULO CENTRADO */
         .main-title {
             text-align: center;
             font-weight: bold;
@@ -118,12 +117,6 @@
             font-size: 8.5pt;
         }
 
-        /* TEXTO JUSTIFICADO */
-        .justified-text {
-            text-align: justify;
-            line-height: 1.4;
-        }
-
         /* TABLAS TÉCNICAS */
         .section-name {
             text-align: center;
@@ -164,6 +157,11 @@
             margin-bottom: 8px;
         }
 
+        .justified-text {
+            text-align: justify;
+            line-height: 1.4;
+        }
+
         .signature-block {
             margin-top: 50px;
             width: 350px;
@@ -201,6 +199,9 @@
             'audiometria' => 'TAMIZ AUDITIVO',
             'fonoaudiologia' => 'TAMIZ FONOAUDIOLOGÍA',
             'odontologia' => 'TAMIZ ODONTOLÓGICO',
+            'optometria' => 'TAMIZ VISUAL',
+            'psicologia' => 'VALORACIÓN PSICOLÓGICA',
+            'valoracion_medica' => 'VALORACIÓN MÉDICA GENERAL',
         ];
     @endphp
 
@@ -211,8 +212,8 @@
             <table class="header-container">
                 <tr>
                     <td class="ips-logo-cell">
-                        @php $logoSrc = request()->routeIs('*.preview_debug') ? asset('LOGIN.png') : public_path('LOGIN.png'); @endphp
-                        <img src="{{ $logoSrc }}" style="height: 65px; width: auto;">
+                        @php $logoSrc = public_path('LOGIN.png'); @endphp
+                        <img src="{{ $logoSrc }}" style="height: 120px; width: auto;">
                     </td>
                     <td class="ips-info">
                         <div class="ips-name">I.P.S CREAR INTEGRAL S.A.S</div>
@@ -222,16 +223,14 @@
             </table>
 
             {{-- 2. TÍTULO CENTRADO --}}
-            <div class="main-title">
-                EXAMENES DE INGRESO ESCOLAR
-            </div>
+            <div class="main-title">EXAMENES DE INGRESO ESCOLAR</div>
 
             {{-- 3. DATOS DE EMISIÓN --}}
             <table class="top-data-row">
                 <tr>
                     <td width="33%">
                         <span class="label-bold">Fecha Emisión</span>
-                        {{ \Carbon\Carbon::parse($exam->created_at)->format('d-m-Y') }}
+                        {{ $result->created_at->format('d-m-Y') }}
                     </td>
                     <td width="34%" style="text-align: center;">
                         <span class="label-bold">Realizado Por</span>
@@ -245,75 +244,93 @@
             </table>
 
             {{-- 4. IDENTIFICACIÓN DEL USUARIO --}}
-            @if ($loop->first)
-                <div class="sub-title">IDENTIFICACION DEL USUARIO</div>
-                <table class="id-grid">
-                    <tr>
-                        <td width="45%"><span class="label-bold">Nombres y Apellidos</span>
-                            {{ strtoupper($exam->student->first_name . ' ' . $exam->student->last_name) }}</td>
-                        <td width="20%"><span class="label-bold">Identificación</span>
-                            {{ $exam->student->document_type }} {{ $exam->student->document_number }}</td>
-                        <td width="20%"><span class="label-bold">Fecha de Nacimiento</span>
-                            {{ \Carbon\Carbon::parse($exam->student->birth_date)->format('d-m-Y') }}</td>
-                        <td width="15%"><span class="label-bold">Edad</span>
-                            {{ \Carbon\Carbon::parse($exam->student->birth_date)->age }} AÑOS</td>
-                    </tr>
-                    <tr>
-                        <td colspan="2"><span class="label-bold">Institución Educativa</span>
-                            {{ strtoupper($exam->student->school_name ?? 'NO REGISTRA') }}</td>
-                        <td colspan="2"><span class="label-bold">Grado a Ingresar</span>
-                            {{ strtoupper($exam->student->grade ?? 'N/A') }}</td>
-                    </tr>
-                </table>
-            @endif
+            <div class="sub-title">IDENTIFICACION DEL USUARIO</div>
+            <table class="id-grid">
+                <tr>
+                    <td width="45%"><span class="label-bold">Nombres y Apellidos</span>
+                        {{ strtoupper($exam->student->first_name . ' ' . $exam->student->last_name) }}</td>
+                    <td width="20%"><span class="label-bold">Identificación</span>
+                        {{ $exam->student->document_type }} {{ $exam->student->document_number }}</td>
+                    <td width="20%"><span class="label-bold">Fecha de Nacimiento</span>
+                        {{ \Carbon\Carbon::parse($exam->student->birth_date)->format('d-m-Y') }}</td>
+                    <td width="15%"><span class="label-bold">Edad</span>
+                        {{ \Carbon\Carbon::parse($exam->student->birth_date)->age }} AÑOS</td>
+                </tr>
+                <tr>
+                    <td colspan="2"><span class="label-bold">Institución Educativa</span>
+                        {{ strtoupper($exam->student->school_name ?? 'NO REGISTRA') }}</td>
+                    <td colspan="2"><span class="label-bold">Grado a Ingresar</span>
+                        {{ strtoupper($exam->student->grade ?? 'N/A') }}</td>
+                </tr>
+            </table>
 
             {{-- NOMBRE DEL EXAMEN ACTUAL --}}
-            @php $areaKey = strtolower((string)$result->area); @endphp
-            <div class="section-name">{{ $titulosPersonalizados[$areaKey] ?? 'TAMIZ ' . strtoupper($areaKey) }}</div>
+            @php $areaKey = $result->area; @endphp
+            <div class="section-name">{{ $titulosPersonalizados[$areaKey] ?? 'TAMIZ ' . strtoupper(str_replace('_', ' ', $areaKey)) }}</div>
 
-            {{-- CONTENIDO TÉCNICO --}}
-            @if (Str::contains($areaKey, 'audiometria'))
-                <table width="100%" style="margin-bottom: 20px;">
+            {{-- CONTENIDO TÉCNICO ESPECÍFICO (AUDIOMETRÍA) --}}
+            @if ($areaKey === 'audiometria')
+                <table width="100%" style="margin-bottom: 20px; border-collapse: collapse;">
                     <tr>
-                        <td width="45%" style="vertical-align: top;">
+                        <td width="45%" style="vertical-align: top; padding-right: 15px;">
                             <table class="data-table">
                                 <tr class="purple-header">
-                                    <th></th>
+                                    <th>Simbolización</th>
                                     <th>Oído Derecho</th>
                                     <th>Oído Izquierdo</th>
                                 </tr>
                                 <tr>
                                     <td style="text-align: left;">Vía aérea sin masking</td>
-                                    <td><span style="color:red; font-size:13pt;">○</span></td>
-                                    <td><span style="color:blue; font-size:13pt;">✕</span></td>
+                                    <td><span style="color:red; font-size:14pt; font-weight: bold;">○</span></td>
+                                    <td><span style="color:blue; font-size:14pt; font-weight: bold;">✕</span></td>
                                 </tr>
                             </table>
-                            <table class="data-table" style="width: 80%; margin: 15px auto;">
+
+                            <table class="data-table" style="width: 100%; margin-top: 20px;">
                                 <tr>
-                                    <th rowspan="2" style="background: #f9f9f9;">PTA</th>
-                                    <th>OD</th>
-                                    <th>OI</th>
+                                    <th rowspan="2" style="background: #f1f5f9; width: 40%; font-size: 10pt;">PTA</th>
+                                    <th style="color: red;">OD</th>
+                                    <th style="color: blue;">OI</th>
                                 </tr>
                                 <tr>
-                                    <td>{{ $result->data['pta_od'] ?? '---' }}</td>
-                                    <td>{{ $result->data['pta_oi'] ?? '---' }}</td>
+                                    <td style="font-size: 11pt; font-weight: bold;">{{ $result->pta_od ?? '--' }}</td>
+                                    <td style="font-size: 11pt; font-weight: bold;">{{ $result->pta_oi ?? '--' }}</td>
                                 </tr>
                             </table>
-                        </td>
-                        <td width="55%" style="text-align: center;">
-                            <div style="border: 1px solid #ccc; height: 180px; padding-top: 80px; color: #999;">
-                                [Gráfica de Audiometría]
+
+                            <div style="margin-top: 20px; font-size: 7.5pt; line-height: 1.2;">
+                                <strong>Nota:</strong> El PTA se calcula sobre el promedio de las frecuencias 500, 1000 y 2000 Hz.
                             </div>
+                        </td>
+                        <td width="55%" style="text-align: center; vertical-align: top;">
+                            <div style="border: 1px solid #000; padding: 5px; background-color: #fff;">
+                                @if($result->chart_path)
+                                    <img src="{{ public_path('storage/' . $result->chart_path) }}" style="width: 100%; height: auto; display: block;">
+                                @else
+                                    <div style="height: 180px; padding-top: 80px; color: #999; font-style: italic; border: 1px dashed #ccc;">
+                                        Gráfica de Audiometría no disponible
+                                    </div>
+                                @endif
+                            </div>
+                            <div style="font-size: 7pt; margin-top: 5px; font-weight: bold;">AUDIOGRAMA TONAL</div>
                         </td>
                     </tr>
                 </table>
             @endif
 
+            {{-- CASO ODONTOLOGÍA (MOSTRAR ODONTOGRAMA) --}}
+            @if ($areaKey === 'odontologia' && $result->chart_path)
+                <div style="text-align: center; margin-bottom: 15px;">
+                    <img src="{{ public_path('storage/' . $result->chart_path) }}" style="max-height: 250px; width: auto; border: 1px solid #eee;">
+                    <div style="font-size: 7pt; font-weight: bold;">ODONTOGRAMA INICIAL</div>
+                </div>
+            @endif
+
             {{-- OBSERVACIONES Y FIRMA --}}
             <div class="footer-content">
                 <div class="obs-title">OBSERVACIONES/RECOMENDACIONES:</div>
-                <div class="justified-text" style="min-height: 80px;">
-                    {{ $result->notes ?? ($result->observations ?? 'Sin observaciones adicionales.') }}
+                <div class="justified-text" style="min-height: 90px; border: 0.5px solid #eee; padding: 10px; background-color: #fafafa;">
+                    {{ $result->notes ?? 'Sin observaciones adicionales.' }}
                 </div>
 
                 <div class="signature-block">
@@ -321,9 +338,8 @@
                         @if ($result->specialist && $result->specialist->signature_path)
                             <img src="{{ public_path('storage/'.$result->specialist->signature_path) }}" class="signature-img">
                         @endif
-                        <strong>{{ strtoupper($result->specialist->name ?? 'Profesional') }}</strong><br>
+                        <strong>{{ strtoupper($result->specialist->name ?? 'Profesional de la Salud') }}</strong><br>
                         {{ strtoupper($result->specialist->specialty ?? 'Especialista') }}<br>
-                        {{ strtoupper($result->specialist->university ?? 'Universidad Santiago de Cali') }}<br>
                         <span style="font-weight: bold;">REG. PROFESIONAL: {{ $result->specialist->license_number ?? '-------' }}</span>
                     </div>
                 </div>

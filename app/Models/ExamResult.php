@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Storage;
 
 class ExamResult extends Model
 {
@@ -18,12 +19,17 @@ class ExamResult extends Model
         'area',
         'data',
         'notes',
+        'chart_path', // Ruta de la imagen del audiograma
+        'pta_od',     // Promedio Tonos Audibles Oído Derecho
+        'pta_oi',     // Promedio Tonos Audibles Oído Izquierdo
     ];
 
     protected $casts = [
         'data'            => 'array',
         'medical_exam_id' => 'integer',
         'user_id'         => 'integer',
+        'pta_od'          => 'float',
+        'pta_oi'          => 'float',
     ];
 
     /* |--------------------------------------------------------------------------
@@ -50,29 +56,18 @@ class ExamResult extends Model
     |-------------------------------------------------------------------------- */
 
     /**
-     * CORRECCIÓN CRÍTICA: separamos el accessor de presentación del valor real.
-     *
-     * ANTES: el accessor devolvía "Valoracion medica" (con mayúscula y espacio)
-     * y el controlador comparaba ese valor contra el slug "valoracion_medica"
-     * → nunca coincidían → el circuito nunca se marcaba como completado.
-     *
-     * AHORA:
-     * - get  → devuelve el slug limpio (ej: "valoracion_medica") para comparaciones
-     * - set  → guarda el slug limpio en BD
-     * - Para mostrar en vistas usa el accessor 'areaLabel' (ver abajo)
+     * Normalización del área para lógica interna (slug).
      */
     protected function area(): Attribute
     {
         return Attribute::make(
-            get: fn($value) => Str::slug($value ?? '', '_'),  // ← slug limpio para lógica
-            set: fn($value) => Str::slug($value ?? '', '_'),  // ← slug limpio en BD
+            get: fn($value) => Str::slug($value ?? '', '_'),
+            set: fn($value) => Str::slug($value ?? '', '_'),
         );
     }
 
     /**
      * Accessor de PRESENTACIÓN para las vistas.
-     * Úsalo en Blade así: {{ $result->area_label }}
-     * Ejemplos: "valoracion_medica" → "Valoración médica"
      */
     public function getAreaLabelAttribute(): string
     {
@@ -87,6 +82,17 @@ class ExamResult extends Model
 
         $slug = $this->getAttributes()['area'] ?? '';
         return $labels[$slug] ?? ucfirst(str_replace('_', ' ', $slug));
+    }
+
+    /**
+     * Genera la URL completa para la imagen del gráfico de audiometría.
+     * Úsalo en Blade: <img src="{{ $result->chart_url }}">
+     */
+    protected function chartUrl(): Attribute
+    {
+        return Attribute::make(
+            get: fn () => $this->chart_path ? Storage::url($this->chart_path) : null,
+        );
     }
 
     /**
@@ -133,7 +139,6 @@ class ExamResult extends Model
 
     /**
      * Compara el área contra un slug dado.
-     * Usa el valor RAW de BD (no el accessor) para comparación exacta.
      */
     public function isArea(string $areaName): bool
     {
