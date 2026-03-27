@@ -3,24 +3,39 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
 
             {{-- Encabezado de la Sección (SnakeDEV Style) --}}
-            <div class="mb-8 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+            <div class="mb-8 flex flex-col xl:flex-row xl:items-center xl:justify-between gap-4">
                 <div>
                     <span class="text-[10px] font-black text-blue-500 uppercase tracking-[0.3em] mb-1 block">Panel de Auditoría</span>
-                    <h2 class="text-3xl font-black text-slate-900 tracking-tighter uppercase">Historial de <span class="text-blue-600">Pacientes</span></h2>
+                    <h2 class="text-2xl sm:text-3xl font-black text-slate-900 tracking-tighter uppercase">Historial de <span class="text-blue-600">Pacientes</span></h2>
                     <p class="text-slate-500 text-sm font-medium">Consulta de estados médicos y generación de Historias Clínicas unificadas.</p>
                 </div>
 
-                <div class="flex flex-wrap items-center gap-4">
+                <div class="flex flex-col sm:flex-row sm:flex-wrap sm:items-center gap-4 w-full xl:w-auto">
                     {{-- Buscador Dinámico --}}
-                    <form action="{{ route('medical_exams.history') }}" method="GET" class="relative group">
-                        <input type="text" name="search" value="{{ $search }}"
-                            placeholder="Buscar nombre o documento..."
-                            class="pl-10 pr-4 py-2.5 bg-white border border-slate-200 rounded-2xl text-sm focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 w-72 transition-all shadow-sm group-hover:border-slate-300 font-bold text-slate-700">
-                        <div class="absolute left-3 top-3 text-slate-400 group-hover:text-blue-500 transition-colors">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                            </svg>
+                    <form action="{{ route('medical_exams.history') }}" method="GET" class="flex flex-col sm:flex-row sm:flex-wrap sm:items-center gap-3 w-full xl:w-auto">
+                        <div class="relative group w-full sm:w-auto">
+                            <input type="text" name="search" value="{{ $search }}"
+                                placeholder="Buscar nombre o documento..."
+                                class="pl-10 pr-4 py-2.5 bg-white border border-slate-200 rounded-2xl text-sm focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 w-full sm:w-72 transition-all shadow-sm group-hover:border-slate-300 font-bold text-slate-700">
+                            <div class="absolute left-3 top-3 text-slate-400 group-hover:text-blue-500 transition-colors">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                                </svg>
+                            </div>
                         </div>
+
+                        <select name="school" class="px-4 py-2.5 bg-white border border-slate-200 rounded-2xl text-sm focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all shadow-sm font-bold text-slate-700 w-full sm:min-w-[220px] sm:w-auto">
+                            <option value="">Todos los colegios</option>
+                            @foreach($schools as $schoolOption)
+                                <option value="{{ $schoolOption }}" {{ $school === $schoolOption ? 'selected' : '' }}>
+                                    {{ $schoolOption }}
+                                </option>
+                            @endforeach
+                        </select>
+
+                        <button type="submit" class="px-4 py-2.5 rounded-2xl bg-blue-600 text-white text-xs font-black uppercase tracking-widest hover:bg-blue-700 transition shadow-sm w-full sm:w-auto">
+                            Filtrar
+                        </button>
                     </form>
 
                     {{-- Contador de Registros --}}
@@ -41,14 +56,14 @@
             {{-- Contenedor de Tabla --}}
             <div class="bg-white overflow-hidden shadow-sm rounded-[2rem] border border-slate-100">
                 @if($completedExams->isEmpty())
-                    <div class="p-24 flex flex-col items-center justify-center text-center">
+                    <div class="p-10 sm:p-16 lg:p-24 flex flex-col items-center justify-center text-center">
                         <div class="w-24 h-24 bg-slate-50 rounded-full flex items-center justify-center mb-6 border border-slate-100 shadow-inner">
                             <svg class="w-12 h-12 text-slate-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                             </svg>
                         </div>
                         <h3 class="text-slate-800 font-black text-xl uppercase tracking-tighter">Sin resultados</h3>
-                        <p class="text-slate-400 text-sm max-w-xs mx-auto font-medium mt-2">No encontramos pacientes que coincidan con "{{ $search }}".</p>
+                        <p class="text-slate-400 text-sm max-w-xs mx-auto font-medium mt-2">No encontramos pacientes con los filtros aplicados.</p>
                         <a href="{{ route('medical_exams.history') }}" class="mt-6 text-blue-600 font-bold text-xs uppercase tracking-widest hover:underline">Limpiar búsqueda</a>
                     </div>
                 @else

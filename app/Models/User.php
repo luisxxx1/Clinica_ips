@@ -18,8 +18,8 @@ class User extends Authenticatable
         'email',
         'password',
         'role_id',
-        'job_title', 
-        'ui_color',  
+        'job_title',
+        'ui_color',
     ];
 
     protected $hidden = [
@@ -50,6 +50,14 @@ class User extends Authenticatable
     public function examResults(): HasMany
     {
         return $this->hasMany(ExamResult::class);
+    }
+
+    /**
+     * Entradas clinicas registradas por este usuario.
+     */
+    public function clinicalHistories(): HasMany
+    {
+        return $this->hasMany(ClinicalHistory::class);
     }
 
     /* |--------------------------------------------------------------------------

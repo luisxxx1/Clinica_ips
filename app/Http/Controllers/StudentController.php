@@ -3,9 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\Student;
+use App\Models\MedicalExam;
+use App\Models\ClinicalHistory;
 use App\Http\Requests\StoreStudentRequest;
 use App\Services\StudentService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 class StudentController extends Controller
@@ -98,9 +101,22 @@ class StudentController extends Controller
     public function destroy(Student $student)
     {
         try {
-            $student->delete();
+            DB::transaction(function () use ($student) {
+                // 1) Historial clínico independiente
+                ClinicalHistory::where('student_id', $student->id)->delete();
+
+                // 2) Circuitos médicos (incluye ya eliminados lógicamente)
+                //    exam_results se elimina por cascade al borrar medical_exams.
+                MedicalExam::withTrashed()
+                    ->where('student_id', $student->id)
+                    ->forceDelete();
+
+                // 3) Borrado definitivo del estudiante
+                $student->forceDelete();
+            });
+
             return redirect()->route('students.index')
-                ->with('success', 'Registro movido a la papelera (Soft Delete).');
+                ->with('success', 'Estudiante y todo su historial asociado fueron eliminados definitivamente.');
         } catch (\Exception $e) {
             Log::error("Error al eliminar estudiante: " . $e->getMessage());
             return back()->with('error', 'No se pudo eliminar el registro.');

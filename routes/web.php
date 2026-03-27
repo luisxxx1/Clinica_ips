@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\{ProfileController, StudentController, MedicalExamController, DashboardController, AdminSettingsController};
+use App\Http\Controllers\{ProfileController, StudentController, MedicalExamController, DashboardController, AdminSettingsController, ClinicalHistoryController};
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', fn() => redirect()->route('login'));
@@ -64,6 +64,18 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->parameters(['medical-exams' => 'medical_exam'])
         ->names('medical_exams')
         ->except(['create']);
+
+    /* --- HISTORIAL CLINICO POR PACIENTE --- */
+    Route::controller(ClinicalHistoryController::class)
+        ->prefix('clinical-histories')
+        ->name('clinical_histories.')
+        ->group(function () {
+            Route::get('/', 'index')->name('index');
+            Route::get('/{student}', 'show')->name('show');
+            Route::get('/{student}/pdf', 'downloadPdf')->name('pdf');
+            Route::post('/{student}', 'store')->name('store');
+            Route::patch('/{student}/{clinical_history}', 'update')->name('update');
+        });
 });
 
 require __DIR__.'/auth.php';

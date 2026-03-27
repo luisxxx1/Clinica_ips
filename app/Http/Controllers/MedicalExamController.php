@@ -35,6 +35,14 @@ class MedicalExamController extends Controller
     {
         $search = $request->input('search');
         $status = $request->input('status');
+        $school = trim((string) $request->input('school'));
+
+        $schools = DB::table('students')
+            ->whereNotNull('previous_school')
+            ->where('previous_school', '!=', '')
+            ->distinct()
+            ->orderBy('previous_school')
+            ->pluck('previous_school');
 
         $completedExams = MedicalExam::with(['student', 'results'])
             ->whereHas('student')
@@ -45,6 +53,11 @@ class MedicalExamController extends Controller
                       ->orWhere('document_number', 'LIKE', "%{$search}%");
                 });
             })
+            ->when($school, function ($query, $school) {
+                $query->whereHas('student', function ($q) use ($school) {
+                    $q->where('previous_school', $school);
+                });
+            })
             ->when($status, function ($query, $status) {
                 $query->where('status', $status);
             })
@@ -52,7 +65,7 @@ class MedicalExamController extends Controller
             ->paginate(15)
             ->withQueryString();
 
-        return view('medical_exams.history', compact('completedExams', 'search', 'status'));
+        return view('medical_exams.history', compact('completedExams', 'search', 'status', 'school', 'schools'));
     }
 
     /**

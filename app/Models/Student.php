@@ -51,6 +51,14 @@ class Student extends Model
     }
 
     /**
+     * Entradas del historial clinico por especialistas.
+     */
+    public function clinicalHistories(): HasMany
+    {
+        return $this->hasMany(ClinicalHistory::class);
+    }
+
+    /**
      * El examen que está actualmente en proceso (no completado).
      */
     public function currentExam(): HasOne

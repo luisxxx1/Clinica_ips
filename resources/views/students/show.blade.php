@@ -1,14 +1,28 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex justify-between items-center no-print">
+        <div class="flex flex-col lg:flex-row lg:justify-between lg:items-center gap-4 no-print">
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">
                 {{ __('Ficha Médica Escolar') }}
             </h2>
-            <div class="flex space-x-3">
-                <a href="{{ route('students.index') }}" class="text-xs font-black uppercase tracking-widest text-slate-400 hover:text-slate-900 transition-colors self-center mr-4">
+            @php
+                $roleName = mb_strtolower(auth()->user()->role->name ?? '');
+                $canDownloadClinicalPdf = in_array($roleName, ['administrador', 'admisión', 'admision']);
+            @endphp
+            <div class="flex flex-wrap gap-2 sm:gap-3">
+                <a href="{{ route('students.index') }}" class="text-xs font-black uppercase tracking-widest text-slate-400 hover:text-slate-900 transition-colors self-center">
                     &larr; Volver
                 </a>
-                <button onclick="window.print()" class="bg-slate-900 text-white px-6 py-2.5 rounded-xl text-xs font-black uppercase tracking-[0.2em] hover:bg-blue-600 transition shadow-lg shadow-slate-200 flex items-center">
+                <a href="{{ route('clinical_histories.show', $student) }}" class="bg-blue-600 text-white px-4 sm:px-6 py-2.5 rounded-xl text-xs font-black uppercase tracking-[0.2em] hover:bg-blue-700 transition shadow-lg shadow-blue-200 flex items-center">
+                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                    Historial Clínico
+                </a>
+                @if($canDownloadClinicalPdf)
+                    <a href="{{ route('clinical_histories.pdf', $student) }}" class="bg-emerald-600 text-white px-4 sm:px-6 py-2.5 rounded-xl text-xs font-black uppercase tracking-[0.2em] hover:bg-emerald-700 transition shadow-lg shadow-emerald-200 flex items-center">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                        Descargar Historial PDF
+                    </a>
+                @endif
+                <button onclick="window.print()" class="bg-slate-900 text-white px-4 sm:px-6 py-2.5 rounded-xl text-xs font-black uppercase tracking-[0.2em] hover:bg-blue-600 transition shadow-lg shadow-slate-200 flex items-center">
                     <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
                     Imprimir Reporte
                 </button>
@@ -21,7 +35,7 @@
             <div class="bg-white overflow-hidden shadow-2xl sm:rounded-[2.5rem] border border-slate-200 printable-card">
 
                 {{-- Encabezado Estilo Reporte Corporativo --}}
-                <div class="p-10 border-b border-slate-100 bg-gradient-to-r from-slate-50 to-white flex justify-between items-center">
+                <div class="p-6 sm:p-10 border-b border-slate-100 bg-gradient-to-r from-slate-50 to-white flex flex-col md:flex-row md:justify-between md:items-center gap-4">
                     <div class="flex items-center">
                         <div class="w-12 h-12 bg-blue-600 rounded-2xl flex items-center justify-center mr-4 shadow-lg shadow-blue-200">
                             <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2-2z"></path></svg>
@@ -31,13 +45,13 @@
                             <p class="text-[10px] font-bold text-slate-400 uppercase tracking-[0.3em]">Historia Clínica Estudiantil</p>
                         </div>
                     </div>
-                    <div class="text-right">
+                    <div class="text-left md:text-right">
                         <p class="text-[10px] font-black text-slate-300 uppercase tracking-widest mb-1">Generado por</p>
                         <span class="px-3 py-1 bg-slate-900 text-white text-[10px] font-black rounded-lg tracking-widest uppercase">SnakeDev</span>
                     </div>
                 </div>
 
-                <div class="p-10">
+                <div class="p-6 sm:p-10">
                     {{-- SECCIÓN 1: DATOS DEL ESTUDIANTE --}}
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-12 mb-12">
                         <div class="space-y-4">
@@ -90,7 +104,7 @@
                     </div>
 
                     {{-- SECCIÓN 2: DATOS DEL ACUDIENTE --}}
-                    <div class="bg-slate-900 rounded-[2rem] p-8 mb-12 shadow-xl shadow-slate-200 relative overflow-hidden">
+                    <div class="bg-slate-900 rounded-[2rem] p-6 sm:p-8 mb-12 shadow-xl shadow-slate-200 relative overflow-hidden">
                         {{-- Decoración sutil --}}
                         <div class="absolute top-0 right-0 p-4 opacity-10 text-white">
                             <svg class="w-24 h-24" fill="currentColor" viewBox="0 0 20 20"><path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"></path></svg>
@@ -128,7 +142,7 @@
                         <h4 class="text-[10px] font-black text-slate-400 uppercase mb-6 tracking-[0.2em] flex items-center">
                             <span class="w-8 h-[1px] bg-slate-200 mr-3"></span> Historial Clínico Reciente
                         </h4>
-                        
+
                         @if($student->medicalExams && $student->medicalExams->count() > 0)
                             <div class="overflow-hidden rounded-2xl border border-slate-100">
                                 <table class="min-w-full divide-y divide-slate-100">
@@ -165,7 +179,7 @@
                 </div>
 
                 {{-- Pie de Página Reporte --}}
-                <div class="p-10 bg-slate-50 border-t border-slate-100 flex justify-between items-center no-print">
+                <div class="p-6 sm:p-10 bg-slate-50 border-t border-slate-100 flex flex-col md:flex-row md:justify-between md:items-center gap-3 no-print">
                     <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
                         Documento oficial emitido por el sistema Snake_DEV IPS
                     </p>
