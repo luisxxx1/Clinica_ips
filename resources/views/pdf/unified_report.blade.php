@@ -1,402 +1,339 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <style>
+        /* Configuración de márgenes de página */
+        @page {
+            margin: 0; /* Control total vía body padding */
+        }
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            font-family: 'Helvetica', Arial, sans-serif;
         }
+
         body {
-            font-family: 'Arial', sans-serif;
-            color: #333;
-            line-height: 1.6;
-            background: #f5f5f5;
-        }
-        .container {
-            max-width: 900px;
-            margin: 0 auto;
+            font-size: 8.5pt;
+            color: #000;
+            line-height: 1.3;
             background: white;
-            padding: 30px 40px;
+            /* Espacios a los lados y extremos para que se vea aireado */
+            padding: 1.2cm 1.8cm; 
         }
-        .header {
-            text-align: center;
-            margin-bottom: 25px;
-            border-bottom: 3px solid #0066cc;
-            padding-bottom: 20px;
-        }
-        .header-logo {
-            font-size: 11px;
-            color: #666;
-            margin-bottom: 8px;
-            font-weight: bold;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-        .header-title {
-            font-size: 26px;
-            font-weight: bold;
-            color: #0066cc;
-            margin: 12px 0 8px 0;
-            letter-spacing: 0.5px;
-        }
-        .header-subtitle {
-            font-size: 13px;
-            color: #666;
-            margin: 8px 0;
-            font-weight: normal;
-        }
-        .patient-card {
-            background: linear-gradient(135deg, #0066cc 0%, #004499 100%);
-            color: white;
-            padding: 20px;
-            margin-bottom: 25px;
-            border-radius: 6px;
-            box-shadow: 0 2px 8px rgba(0,102,204,0.15);
-        }
-        .patient-card .label {
-            font-size: 10px;
-            opacity: 0.85;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-bottom: 2px;
-            font-weight: bold;
-        }
-        .patient-card .value {
-            font-size: 14px;
-            font-weight: bold;
-            margin-bottom: 12px;
-        }
-        .patient-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-        }
-        .patient-grid-item .label {
-            font-size: 9px;
-            opacity: 0.8;
-            text-transform: uppercase;
-        }
-        .patient-grid-item .value {
-            font-size: 13px;
-            font-weight: bold;
-        }
-        .section-break {
+
+        .page-break {
             page-break-after: always;
-            margin: 30px 0;
         }
-        .specialty-section {
-            margin-bottom: 30px;
-            border: 1px solid #d0d0d0;
-            padding: 18px;
-            background: #fafafa;
-            border-radius: 6px;
-            page-break-inside: avoid;
+
+        .page-break:last-child {
+            page-break-after: auto;
         }
-        .specialty-header {
-            background: #0066cc;
-            color: white;
-            padding: 12px 15px;
-            margin: -18px -18px 15px -18px;
-            border-radius: 5px 5px 0 0;
-            font-size: 15px;
-            font-weight: bold;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .specialty-badge {
-            background: rgba(255,255,255,0.25);
-            padding: 3px 10px;
-            border-radius: 15px;
-            font-size: 10px;
-            font-weight: bold;
-        }
-        .evaluation-content {
-            font-size: 12px;
-            line-height: 1.8;
-        }
-        .evaluation-table {
+
+        /* HEADER CON LOGO E INFO */
+        .header-container {
             width: 100%;
             border-collapse: collapse;
+            margin-bottom: 5px;
+        }
+
+        .ips-logo-cell {
+            width: 110px;
+            vertical-align: middle;
+        }
+
+        .ips-info {
+            padding-left: 10px;
+            vertical-align: middle;
+        }
+
+        .ips-name {
+            color: #3b82f6;
+            font-weight: bold;
+            font-size: 11.5pt;
+            font-style: italic;
+        }
+
+        .ips-nit {
+            font-size: 9pt;
+            color: #1d4ed8;
+            font-weight: bold;
+        }
+
+        /* TÍTULO CENTRADO ABAJO DEL LOGO */
+        .main-title {
+            text-align: center;
+            font-weight: bold;
+            font-size: 12pt;
             margin: 15px 0;
-            font-size: 11px;
-        }
-        .evaluation-table th {
-            background: #0066cc;
-            color: white;
-            padding: 12px;
-            text-align: left;
-            font-weight: bold;
-            border: none;
-        }
-        .evaluation-table td {
-            padding: 10px 12px;
-            border-bottom: 1px solid #e0e0e0;
-        }
-        .evaluation-table tr:nth-child(even) {
-            background: #f9fbff;
-        }
-        .evaluation-table tr:hover {
-            background: #f0f5ff;
-        }
-        .data-label-cell {
-            width: 35%;
-            font-weight: bold;
-            color: #0066cc;
-        }
-        .data-value-cell {
-            width: 65%;
-            color: #333;
-        }
-        .notes-box {
-            background: #fffbea;
-            padding: 12px;
-            border-left: 3px solid #ffc107;
-            margin-top: 12px;
-            border-radius: 3px;
-            font-size: 10px;
-            line-height: 1.6;
-        }
-        .notes-title {
-            font-weight: bold;
-            color: #856404;
-            display: block;
-            margin-bottom: 6px;
             text-transform: uppercase;
-            font-size: 9px;
-        }
-        .specialist-info {
-            background: #f5f5f5;
-            padding: 10px 12px;
-            margin-top: 12px;
-            border-radius: 4px;
-            font-size: 10px;
-            color: #555;
-            border-left: 3px solid #0066cc;
-            line-height: 1.5;
-        }
-        .footer {
-            margin-top: 40px;
-            text-align: center;
-            font-size: 9px;
-            color: #999;
-            border-top: 2px solid #e0e0e0;
-            padding-top: 15px;
-            line-height: 1.6;
-        }
-        .completion-badge {
-            display: block;
-            background: linear-gradient(135deg, #28a745 0%, #1fa833 100%);
-            color: white;
-            padding: 12px 20px;
-            border-radius: 4px;
-            font-size: 11px;
-            font-weight: bold;
-            margin: 20px 0;
-            text-align: center;
             width: 100%;
+            display: block;
         }
-        table {
+
+        /* FILA DE DATOS DE EMISIÓN */
+        .top-data-row {
             width: 100%;
             border-collapse: collapse;
-            margin: 10px 0;
-            font-size: 11px;
-            background: white;
+            margin-bottom: 15px;
+            border-top: 1px solid #000;
+            border-bottom: 1px solid #000;
         }
-        th, td {
-            border: 1px solid #ddd;
-            padding: 10px;
-            text-align: left;
+
+        .top-data-row td {
+            font-size: 8pt;
+            padding: 6px 0;
+            vertical-align: top;
         }
-        th {
-            background: #e8f1ff;
+
+        .label-bold {
             font-weight: bold;
-            color: #0066cc;
-        }
-        .summary-box {
-            background: linear-gradient(135deg, #e8f1ff 0%, #f0f5ff 100%);
-            border: 1px solid #0066cc;
-            padding: 18px;
-            margin: 25px 0;
-            border-radius: 6px;
-            text-align: center;
-        }
-        .summary-title {
-            font-size: 13px;
-            font-weight: bold;
-            color: #0066cc;
-            margin-bottom: 12px;
+            display: block;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
+            font-size: 7.5pt;
+            margin-bottom: 2px;
         }
-        .areas-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 8px;
-        }
-        .area-item {
-            background: white;
-            padding: 10px;
-            border: 1px solid #0066cc;
-            border-radius: 4px;
-            font-size: 10px;
+
+        /* SECCIÓN IDENTIFICACIÓN */
+        .sub-title {
             font-weight: bold;
+            font-size: 9.5pt;
+            text-transform: uppercase;
+            border-bottom: 1px solid #000;
+            padding-bottom: 2px;
+            margin-top: 10px;
+        }
+
+        .id-grid {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 15px;
+        }
+
+        .id-grid td {
+            padding: 5px 0;
+            font-size: 8.5pt;
+        }
+
+        /* TEXTO JUSTIFICADO */
+        .justified-text {
+            text-align: justify;
+            line-height: 1.4;
+        }
+
+        /* TABLAS TÉCNICAS */
+        .section-name {
             text-align: center;
-            color: #0066cc;
-        }
-        .area-item.completed {
-            background: #d4edda;
-            border-color: #28a745;
-            color: #155724;
-        }
-        .area-item.completed::before {
-            content: "✓ ";
             font-weight: bold;
+            font-size: 11pt;
+            margin: 15px 0;
+            text-transform: uppercase;
+        }
+
+        .data-table {
+            border-collapse: collapse;
+            text-align: center;
+            font-size: 8pt;
+            width: 100%;
+        }
+
+        .data-table th,
+        .data-table td {
+            border: 1px solid #000;
+            padding: 5px;
+        }
+
+        .purple-header {
+            background-color: #800080;
+            color: white;
+        }
+
+        /* BLOQUE INFERIOR */
+        .footer-content {
+            margin-top: 25px;
+            width: 100%;
+        }
+
+        .obs-title {
+            font-weight: bold;
+            text-decoration: underline;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+
+        .signature-block {
+            margin-top: 50px;
+            width: 350px;
+        }
+
+        .signature-line {
+            border-top: 1.2px solid #000;
+            padding-top: 5px;
+            position: relative;
+        }
+
+        .signature-img {
+            height: 70px;
+            position: absolute;
+            top: -65px;
+            left: 20px;
+        }
+
+        .blue-footer {
+            text-align: center;
+            color: #1d4ed8;
+            font-style: italic;
+            font-size: 8.5pt;
+            margin-top: 40px;
+            border-top: 0.5px solid #ccc;
+            padding-top: 10px;
         }
     </style>
 </head>
+
 <body>
-    <div class="container">
-        {{-- PORTADA --}}
-        <div class="header">
-            <div class="header-logo">🏥 IPS CREAR INTEGRAL S.A.S</div>
-            <div class="header-title">REPORTE INTEGRAL DE SALUD</div>
-            <div class="header-subtitle">Evaluación Clínica Completa del Ingreso Escolar</div>
-            <div class="header-subtitle" style="color: #0066cc; margin-top: 20px;">
-                Generado: {{ now()->format('d de F de Y - H:i') }}
-            </div>
-        </div>
 
-        {{-- INFORMACIÓN DEL PACIENTE --}}
-        <div class="patient-card">
-            <div class="patient-grid">
-                <div class="patient-grid-item">
-                    <div class="label">Nombre del Paciente</div>
-                    <div class="value">{{ $exam->student->full_name }}</div>
-                </div>
-                <div class="patient-grid-item">
-                    <div class="label">Documento de Identidad</div>
-                    <div class="value">{{ $exam->student->document_type }}: {{ $exam->student->document_number }}</div>
-                </div>
-                <div class="patient-grid-item">
-                    <div class="label">Fecha de Nacimiento</div>
-                    <div class="value">{{ $exam->student->birth_date ? $exam->student->birth_date->format('d/m/Y') : 'N/A' }}</div>
-                </div>
-                <div class="patient-grid-item">
-                    <div class="label">Edad</div>
-                    <div class="value">{{ $exam->student->age ?? 'N/A' }} años</div>
-                </div>
-                <div class="patient-grid-item">
-                    <div class="label">Grado Académico</div>
-                    <div class="value">{{ $exam->student->grade }}</div>
-                </div>
-                <div class="patient-grid-item">
-                    <div class="label">Estado Clínico</div>
-                    <div class="value" style="color: #28a745;">✓ COMPLETADO</div>
-                </div>
-            </div>
-        </div>
+    @php
+        $titulosPersonalizados = [
+            'audiometria' => 'TAMIZ AUDITIVO',
+            'fonoaudiologia' => 'TAMIZ FONOAUDIOLOGÍA',
+            'odontologia' => 'TAMIZ ODONTOLÓGICO',
+        ];
+    @endphp
 
-        {{-- RESUMEN DE EVALUACIONES --}}
-        <div class="summary-box">
-            <div class="summary-title">Circuito de Evaluaciones</div>
-            <div class="areas-grid">
-                @foreach(['valoracion_medica' => 'Medicina General', 'odontologia' => 'Odontología', 'optometria' => 'Optometría', 'audiometria' => 'Audiometría', 'fonoaudiologia' => 'Fonoaudiología', 'psicologia' => 'Psicología'] as $slug => $name)
-                    @php
-                        $hasResult = $exam->results->where('area', $slug)->count() > 0;
-                    @endphp
-                    <div class="area-item {{ $hasResult ? 'completed' : '' }}">
-                        {{ $name }}
-                    </div>
-                @endforeach
-            </div>
-        </div>
+    @foreach ($exam->results->sortBy('area') as $result)
+        <div class="page-break">
 
-        {{-- EVALUACIONES POR ESPECIALIDAD --}}
-        @foreach($exam->results as $index => $result)
-            @if($index > 0)
-                <div class="section-break"></div>
+            {{-- 1. LOGO E IPS --}}
+            <table class="header-container">
+                <tr>
+                    <td class="ips-logo-cell">
+                        @php $logoSrc = request()->routeIs('*.preview_debug') ? asset('LOGIN.png') : public_path('LOGIN.png'); @endphp
+                        <img src="{{ $logoSrc }}" style="height: 65px; width: auto;">
+                    </td>
+                    <td class="ips-info">
+                        <div class="ips-name">I.P.S CREAR INTEGRAL S.A.S</div>
+                        <div class="ips-nit">NIT 900727545-8</div>
+                    </td>
+                </tr>
+            </table>
+
+            {{-- 2. TÍTULO CENTRADO --}}
+            <div class="main-title">
+                EXAMENES DE INGRESO ESCOLAR
+            </div>
+
+            {{-- 3. DATOS DE EMISIÓN --}}
+            <table class="top-data-row">
+                <tr>
+                    <td width="33%">
+                        <span class="label-bold">Fecha Emisión</span>
+                        {{ \Carbon\Carbon::parse($exam->created_at)->format('d-m-Y') }}
+                    </td>
+                    <td width="34%" style="text-align: center;">
+                        <span class="label-bold">Realizado Por</span>
+                        IPS CREAR INTEGRAL SAS
+                    </td>
+                    <td width="33%" style="text-align: right;">
+                        <span class="label-bold">Tipo Evaluación – Énfasis</span>
+                        INGRESO ESCOLAR
+                    </td>
+                </tr>
+            </table>
+
+            {{-- 4. IDENTIFICACIÓN DEL USUARIO --}}
+            @if ($loop->first)
+                <div class="sub-title">IDENTIFICACION DEL USUARIO</div>
+                <table class="id-grid">
+                    <tr>
+                        <td width="45%"><span class="label-bold">Nombres y Apellidos</span>
+                            {{ strtoupper($exam->student->first_name . ' ' . $exam->student->last_name) }}</td>
+                        <td width="20%"><span class="label-bold">Identificación</span>
+                            {{ $exam->student->document_type }} {{ $exam->student->document_number }}</td>
+                        <td width="20%"><span class="label-bold">Fecha de Nacimiento</span>
+                            {{ \Carbon\Carbon::parse($exam->student->birth_date)->format('d-m-Y') }}</td>
+                        <td width="15%"><span class="label-bold">Edad</span>
+                            {{ \Carbon\Carbon::parse($exam->student->birth_date)->age }} AÑOS</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2"><span class="label-bold">Institución Educativa</span>
+                            {{ strtoupper($exam->student->school_name ?? 'NO REGISTRA') }}</td>
+                        <td colspan="2"><span class="label-bold">Grado a Ingresar</span>
+                            {{ strtoupper($exam->student->grade ?? 'N/A') }}</td>
+                    </tr>
+                </table>
             @endif
 
-            <div class="specialty-section">
-                <div class="specialty-header">
-                    <span>{{ ucfirst(str_replace('_', ' ', $result->area)) }}</span>
-                    <span class="specialty-badge">{{ $result->created_at->format('d/m/Y H:i') }}</span>
-                </div>
+            {{-- NOMBRE DEL EXAMEN ACTUAL --}}
+            @php $areaKey = strtolower((string)$result->area); @endphp
+            <div class="section-name">{{ $titulosPersonalizados[$areaKey] ?? 'TAMIZ ' . strtoupper($areaKey) }}</div>
 
-                <div class="evaluation-content">
-                    @if(is_array($result->data) && count($result->data) > 0)
-                        <table class="evaluation-table">
-                            <thead>
-                                <tr>
-                                    <th>Campo</th>
-                                    <th>Valor</th>
+            {{-- CONTENIDO TÉCNICO --}}
+            @if (Str::contains($areaKey, 'audiometria'))
+                <table width="100%" style="margin-bottom: 20px;">
+                    <tr>
+                        <td width="45%" style="vertical-align: top;">
+                            <table class="data-table">
+                                <tr class="purple-header">
+                                    <th></th>
+                                    <th>Oído Derecho</th>
+                                    <th>Oído Izquierdo</th>
                                 </tr>
-                            </thead>
-                            <tbody>
-                                @foreach($result->data as $key => $value)
-                                    @if(!in_array($key, ['_token', 'odontograma_imagen']))
-                                        <tr>
-                                            <td class="data-label-cell">{{ ucfirst(str_replace(['_', 'OD', 'OI'], [' ', 'OJO DERECHO', 'OJO IZQUIERDO'], $key)) }}</td>
-                                            <td class="data-value-cell">
-                                                @if($key === 'odontograma_path' && !empty($value))
-                                                    <em>[Imagen adjunta]</em>
-                                                @elseif(is_array($value))
-                                                    @php
-                                                        $formatted = [];
-                                                        foreach($value as $v) {
-                                                            if (is_array($v)) {
-                                                                $formatted[] = json_encode($v);
-                                                            } else {
-                                                                $formatted[] = (string)$v;
-                                                            }
-                                                        }
-                                                        echo implode(', ', $formatted);
-                                                    @endphp
-                                                @else
-                                                    {{ $value ?? 'No especificado' }}
-                                                @endif
-                                            </td>
-                                        </tr>
-                                    @endif
-                                @endforeach
-                            </tbody>
-                        </table>
-                    @else
-                        <p style="color: #999;"><em>No hay datos de evaluación registrados</em></p>
-                    @endif
+                                <tr>
+                                    <td style="text-align: left;">Vía aérea sin masking</td>
+                                    <td><span style="color:red; font-size:13pt;">○</span></td>
+                                    <td><span style="color:blue; font-size:13pt;">✕</span></td>
+                                </tr>
+                            </table>
+                            <table class="data-table" style="width: 80%; margin: 15px auto;">
+                                <tr>
+                                    <th rowspan="2" style="background: #f9f9f9;">PTA</th>
+                                    <th>OD</th>
+                                    <th>OI</th>
+                                </tr>
+                                <tr>
+                                    <td>{{ $result->data['pta_od'] ?? '---' }}</td>
+                                    <td>{{ $result->data['pta_oi'] ?? '---' }}</td>
+                                </tr>
+                            </table>
+                        </td>
+                        <td width="55%" style="text-align: center;">
+                            <div style="border: 1px solid #ccc; height: 180px; padding-top: 80px; color: #999;">
+                                [Gráfica de Audiometría]
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+            @endif
+
+            {{-- OBSERVACIONES Y FIRMA --}}
+            <div class="footer-content">
+                <div class="obs-title">OBSERVACIONES/RECOMENDACIONES:</div>
+                <div class="justified-text" style="min-height: 80px;">
+                    {{ $result->notes ?? ($result->observations ?? 'Sin observaciones adicionales.') }}
                 </div>
 
-                @if(!empty($result->notes))
-                    <div class="notes-box">
-                        <span class="notes-title">📝 Observaciones del Especialista</span>
-                        <p>{{ $result->notes }}</p>
+                <div class="signature-block">
+                    <div class="signature-line">
+                        @if ($result->specialist && $result->specialist->signature_path)
+                            <img src="{{ public_path('storage/'.$result->specialist->signature_path) }}" class="signature-img">
+                        @endif
+                        <strong>{{ strtoupper($result->specialist->name ?? 'Profesional') }}</strong><br>
+                        {{ strtoupper($result->specialist->specialty ?? 'Especialista') }}<br>
+                        {{ strtoupper($result->specialist->university ?? 'Universidad Santiago de Cali') }}<br>
+                        <span style="font-weight: bold;">REG. PROFESIONAL: {{ $result->specialist->license_number ?? '-------' }}</span>
                     </div>
-                @endif
-
-                <div class="specialist-info">
-                    <strong>👨‍⚕️ Especialista:</strong> {{ $result->specialist->name ?? 'No registrado' }}<br>
-                    <strong>📋 Rol:</strong> {{ $result->specialist->role->name ?? 'N/A' }}<br>
-                    <strong>📅 Fecha:</strong> {{ $result->created_at->format('d/m/Y \a \l\a\s H:i') }}
                 </div>
             </div>
-        @endforeach
 
-        {{-- RESUMEN FINAL --}}
-        <div class="section-break"></div>
-        <div class="completion-badge" style="display: block; width: 100%;">
-            ✅ Este reporte integra todas las evaluaciones médicas realizadas
+            <div class="blue-footer">
+                Carrera 12 No 13-24 B/ Simón Bolívar - Jamundí (Valle) | Tel: 316 185 57 27
+            </div>
         </div>
+    @endforeach
 
-        {{-- PIE DE PÁGINA --}}
-        <div class="footer">
-            <p><strong>IPS CREAR INTEGRAL S.A.S</strong></p>
-            <p>Sistema de Gestión Clínica Escolar - Reporte Automático</p>
-            <p>Documento confidencial - Uso exclusivo de profesionales autorizados</p>
-            <p>Generado: {{ now()->format('d/m/Y H:i:s') }}</p>
-        </div>
-    </div>
 </body>
 </html>
