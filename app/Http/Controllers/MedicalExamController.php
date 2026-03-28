@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\MedicalExam;
 use App\Models\ExamResult; // Importante: Asegúrate de que el modelo se llame así
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\{Auth, DB, Storage, Log};
+use Illuminate\Support\Facades\{Auth, DB, Storage, Log, Schema};
 use Illuminate\Support\Str;
 use Barryvdh\DomPDF\Facade\Pdf;
 
@@ -179,6 +179,9 @@ class MedicalExamController extends Controller
             if ($userArea === 'audiometria') {
                 if ($request->filled('audiogram_base64')) {
                     $chartPath = $this->saveMedicalImage($request->audiogram_base64, 'audiogramas', $medical_exam->id);
+                    if ($chartPath) {
+                        $evaluationData['audiogram_path'] = $chartPath; // Guardar en data para PDF fallback
+                    }
                 }
                 $pta_od = $this->calculatePTA($evaluationData, 'od');
                 $pta_oi = $this->calculatePTA($evaluationData, 'oi');
@@ -188,22 +191,31 @@ class MedicalExamController extends Controller
             if ($userArea === 'odontologia' && !empty($evaluationData['odontograma_path'])) {
                 $path = $this->saveMedicalImage($evaluationData['odontograma_path'], 'odontogramas', $medical_exam->id);
                 if ($path) {
-                    $evaluationData['odontograma_path'] = $path; 
+                    $evaluationData['odontograma_path'] = $path;
                     $chartPath = $path; // Guardamos en chart_path para consistencia en reportes
                 }
             }
 
-            // Guardar o actualizar resultado (Usa chart_path según la migración)
+            // Guardar o actualizar resultado con compatibilidad de esquema.
+            $payload = [
+                'user_id' => Auth::id(),
+                'data'    => $evaluationData,
+                'notes'   => $request->notes,
+            ];
+
+            if (Schema::hasColumn('exam_results', 'chart_path')) {
+                $payload['chart_path'] = $chartPath;
+            }
+            if (Schema::hasColumn('exam_results', 'pta_od')) {
+                $payload['pta_od'] = $pta_od;
+            }
+            if (Schema::hasColumn('exam_results', 'pta_oi')) {
+                $payload['pta_oi'] = $pta_oi;
+            }
+
             $medical_exam->results()->updateOrCreate(
                 ['area' => $userArea],
-                [
-                    'user_id'    => Auth::id(),
-                    'data'       => $evaluationData,
-                    'notes'      => $request->notes,
-                    'chart_path' => $chartPath, // Corregido: antes decía chart_image
-                    'pta_od'     => $pta_od,
-                    'pta_oi'     => $pta_oi,
-                ]
+                $payload
             );
 
             // Verificar si el circuito está completo

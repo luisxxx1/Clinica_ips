@@ -1,5 +1,5 @@
 <div class="bg-white rounded-[3rem] shadow-2xl shadow-slate-200/50 border border-slate-100 overflow-hidden">
-    
+
     {{-- HEADER PROFESIONAL --}}
     <div class="p-10 border-b border-slate-50 bg-slate-50/30 text-center md:text-left">
         <div class="flex flex-col md:flex-row justify-between items-center gap-4">
@@ -99,8 +99,38 @@
                 <div class="w-10 h-10 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center font-black text-sm uppercase text-center">03</div>
                 <h3 class="text-xl font-black text-slate-800 uppercase tracking-tight">Curva Audiométrica Dinámica</h3>
             </div>
+
+            {{-- Leyenda de símbolos --}}
+            <div class="flex gap-8 mb-6 p-4 bg-slate-50 rounded-2xl border border-slate-100">
+                <div class="flex items-center gap-3">
+                    <svg width="30" height="30" viewBox="0 0 30 30" style="display: inline-block;">
+                        <circle cx="15" cy="15" r="8" fill="#ef4444" stroke="#dc2626" stroke-width="2"/>
+                    </svg>
+                    <span class="text-sm font-bold text-red-600 uppercase">Oído Derecho (OD)</span>
+                </div>
+                <div class="flex items-center gap-3">
+                    <svg width="30" height="30" viewBox="0 0 30 30" style="display: inline-block;">
+                        <line x1="8" y1="8" x2="22" y2="22" stroke="#2563eb" stroke-width="3" stroke-linecap="round"/>
+                        <line x1="22" y1="8" x2="8" y2="22" stroke="#2563eb" stroke-width="3" stroke-linecap="round"/>
+                    </svg>
+                    <span class="text-sm font-bold text-blue-600 uppercase">Oído Izquierdo (OI)</span>
+                </div>
+            </div>
+
             <div class="relative w-full h-[500px] bg-white rounded-[2rem] p-6 border border-slate-100">
                 <canvas id="audiogramChart"></canvas>
+            </div>
+
+            <div class="flex justify-center mt-8 gap-4">
+                <button type="button" id="btn-capture-audiogram" class="bg-purple-600 hover:bg-purple-500 text-white px-8 py-4 rounded-xl font-black uppercase text-xs tracking-widest transition-all shadow-lg">
+                    📸 Capturar Audiograma
+                </button>
+            </div>
+
+            {{-- Vista previa del audiograma capturado --}}
+            <div id="capture-preview-audio" style="display:none; margin-top: 20px; text-align: center;">
+                <p class="text-sm font-bold text-slate-700 mb-3">Vista previa del audiograma:</p>
+                <img id="preview-img-audio" style="max-width: 100%; max-height: 300px; border: 2px solid #10b981; border-radius: 1rem;">
             </div>
         </section>
 
@@ -149,7 +179,7 @@
     document.addEventListener('DOMContentLoaded', function() {
         const ctx = document.getElementById('audiogramChart').getContext('2d');
         const form = document.getElementById('audiometriaForm');
-        
+
         const audiogramChart = new Chart(ctx, {
             type: 'line',
             data: {
@@ -161,7 +191,7 @@
             },
             options: {
                 responsive: true, maintainAspectRatio: false,
-                scales: { 
+                scales: {
                     y: { reverse: true, min: -10, max: 120, ticks: { stepSize: 10 } }
                 },
                 animation: false // Desactivado para asegurar captura de imagen correcta
@@ -183,8 +213,55 @@
 
         document.querySelectorAll('.dB-input').forEach(input => input.addEventListener('input', syncData));
 
-        form.addEventListener('submit', function() {
-            document.getElementById('audiogram_base64').value = audiogramChart.toBase64Image();
+        // Captura explícita del audiograma
+        let capturedAudiogramBase64 = null;
+        document.getElementById('btn-capture-audiogram').addEventListener('click', function(e) {
+            e.preventDefault();
+            const btn = document.getElementById('btn-capture-audiogram');
+            const originalText = btn.innerHTML;
+            btn.disabled = true;
+            btn.innerHTML = `⏳ Capturando...`;
+
+            setTimeout(() => {
+                try {
+                    // Capturar imagen del gráfico
+                    capturedAudiogramBase64 = audiogramChart.toBase64Image();
+
+                    // Mostrar vista previa
+                    document.getElementById('preview-img-audio').src = capturedAudiogramBase64;
+                    document.getElementById('capture-preview-audio').style.display = 'block';
+
+                    // Guardar en input oculto
+                    document.getElementById('audiogram_base64').value = capturedAudiogramBase64;
+
+                    btn.disabled = false;
+                    btn.innerHTML = `✅ ${originalText}`;
+                    btn.classList.remove('bg-purple-600', 'hover:bg-purple-500');
+                    btn.classList.add('bg-green-600', 'hover:bg-green-500');
+
+                    setTimeout(() => {
+                        btn.innerHTML = originalText;
+                        btn.classList.remove('bg-green-600', 'hover:bg-green-500');
+                        btn.classList.add('bg-purple-600', 'hover:bg-purple-500');
+                    }, 2000);
+                } catch (err) {
+                    console.error('Error capturando audiograma:', err);
+                    btn.disabled = false;
+                    btn.innerHTML = `❌ Error en captura`;
+                    setTimeout(() => {
+                        btn.innerHTML = originalText;
+                    }, 2000);
+                }
+            }, 150);
+        });
+
+        form.addEventListener('submit', function(e) {
+            if (!capturedAudiogramBase64) {
+                e.preventDefault();
+                alert('⚠️ Debes capturar el audiograma primero antes de guardar.');
+                return;
+            }
+            document.getElementById('audiogram_base64').value = capturedAudiogramBase64;
         });
     });
 </script>

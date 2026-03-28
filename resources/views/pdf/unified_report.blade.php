@@ -21,7 +21,7 @@
             color: #000;
             line-height: 1.3;
             background: white;
-            padding: 1.2cm 1.8cm; 
+            padding: 1.2cm 1.8cm;
         }
 
         .page-break {
@@ -275,26 +275,61 @@
                         <td width="45%" style="vertical-align: top; padding-right: 15px;">
                             <table class="data-table">
                                 <tr class="purple-header">
-                                    <th>Simbolización</th>
-                                    <th>Oído Derecho</th>
-                                    <th>Oído Izquierdo</th>
+                                    <th colspan="3" style="font-size: 11pt; padding: 12px; background: #f1f5f9; color: #1e293b;">CONVENCIONES - SÍMBOLOS AUDIOMÉTRICOS</th>
                                 </tr>
-                                <tr>
-                                    <td style="text-align: left;">Vía aérea sin masking</td>
-                                    <td><span style="color:red; font-size:14pt; font-weight: bold;">○</span></td>
-                                    <td><span style="color:blue; font-size:14pt; font-weight: bold;">✕</span></td>
+                                <tr style="height: 50px;">
+                                    <td style="text-align: center; font-weight: bold; font-size: 10pt; vertical-align: middle;">Vía Aérea</td>
+                                    <td style="text-align: center; border-left: 1px solid #e2e8f0; vertical-align: middle;">
+                                        <div style="font-size: 48pt; color: #ef4444; font-weight: bold; line-height: 1; font-family: Arial, sans-serif;">O</div>
+                                        <div style="font-size: 9pt; font-weight: bold; color: #ef4444; margin-top: 5px;">OÍDO<br/>DERECHO</div>
+                                    </td>
+                                    <td style="text-align: center; border-left: 1px solid #e2e8f0; vertical-align: middle;">
+                                        <div style="font-size: 48pt; color: #2563eb; font-weight: bold; line-height: 1; font-family: Arial, sans-serif;">X</div>
+                                        <div style="font-size: 9pt; font-weight: bold; color: #2563eb; margin-top: 5px;">OÍDO<br/>IZQUIERDO</div>
+                                    </td>
                                 </tr>
                             </table>
 
                             <table class="data-table" style="width: 100%; margin-top: 20px;">
+                                @php
+                                    $ptaOd = $result->pta_od;
+                                    $ptaOi = $result->pta_oi;
+                                    $ptaFreqs = [500, 1000, 2000];
+
+                                    if ($ptaOd === null) {
+                                        $sumOd = 0;
+                                        $countOd = 0;
+                                        foreach ($ptaFreqs as $f) {
+                                            $v = data_get($result->data, "dB_od_{$f}");
+                                            if (is_numeric($v)) {
+                                                $sumOd += (float) $v;
+                                                $countOd++;
+                                            }
+                                        }
+                                        $ptaOd = $countOd > 0 ? round($sumOd / $countOd, 2) : null;
+                                    }
+
+                                    if ($ptaOi === null) {
+                                        $sumOi = 0;
+                                        $countOi = 0;
+                                        foreach ($ptaFreqs as $f) {
+                                            $v = data_get($result->data, "dB_oi_{$f}");
+                                            if (is_numeric($v)) {
+                                                $sumOi += (float) $v;
+                                                $countOi++;
+                                            }
+                                        }
+                                        $ptaOi = $countOi > 0 ? round($sumOi / $countOi, 2) : null;
+                                    }
+                                @endphp
                                 <tr>
                                     <th rowspan="2" style="background: #f1f5f9; width: 40%; font-size: 10pt;">PTA</th>
                                     <th style="color: red;">OD</th>
                                     <th style="color: blue;">OI</th>
                                 </tr>
                                 <tr>
-                                    <td style="font-size: 11pt; font-weight: bold;">{{ $result->pta_od ?? '--' }}</td>
-                                    <td style="font-size: 11pt; font-weight: bold;">{{ $result->pta_oi ?? '--' }}</td>
+                                    <td style="font-size: 11pt; font-weight: bold;">{{ $ptaOd !== null ? number_format((float) $ptaOd, 2, '.', '') : '--' }}</td>
+                                    <td style="font-size: 11pt; font-weight: bold;">{{ $ptaOi !== null ? number_format((float) $ptaOi, 2, '.', '') : '--' }}</td>
                                 </tr>
                             </table>
 
@@ -304,8 +339,23 @@
                         </td>
                         <td width="55%" style="text-align: center; vertical-align: top;">
                             <div style="border: 1px solid #000; padding: 5px; background-color: #fff;">
-                                @if($result->chart_path)
-                                    <img src="{{ public_path('storage/' . $result->chart_path) }}" style="width: 100%; height: auto; display: block;">
+                                @php
+                                    $audiogramPath = $result->chart_path ?? data_get($result->data, 'audiogram_path');
+                                    $audiogramImagePath = null;
+                                    if ($audiogramPath) {
+                                        $storageAppPath = storage_path('app/public/' . ltrim($audiogramPath, '/'));
+                                        if (file_exists($storageAppPath)) {
+                                            $audiogramImagePath = $storageAppPath;
+                                        } elseif (!$audiogramImagePath) {
+                                            $publicStoragePath = public_path('storage/' . ltrim($audiogramPath, '/'));
+                                            if (file_exists($publicStoragePath)) {
+                                                $audiogramImagePath = $publicStoragePath;
+                                            }
+                                        }
+                                    }
+                                @endphp
+                                @if($audiogramImagePath)
+                                    <img src="{{ $audiogramImagePath }}" style="width: 100%; height: auto; display: block;">
                                 @else
                                     <div style="height: 180px; padding-top: 80px; color: #999; font-style: italic; border: 1px dashed #ccc;">
                                         Gráfica de Audiometría no disponible
@@ -319,11 +369,55 @@
             @endif
 
             {{-- CASO ODONTOLOGÍA (MOSTRAR ODONTOGRAMA) --}}
-            @if ($areaKey === 'odontologia' && $result->chart_path)
-                <div style="text-align: center; margin-bottom: 15px;">
-                    <img src="{{ public_path('storage/' . $result->chart_path) }}" style="max-height: 250px; width: auto; border: 1px solid #eee;">
-                    <div style="font-size: 7pt; font-weight: bold;">ODONTOGRAMA INICIAL</div>
-                </div>
+            @if ($areaKey === 'odontologia')
+                @php
+                    $odontogramaPath = $result->chart_path ?? data_get($result->data, 'odontograma_path');
+                    $imagePath = null;
+                    if ($odontogramaPath) {
+                        // Intentar cargar desde storage/app/public
+                        $storageAppPath = storage_path('app/public/' . ltrim($odontogramaPath, '/'));
+                        if (file_exists($storageAppPath)) {
+                            $imagePath = $storageAppPath;
+                        }
+                    }
+                    // Fallback a public/storage
+                    if (!$imagePath && $odontogramaPath) {
+                        $publicStoragePath = public_path('storage/' . ltrim($odontogramaPath, '/'));
+                        if (file_exists($publicStoragePath)) {
+                            $imagePath = $publicStoragePath;
+                        }
+                    }
+                @endphp
+                @if($imagePath)
+                    <div style="text-align: center; margin-bottom: 15px;">
+                        <img src="{{ $imagePath }}" style="max-height: 250px; width: auto; border: 1px solid #eee;">
+                        <div style="font-size: 7pt; font-weight: bold;">ODONTOGRAMA INICIAL</div>
+                    </div>
+                @endif
+
+                <table class="data-table" style="width: 100%; margin-top: 8px; margin-bottom: 15px;">
+                    <tr>
+                        <th colspan="4" style="font-size: 9pt; background: #f1f5f9; color: #1e293b;">CONVENCIONES DE COLORES DEL ODONTOGRAMA</th>
+                    </tr>
+                    <tr>
+                        <td style="text-align: left; font-weight: bold;">
+                            <span style="display: inline-block; width: 9px; height: 9px; background: #ef4444; border: 1px solid #b91c1c; vertical-align: middle;"></span>
+                            <span style="margin-left: 6px; vertical-align: middle;">Rojo: Caries</span>
+                        </td>
+                        <td style="text-align: left; font-weight: bold;">
+                            <span style="display: inline-block; width: 9px; height: 9px; background: #22c55e; border: 1px solid #15803d; vertical-align: middle;"></span>
+                            <span style="margin-left: 6px; vertical-align: middle;">Verde: Sellante</span>
+                        </td>
+                        <td style="text-align: left; font-weight: bold;">
+                            <span style="display: inline-block; width: 9px; height: 9px; background: #3b82f6; border: 1px solid #1d4ed8; vertical-align: middle;"></span>
+                            <span style="margin-left: 6px; vertical-align: middle;">Azul: Restauración</span>
+                        </td>
+                        <td style="text-align: left; font-weight: bold;">
+                            <span style="display: inline-block; width: 9px; height: 9px; background: #000000; border: 1px solid #000000; vertical-align: middle;"></span>
+                            <span style="margin-left: 6px; vertical-align: middle;">Negro: Ausente</span>
+                        </td>
+                    </tr>
+                </table>
             @endif
 
             {{-- OBSERVACIONES Y FIRMA --}}

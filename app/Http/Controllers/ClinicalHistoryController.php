@@ -183,31 +183,65 @@ class ClinicalHistoryController extends Controller
     private function defaultClinicalEntry(): string
     {
         return match ($this->currentAreaSlug()) {
-            'audiometria' => "A la valoración auditiva mediante audiometría comportamental de tonos puros realizada en la IPS NO se evidencian dificultades auditivas presentando Normoacusia.\n"
-                . "OBSERVACIONES/RECOMENDACIONES:\n"
-                . "- Durante la exploración física se evidencia conducto auditivo normal sin lesión, cera fisiológica normal.\n"
-                . "- Mantener controles auditivos preventivos de manera periódica, especialmente en edad escolar.\n"
-                . "- Evitar la exposición a ruidos intensos o prolongados (volumen elevado en televisión, dispositivos electrónicos o ambientes ruidosos).\n"
-                . "- Evitar la introducción de objetos extraños en el conducto auditivo externo.\n"
-                . "- Observar posibles signos de alerta como dificultad para seguir instrucciones, aumento del volumen al escuchar, o necesidad de repetición frecuente.",
+            'audiometria' => "A la valoración auditiva mediante audiometría comportamental de tonos puros realizada en la IE, NO se evidencian dificultades auditivas, presentando Normoacusia.\n\n"
+                . "OBSERVACIONES:\n"
+                . "• Durante la exploración física se evidencia:\n"
+                . "  CAE: Permeables, sin presencia de cerumen impactado ni secreciones.\n"
+                . "  MT: Integra, bien orientada, de color nacarado y sin evidencias de perforación, retracción o líquido en oído medio.\n"
+                . "• Realizar Audiometría Clínica o Potenciales Evocados Auditivos con el fin de corroborar resultado obtenido.\n\n"
+                . "RECOMENDACIONES:\n"
+                . "● Mantener controles auditivos preventivos de manera periódica, especialmente en edad escolar.\n"
+                . "● Evitar la exposición a ruidos intensos o prolongados (volumen elevado en dispositivos o ambientes ruidosos).\n"
+                . "● Supervisar el uso de audífonos y evitar la introducción de objetos extraños en el conducto auditivo externo.\n"
+                . "● Observar posibles signos de alerta como dificultad para seguir instrucciones o necesidad de repetición frecuente.\n"
+                . "● Acudir a valoración por fonoaudiología u otorrinolaringología ante cualquier cambio en la respuesta auditiva o del lenguaje.",
 
-            'valoracion_medica', 'medicina_general' => "Paciente valorado en Medicina General. Estado clínico general dentro de parámetros esperados para la edad, sin hallazgos de alarma al momento de la consulta.\n"
-                . "OBSERVACIONES/RECOMENDACIONES:\n"
-                . "- Mantener hábitos de vida saludable (alimentación balanceada, hidratación y actividad física).\n"
-                . "- Continuar controles médicos preventivos periódicos.\n"
-                . "- Acudir nuevamente si aparecen síntomas nuevos o cambios clínicos relevantes.",
+                'medicina_general' => "El que suscribe legalmente autorizado para ejercer su profesión.\n\n"
+                    . "CERTIFICA:\n"
+                    . "● No existen síntomas o signos de enfermedad orgánica o infecciosa ni de ninguna otra enfermedad transmisible.\n"
+                    . "● El/La paciente no padece de ninguna enfermedad crónica que lo/la limite físicamente.\n\n"
+                    . "PARÁMETROS ANTROPOMÉTRICOS:\n"
+                    . "Peso: 17.8 Kg\n"
+                    . "Talla: 107 Cm\n"
+                    . "IMC: 15.5\n"
+                    . "Percentil: 58\n\n"
+                    . "IDX: 1. APS FISICAMENTE ESTABLE\n\n"
+                    . "OBSERVACIONES/RECOMENDACIONES:\n"
+                    . "• Mantener controles médicos periódicos de crecimiento y desarrollo, según esquema pediátrico.\n"
+                    . "• Cumplir con el esquema de vacunación correspondiente a la edad.\n"
+                    . "• Promover una alimentación balanceada, variada y acorde a la edad, rica en frutas, verduras, proteínas y adecuada hidratación.\n"
+                    . "• Fomentar la actividad física diaria y el juego al aire libre, evitando el sedentarismo.\n"
+                    . "• Establecer rutinas de sueño adecuadas, asegurando entre 10 y 12 horas de descanso nocturno.\n"
+                    . "• Reforzar hábitos de higiene personal, como el lavado frecuente de manos y el cepillado dental después de cada comida.\n"
+                    . "• Asistir a controles odontológicos al menos cada seis meses.\n"
+                    . "• Limitar el tiempo de exposición a pantallas (televisión, tabletas, celulares).",
 
-            'odontologia' => "Paciente valorado en Odontología. No se evidencian alteraciones odontológicas significativas al momento del examen clínico, con estado oral general dentro de la normalidad.\n"
-                . "OBSERVACIONES/RECOMENDACIONES:\n"
-                . "- Mantener higiene oral diaria (cepillado después de cada comida y uso de seda dental).\n"
-                . "- Control odontológico preventivo cada 6 meses.\n"
-                . "- Reducir consumo frecuente de azúcares para prevención de caries.",
+            'odontologia' => "Usuario que asiste a valoración Odontológica donde se realiza carta dental.\n"
+                . "No se observan lesiones cariosas activas, procesos infecciosos ni alteraciones en tejidos blandos o duros. "
+                . "La dentición temporal se encuentra acorde a la edad, con adecuado proceso de erupción.\n\n"
+                . "Índice ceo-d: 0 (sin evidencia de dientes cariados, extraídos u obturados en dentición temporal).\n\n"
+                . "De acuerdo con lo anterior, el(la) paciente se encuentra en condiciones de salud oral satisfactorias "
+                . "al momento de la valoración y es apto(a) para su permanencia en el entorno escolar.\n\n"
+                . "RECOMENDACIONES:\n"
+                . "- Mantener hábitos adecuados de higiene oral mediante cepillado mínimo tres veces al día y supervisión de un adulto.\n"
+                . "- Limitar el consumo de azúcares y alimentos cariogénicos; fomentar una alimentación balanceada.\n"
+                . "- Asistir a controles odontológicos cada seis meses.",
 
-            'optometria' => "Paciente valorado en Optometría. Agudeza visual y valoración ocular sin hallazgos significativos, compatible con estado visual funcional dentro de parámetros normales.\n"
+            'optometria' => "Al realizar el examen del usuario en mención se encontró:\n\n"
+                . "AGUDEZA VISUAL:\n"
+                . "OD: 20/20 | OI: 20/20 | VP: 20/20\n"
+                . "CSM (Capacidad Sensorial y Motora)\n"
+                . "Examen realizado con opto-tipo E direccional y luz.\n\n"
+                . "HALLAZGOS:\n"
+                . "Al examen externo se encuentran corneas claras, medios transparentes y cámara anterior formada.\n"
+                . "IDX: H527 (Trastorno de la refracción, no especificado).\n\n"
                 . "OBSERVACIONES/RECOMENDACIONES:\n"
-                . "- Mantener controles visuales periódicos según edad escolar.\n"
-                . "- Promover higiene visual (descansos en pantallas, buena iluminación y distancia adecuada de lectura).\n"
-                . "- Consultar nuevamente ante síntomas como visión borrosa, cefalea o fatiga visual.",
+                . "- Se aconseja asistir por su EPS para controles anuales.\n"
+                . "- Implementar hábitos de higiene visual: mantener adecuada iluminación y conservar una distancia prudente frente a pantallas (mínimo 40–50 cm).\n"
+                . "- Aplicar la regla 20-20-20: cada 20 minutos descansar la vista mirando a lo lejos durante 20 segundos.\n"
+                . "- Evitar el uso prolongado de dispositivos electrónicos sin pausas activas y fomentar actividades al aire libre.\n"
+                . "- Consultar nuevamente si presenta visión borrosa, dolor de cabeza recurrente, fatiga visual o ardor ocular.\n"
+                . "- El seguimiento oportuno permitirá mantener un adecuado desempeño en las actividades académicas y diarias.",
 
             'fonoaudiologia' => "Paciente valorado por Fonoaudiología. Se observan procesos comunicativos y de lenguaje acordes a la etapa del desarrollo, sin alteraciones evidentes durante la evaluación.\n"
                 . "OBSERVACIONES/RECOMENDACIONES:\n"
@@ -215,11 +249,17 @@ class ClinicalHistoryController extends Controller
                 . "- Mantener seguimiento preventivo del desarrollo del lenguaje.\n"
                 . "- Revalorar en caso de notar cambios en articulación, comprensión o fluidez verbal.",
 
-            'psicologia' => "Paciente valorado por Psicología. Durante la consulta se evidencia adaptación emocional y conductual adecuada para su contexto escolar, sin signos de riesgo psicológico inmediato.\n"
-                . "OBSERVACIONES/RECOMENDACIONES:\n"
-                . "- Fortalecer rutinas de sueño, estudio y recreación saludable.\n"
-                . "- Mantener acompañamiento familiar y comunicación asertiva en casa.\n"
-                . "- Solicitar nueva valoración si se identifican cambios marcados en estado de ánimo o conducta.",
+            'psicologia' => "Motivo de consulta Entrevista psicológica para ingreso al colegio XXX\n\n"
+                        . "Observaciones de la conducta\n"
+                        . "Estudiante ingresa en compañía de Xxx en adecuadas condiciones de higiene y aseo, presenta coherencia ideo verbal, establece contacto visual adecuado y producción del pensamiento, con buen comportamiento, receptivo, es capaz de sostener el foco atencional de aquellos elementos del ambiente, tiene iniciativa y es propositivo en la comunicación, tiene buena valoración de sí misma, refiere relaciones interpersonales sanas.\n\n"
+                        . "Composición familiar\n"
+                        . "El/la menor reside actualmente con xxx Mantiene vinculo con su padre, con quien comparte tiempo de manera esporádica conservando una relación respetuosa y funcional. El grupo familiar presenta una dinámica adecuada, relaciones basadas en el respeto, la comunicación y el apoyo mutuo.\n"
+                        . "La corresponsabilidad parental favorece un entorno estable y seguro, permitiendo al estudiante desarrollar vínculos afectivos sanos, normas claras y valores que contribuyen positivamente a su desarrollo integral. El comportamiento del estudiante dentro del contexto familiar se caracteriza por ser asertivo, respetuoso y acorde a las normas y rutinas establecidas.\n\n"
+                        . "Dimensión académica (instituciones educativas previas, fortalezas, dificultades en asignaturas, etc.)\n"
+                        . "El/la estudiante curso el grado xxx en el colegio xxx el cual aprobó con buen rendimiento académico, buen desempeño cognitivo, social y buena dinámica escolar. El motivo por el cual los acudientes deciden ingresarlo/a en el xxx es debido al deseo de continuar fortaleciendo sus habilidades sociales y cognitivas.\n\n"
+                        . "Conclusiones\n"
+                        . "- El/la estudiante cuenta con habilidades sociales, académicas y un núcleo familiar estable y positivo el cual favorece el logro exitoso de cada una de las competencias en el proceso educativo y acompañamiento significativo en el desarrollo personal. Por ende, es apto para el contexto educativo.\n"
+                        . "- Se sugiere al acudiente e institución educativa estar atentos al proceso de adaptación escolar del estudiante, y la posibilidad de cambios emocionales y/o comportamentales en dicho proceso.",
 
             default => "Paciente evaluado por el área correspondiente. A la fecha no se evidencian hallazgos clínicos de alarma y el estado general se encuentra dentro de parámetros esperados.\n"
                 . "OBSERVACIONES/RECOMENDACIONES:\n"
