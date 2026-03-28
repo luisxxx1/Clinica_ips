@@ -33,6 +33,8 @@
                                             <option value="RC" {{ old('document_type', $student->document_type) == 'RC' ? 'selected' : '' }}>Registro Civil</option>
                                             <option value="TI" {{ old('document_type', $student->document_type) == 'TI' ? 'selected' : '' }}>Tarjeta Identidad</option>
                                             <option value="CC" {{ old('document_type', $student->document_type) == 'CC' ? 'selected' : '' }}>Cédula</option>
+                                            <option value="CE" {{ old('document_type', $student->document_type) == 'CE' ? 'selected' : '' }}>Cédula de Extranjería</option>
+                                            <option value="RE" {{ old('document_type', $student->document_type) == 'RE' ? 'selected' : '' }}>Registro de Extranjería</option>
                                         </select>
                                     </div>
                                     <div>
@@ -126,13 +128,13 @@
                                 </div>
 
                                 <div>
-                                    <x-input-label for="guardian_address" :value="__('Dirección de Residencia')" class="text-[10px] uppercase tracking-widest font-bold text-slate-400" />
-                                    <x-text-input id="guardian_address" class="block mt-1 w-full rounded-xl border-slate-200" type="text" name="guardian_address" :value="old('guardian_address', $student->guardian_address)" required />
+                                    <x-input-label for="guardian_address" :value="__('Dirección de Residencia (Opcional)')" class="text-[10px] uppercase tracking-widest font-bold text-slate-400" />
+                                    <x-text-input id="guardian_address" class="block mt-1 w-full rounded-xl border-slate-200" type="text" name="guardian_address" :value="old('guardian_address', $student->guardian_address)" />
                                 </div>
 
                                 <div>
-                                    <x-input-label for="guardian_email" :value="__('Correo Electrónico')" class="text-[10px] uppercase tracking-widest font-bold text-slate-400" />
-                                    <x-text-input id="guardian_email" class="block mt-1 w-full rounded-xl border-slate-200" type="email" name="guardian_email" :value="old('guardian_email', $student->guardian_email)" required />
+                                    <x-input-label for="guardian_email" :value="__('Correo Electrónico (Opcional)')" class="text-[10px] uppercase tracking-widest font-bold text-slate-400" />
+                                    <x-text-input id="guardian_email" class="block mt-1 w-full rounded-xl border-slate-200" type="email" name="guardian_email" :value="old('guardian_email', $student->guardian_email)" />
                                 </div>
                             </div>
 

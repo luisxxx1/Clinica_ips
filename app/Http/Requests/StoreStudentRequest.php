@@ -29,7 +29,7 @@ class StoreStudentRequest extends FormRequest
 
         return [
             // Datos del Estudiante
-            'document_type'   => ['required', Rule::in(['TI', 'CC', 'RC', 'CE'])], // Añadí CE (Cédula Extranjería)
+            'document_type'   => ['required', Rule::in(['TI', 'CC', 'RC', 'CE', 'RE'])],
             'document_number' => [
                 'required',
                 'string',
@@ -40,7 +40,7 @@ class StoreStudentRequest extends FormRequest
             'first_name'      => 'required|string|max:100',
             'last_name'       => 'required|string|max:100',
             'birth_date'      => 'required|date|before_or_equal:today',
-            'age'             => 'nullable|integer|min:3|max:25', // Se calcula automáticamente desde fecha de nacimiento
+            'age'             => 'nullable|integer|min:1|max:25', // Se calcula automáticamente desde fecha de nacimiento
             'gender'          => ['required', Rule::in(['Masculino', 'Femenino', 'Otro'])],
             'previous_school' => 'nullable|string|max:255', // Cambiado a nullable por si es su primer colegio
             'grade'           => 'required|string|max:50',
@@ -51,9 +51,9 @@ class StoreStudentRequest extends FormRequest
             'guardian_document'     => 'required|string|max:20',
             'guardian_age'          => 'required|integer|min:18', // Validación de mayoría de edad
             'guardian_phone'        => 'required|string|max:20',
-            'guardian_address'      => 'required|string|max:255',
+            'guardian_address'      => 'nullable|string|max:255',
             'guardian_relationship' => 'required|string|max:50',
-            'guardian_email'        => 'required|email|max:100',
+            'guardian_email'        => 'nullable|email|max:100',
 
             // Circuito Médico
             'requested_areas'       => 'required|array|min:1',

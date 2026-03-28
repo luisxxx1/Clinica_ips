@@ -39,6 +39,8 @@
                                         <option value="TI" {{ old('document_type') == 'TI' ? 'selected' : '' }}>T.I</option>
                                         <option value="RC" {{ old('document_type') == 'RC' ? 'selected' : '' }}>R.C</option>
                                         <option value="CC" {{ old('document_type') == 'CC' ? 'selected' : '' }}>C.C</option>
+                                        <option value="CE" {{ old('document_type') == 'CE' ? 'selected' : '' }}>C.E</option>
+                                        <option value="RE" {{ old('document_type') == 'RE' ? 'selected' : '' }}>R.E</option>
                                     </select> {{-- CORREGIDO: Faltaba cerrar el select --}}
                                 </div> {{-- CORREGIDO: Faltaba cerrar el div --}}
 
@@ -117,12 +119,12 @@
                                     <x-text-input id="guardian_relationship" class="block mt-1 w-full" type="text" name="guardian_relationship" :value="old('guardian_relationship')" required />
                                 </div>
                                 <div class="md:col-span-2">
-                                    <x-input-label for="guardian_address" :value="__('Dirección')" />
-                                    <x-text-input id="guardian_address" class="block mt-1 w-full" type="text" name="guardian_address" :value="old('guardian_address')" required />
+                                    <x-input-label for="guardian_address" :value="__('Dirección (Opcional)')" />
+                                    <x-text-input id="guardian_address" class="block mt-1 w-full" type="text" name="guardian_address" :value="old('guardian_address')" />
                                 </div>
                                 <div>
-                                    <x-input-label for="guardian_email" :value="__('Correo Electrónico')" />
-                                    <x-text-input id="guardian_email" class="block mt-1 w-full" type="email" name="guardian_email" :value="old('guardian_email')" required />
+                                    <x-input-label for="guardian_email" :value="__('Correo Electrónico (Opcional)')" />
+                                    <x-text-input id="guardian_email" class="block mt-1 w-full" type="email" name="guardian_email" :value="old('guardian_email')" />
                                 </div>
                             </div>
                         </div>
