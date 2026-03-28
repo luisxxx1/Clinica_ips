@@ -55,8 +55,12 @@
                                     <x-text-input id="last_name" class="block mt-1 w-full" type="text" name="last_name" :value="old('last_name')" required />
                                 </div>
                                 <div>
+                                    <x-input-label for="birth_date" :value="__('Fecha de Nacimiento')" />
+                                    <x-text-input id="birth_date" class="block mt-1 w-full" type="date" name="birth_date" :value="old('birth_date')" required />
+                                </div>
+                                <div>
                                     <x-input-label for="age" :value="__('Edad')" />
-                                    <x-text-input id="age" class="block mt-1 w-full" type="number" name="age" :value="old('age')" required />
+                                    <x-text-input id="age" class="block mt-1 w-full bg-slate-50" type="number" name="age" :value="old('age')" required readonly />
                                 </div>
                                 <div>
                                     <x-input-label for="gender" :value="__('Sexo')" />
@@ -167,3 +171,40 @@
         </div>
     </div>
 </x-app-layout>
+
+<script>
+    (function () {
+        const birthInput = document.getElementById('birth_date');
+        const ageInput = document.getElementById('age');
+
+        if (!birthInput || !ageInput) {
+            return;
+        }
+
+        const calculateAge = (birthDateValue) => {
+            if (!birthDateValue) return '';
+
+            const today = new Date();
+            const birthDate = new Date(birthDateValue + 'T00:00:00');
+
+            if (Number.isNaN(birthDate.getTime())) return '';
+
+            let age = today.getFullYear() - birthDate.getFullYear();
+            const monthDiff = today.getMonth() - birthDate.getMonth();
+
+            if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+                age--;
+            }
+
+            return age >= 0 ? age : '';
+        };
+
+        const syncAge = () => {
+            ageInput.value = calculateAge(birthInput.value);
+        };
+
+        birthInput.addEventListener('change', syncAge);
+        birthInput.addEventListener('input', syncAge);
+        syncAge();
+    })();
+</script>

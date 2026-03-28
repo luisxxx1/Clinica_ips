@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Carbon;
 use Illuminate\Validation\Rule;
 
 class StoreStudentRequest extends FormRequest
@@ -12,7 +13,7 @@ class StoreStudentRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        // Se deja en true para permitir la validación. 
+        // Se deja en true para permitir la validación.
         // La seguridad por roles se maneja usualmente en el Controller o Middleware.
         return true;
     }
@@ -38,7 +39,8 @@ class StoreStudentRequest extends FormRequest
             ],
             'first_name'      => 'required|string|max:100',
             'last_name'       => 'required|string|max:100',
-            'age'             => 'required|integer|min:3|max:25', // Ampliado a 25 por si hay educación nocturna/especial
+            'birth_date'      => 'required|date|before_or_equal:today',
+            'age'             => 'nullable|integer|min:3|max:25', // Se calcula automáticamente desde fecha de nacimiento
             'gender'          => ['required', Rule::in(['Masculino', 'Femenino', 'Otro'])],
             'previous_school' => 'nullable|string|max:255', // Cambiado a nullable por si es su primer colegio
             'grade'           => 'required|string|max:50',
@@ -55,7 +57,7 @@ class StoreStudentRequest extends FormRequest
 
             // Circuito Médico
             'requested_areas'       => 'required|array|min:1',
-            'requested_areas.*'     => 'string', 
+            'requested_areas.*'     => 'string',
         ];
     }
 
@@ -69,8 +71,25 @@ class StoreStudentRequest extends FormRequest
             'document_number' => 'número de documento',
             'first_name' => 'nombres',
             'last_name' => 'apellidos',
+            'birth_date' => 'fecha de nacimiento',
             'requested_areas' => 'áreas de valoración',
             'guardian_email' => 'correo del acudiente',
         ];
+    }
+
+    protected function prepareForValidation(): void
+    {
+        $birthDate = $this->input('birth_date');
+
+        if (!$birthDate) {
+            return;
+        }
+
+        try {
+            $calculatedAge = Carbon::parse($birthDate)->age;
+            $this->merge(['age' => $calculatedAge]);
+        } catch (\Throwable $e) {
+            // Si la fecha es inválida, dejamos que la regla de birth_date responda.
+        }
     }
 }

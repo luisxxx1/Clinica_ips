@@ -13,6 +13,10 @@ class Student extends Model
 {
     use HasFactory, SoftDeletes;
 
+    protected $casts = [
+        'birth_date' => 'date',
+    ];
+
     /**
      * Atributos asignables masivamente.
      */
@@ -22,6 +26,7 @@ class Student extends Model
         'document_number',
         'first_name',
         'last_name',
+        'birth_date',
         'age',
         'gender',
         'previous_school',

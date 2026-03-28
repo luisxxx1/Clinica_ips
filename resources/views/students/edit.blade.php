@@ -8,7 +8,7 @@
     <div class="py-12 bg-slate-50/50 min-h-screen">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-[2rem] border border-slate-200">
-                
+
                 <div class="p-8 md:p-12">
                     {{-- Formulario de Edición --}}
                     <form action="{{ route('students.update', $student) }}" method="POST" class="space-y-10">
@@ -54,8 +54,12 @@
 
                                 <div class="grid grid-cols-2 gap-4">
                                     <div>
+                                        <x-input-label for="birth_date" :value="__('Fecha de Nacimiento')" class="text-[10px] uppercase tracking-widest font-bold text-slate-400" />
+                                        <x-text-input id="birth_date" class="block mt-1 w-full rounded-xl border-slate-200" type="date" name="birth_date" :value="old('birth_date', optional($student->birth_date)->format('Y-m-d'))" required />
+                                    </div>
+                                    <div>
                                         <x-input-label for="age" :value="__('Edad')" class="text-[10px] uppercase tracking-widest font-bold text-slate-400" />
-                                        <x-text-input id="age" class="block mt-1 w-full rounded-xl border-slate-200" type="number" name="age" :value="old('age', $student->age)" required />
+                                        <x-text-input id="age" class="block mt-1 w-full rounded-xl border-slate-200 bg-slate-50" type="number" name="age" :value="old('age', $student->age)" required readonly />
                                     </div>
                                     <div>
                                         <x-input-label for="gender" :value="__('Género')" class="text-[10px] uppercase tracking-widest font-bold text-slate-400" />
@@ -149,3 +153,40 @@
         </div>
     </div>
 </x-app-layout>
+
+<script>
+    (function () {
+        const birthInput = document.getElementById('birth_date');
+        const ageInput = document.getElementById('age');
+
+        if (!birthInput || !ageInput) {
+            return;
+        }
+
+        const calculateAge = (birthDateValue) => {
+            if (!birthDateValue) return '';
+
+            const today = new Date();
+            const birthDate = new Date(birthDateValue + 'T00:00:00');
+
+            if (Number.isNaN(birthDate.getTime())) return '';
+
+            let age = today.getFullYear() - birthDate.getFullYear();
+            const monthDiff = today.getMonth() - birthDate.getMonth();
+
+            if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+                age--;
+            }
+
+            return age >= 0 ? age : '';
+        };
+
+        const syncAge = () => {
+            ageInput.value = calculateAge(birthInput.value);
+        };
+
+        birthInput.addEventListener('change', syncAge);
+        birthInput.addEventListener('input', syncAge);
+        syncAge();
+    })();
+</script>

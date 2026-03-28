@@ -3,10 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\ClinicalHistory;
+use App\Models\ExamResult;
 use App\Models\Student;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 class ClinicalHistoryController extends Controller
@@ -61,7 +63,7 @@ class ClinicalHistoryController extends Controller
             'student' => $student,
             'currentAreaLabel' => $this->currentAreaLabel(),
             'defaultClinicalTitle' => $this->defaultClinicalTitle(),
-            'defaultClinicalEntry' => $this->defaultClinicalEntry(),
+            'defaultClinicalEntry' => $this->defaultClinicalEntry($student),
         ]);
     }
 
@@ -136,9 +138,82 @@ class ClinicalHistoryController extends Controller
             . now()->format('d-m-Y_H-i')
             . '.pdf';
 
+        $graphics = ExamResult::query()
+            ->whereHas('medicalExam', function ($query) use ($student) {
+                $query->where('student_id', $student->id);
+            })
+            ->whereIn('area', ['audiometria', 'audiometría', 'odontologia', 'odontología'])
+            ->with('specialist.role')
+            ->orderByDesc('created_at')
+            ->orderByDesc('id')
+            ->get()
+            ->map(function (ExamResult $result) {
+                $source = $this->resolveGraphicSourceForPdf($result);
+
+                if (!$source) {
+                    return null;
+                }
+
+                return [
+                    'area' => $result->area,
+                    'specialist' => $result->specialist?->name ?? 'No registrado',
+                    'created_at' => optional($result->created_at)->format('d/m/Y H:i'),
+                    'source' => $source,
+                    'pta_od' => $result->pta_od,
+                    'pta_oi' => $result->pta_oi,
+                    'data' => $result->data ?? [],
+                ];
+            })
+            ->filter()
+            ->values();
+
+        $entriesByArea = $student->clinicalHistories
+            ->groupBy(fn (ClinicalHistory $entry) => $this->normalizeAreaKey($entry->area));
+
+        $areasWithEntries = $entriesByArea->keys()->values();
+        $areasWithGraphics = $graphics
+            ->map(fn (array $graphic) => $this->normalizeAreaKey($graphic['area']))
+            ->unique()
+            ->values();
+
+        $preferredAreaOrder = collect([
+            'audiometria',
+            'odontologia',
+            'valoracion_medica',
+            'optometria',
+            'fonoaudiologia',
+            'psicologia',
+        ]);
+
+        $orderedAreaKeys = $preferredAreaOrder
+            ->filter(fn (string $areaKey) => $areasWithEntries->contains($areaKey) || $areasWithGraphics->contains($areaKey))
+            ->values();
+
+        $extraAreaKeys = $areasWithEntries
+            ->merge($areasWithGraphics)
+            ->unique()
+            ->filter(fn (string $areaKey) => !$orderedAreaKeys->contains($areaKey))
+            ->values();
+
+        $allAreaKeys = $orderedAreaKeys->merge($extraAreaKeys)->values();
+
+        $orderedSections = $allAreaKeys
+            ->map(function (string $areaKey) use ($graphics, $entriesByArea) {
+                return [
+                    'area' => $areaKey,
+                    'label' => $this->areaLabel($areaKey),
+                    'title' => $this->areaSectionTitle($areaKey),
+                    'graphic' => $graphics->first(fn (array $graphic) => $this->normalizeAreaKey($graphic['area']) === $areaKey),
+                    'entries' => ($entriesByArea->get($areaKey) ?? collect())->values(),
+                ];
+            })
+            ->values();
+
         $pdf = Pdf::loadView('clinical_histories.pdf', [
             'student' => $student,
             'entries' => $student->clinicalHistories,
+            'graphics' => $graphics,
+            'orderedSections' => $orderedSections,
             'generatedAt' => now()->format('d/m/Y H:i'),
         ])
             ->setPaper('letter', 'portrait')
@@ -180,8 +255,27 @@ class ClinicalHistoryController extends Controller
         return Auth::user()?->role?->name ?? 'Especialista';
     }
 
-    private function defaultClinicalEntry(): string
+    private function defaultClinicalEntry(Student $student): string
     {
+        $medicalData = $this->getLatestMedicalAssessmentData($student->id);
+        $optometryData = $this->getLatestOptometryAssessmentData($student->id);
+
+        $peso = $medicalData['peso'] ?? '';
+        $talla = $medicalData['talla'] ?? '';
+        $imc = $medicalData['imc_calculado'] ?? $medicalData['imc'] ?? '';
+        $percentil = $medicalData['imc_percentil'] ?? '';
+
+        $odLejana = trim((string) ($optometryData['od_lejana'] ?? ''));
+        $oiLejana = trim((string) ($optometryData['oi_lejana'] ?? ''));
+        $odProxima = trim((string) ($optometryData['od_proxima'] ?? ''));
+        $oiProxima = trim((string) ($optometryData['oi_proxima'] ?? ''));
+        $vp = trim((string) (
+            $optometryData['vp']
+            ?? $optometryData['vision_proxima_binocular']
+            ?? $optometryData['vision_proxima']
+            ?? ''
+        ));
+
         return match ($this->currentAreaSlug()) {
             'audiometria' => "A la valoración auditiva mediante audiometría comportamental de tonos puros realizada en la IE, NO se evidencian dificultades auditivas, presentando Normoacusia.\n\n"
                 . "OBSERVACIONES:\n"
@@ -196,15 +290,15 @@ class ClinicalHistoryController extends Controller
                 . "● Observar posibles signos de alerta como dificultad para seguir instrucciones o necesidad de repetición frecuente.\n"
                 . "● Acudir a valoración por fonoaudiología u otorrinolaringología ante cualquier cambio en la respuesta auditiva o del lenguaje.",
 
-                'medicina_general' => "El que suscribe legalmente autorizado para ejercer su profesión.\n\n"
+                'medicina_general', 'valoracion_medica' => "El que suscribe legalmente autorizado para ejercer su profesión.\n\n"
                     . "CERTIFICA:\n"
                     . "● No existen síntomas o signos de enfermedad orgánica o infecciosa ni de ninguna otra enfermedad transmisible.\n"
                     . "● El/La paciente no padece de ninguna enfermedad crónica que lo/la limite físicamente.\n\n"
                     . "PARÁMETROS ANTROPOMÉTRICOS:\n"
-                    . "Peso: 17.8 Kg\n"
-                    . "Talla: 107 Cm\n"
-                    . "IMC: 15.5\n"
-                    . "Percentil: 58\n\n"
+                    . "Peso: " . ($peso !== '' ? $peso . " Kg" : "") . "\n"
+                    . "Talla: " . ($talla !== '' ? $talla . " Cm" : "") . "\n"
+                    . "IMC: {$imc}\n"
+                    . "Percentil: {$percentil}\n\n"
                     . "IDX: 1. APS FISICAMENTE ESTABLE\n\n"
                     . "OBSERVACIONES/RECOMENDACIONES:\n"
                     . "• Mantener controles médicos periódicos de crecimiento y desarrollo, según esquema pediátrico.\n"
@@ -229,7 +323,8 @@ class ClinicalHistoryController extends Controller
 
             'optometria' => "Al realizar el examen del usuario en mención se encontró:\n\n"
                 . "AGUDEZA VISUAL:\n"
-                . "OD: 20/20 | OI: 20/20 | VP: 20/20\n"
+                . "OD (Lejana): " . ($odLejana !== '' ? $odLejana : '_____') . " | OI (Lejana): " . ($oiLejana !== '' ? $oiLejana : '_____') . " | VP: " . ($vp !== '' ? $vp : '_____') . "\n"
+                . "OD (Próxima): " . ($odProxima !== '' ? $odProxima : '_____') . " | OI (Próxima): " . ($oiProxima !== '' ? $oiProxima : '_____') . "\n"
                 . "CSM (Capacidad Sensorial y Motora)\n"
                 . "Examen realizado con opto-tipo E direccional y luz.\n\n"
                 . "HALLAZGOS:\n"
@@ -272,14 +367,40 @@ class ClinicalHistoryController extends Controller
     private function defaultClinicalTitle(): string
     {
         return match ($this->currentAreaSlug()) {
-            'audiometria' => 'Evolucion normal - Audiometria',
-            'valoracion_medica', 'medicina_general' => 'Evolucion normal - Medicina General',
-            'odontologia' => 'Evolucion normal - Odontologia',
-            'optometria' => 'Evolucion normal - Optometria',
-            'fonoaudiologia' => 'Evolucion normal - Fonoaudiologia',
-            'psicologia' => 'Evolucion normal - Psicologia',
-            default => 'Evolucion clinica - Control',
+            'audiometria' => 'Audiometria',
+            'valoracion_medica', 'medicina_general' => 'Valoracion Medica',
+            'odontologia' => 'Odontologia',
+            'optometria' => 'Optometria',
+            'fonoaudiologia' => 'Fonoaudiologia',
+            'psicologia' => 'Psicologia',
+            default => 'Control Clinico',
         };
+    }
+
+    private function getLatestMedicalAssessmentData(int $studentId): array
+    {
+        $result = ExamResult::query()
+            ->whereHas('medicalExam', function ($query) use ($studentId) {
+                $query->where('student_id', $studentId);
+            })
+            ->whereIn('area', ['valoracion_medica', 'medicina_general', 'medicina-general'])
+            ->latest('id')
+            ->first();
+
+        return is_array($result?->data) ? $result->data : [];
+    }
+
+    private function getLatestOptometryAssessmentData(int $studentId): array
+    {
+        $result = ExamResult::query()
+            ->whereHas('medicalExam', function ($query) use ($studentId) {
+                $query->where('student_id', $studentId);
+            })
+            ->whereIn('area', ['optometria', 'optometría'])
+            ->latest('id')
+            ->first();
+
+        return is_array($result?->data) ? $result->data : [];
     }
 
     private function canEditEntry(ClinicalHistory $entry): bool
@@ -300,5 +421,82 @@ class ClinicalHistoryController extends Controller
         if (!in_array($role, ['administrador', 'admisión', 'admision'], true)) {
             abort(403, 'Solo Admisión y Administrador pueden descargar este PDF.');
         }
+    }
+
+    private function resolveGraphicSourceForPdf(ExamResult $result): ?string
+    {
+        $candidate = $result->chart_path;
+
+        if (!$candidate && is_array($result->data)) {
+            $candidate = $result->data['audiogram_path']
+                ?? $result->data['odontograma_path']
+                ?? null;
+        }
+
+        if (!$candidate || !is_string($candidate)) {
+            return null;
+        }
+
+        if (Str::startsWith($candidate, 'data:image')) {
+            return $candidate;
+        }
+
+        $normalizedPath = ltrim(str_replace(['public/storage/', 'storage/'], '', $candidate), '/');
+
+        // Mismo enfoque del reporte final: probar storage/app/public primero.
+        $storageAppPath = storage_path('app/public/' . $normalizedPath);
+        if (file_exists($storageAppPath)) {
+            return $storageAppPath;
+        }
+
+        // Fallback a public/storage.
+        $publicStoragePath = public_path('storage/' . $normalizedPath);
+        if (file_exists($publicStoragePath)) {
+            return $publicStoragePath;
+        }
+
+        // Último intento vía disco configurado (por si el path es distinto).
+        if (!Storage::disk('public')->exists($normalizedPath)) {
+            return null;
+        }
+
+        return public_path('storage/' . $normalizedPath);
+    }
+
+    private function normalizeAreaKey(?string $area): string
+    {
+        $slug = Str::slug((string) $area, '_');
+
+        return match ($slug) {
+            'valoracion_medica', 'valoracion-medica', 'medicina_general', 'medicina-general', 'medicina', 'medico', 'medica' => 'valoracion_medica',
+            'optometria', 'optometria_' => 'optometria',
+            'fonoaudiologia', 'fonoaudiologia_' => 'fonoaudiologia',
+            'psicologia', 'psicologia_' => 'psicologia',
+            'audiometria', 'audiometria_' => 'audiometria',
+            'odontologia', 'odontologia_' => 'odontologia',
+            default => $slug,
+        };
+    }
+
+    private function areaLabel(string $areaKey): string
+    {
+        return match ($areaKey) {
+            'valoracion_medica' => 'Valoración Médica',
+            'optometria' => 'Optometría',
+            'audiometria' => 'Audiometría',
+            'odontologia' => 'Odontología',
+            'fonoaudiologia' => 'Fonoaudiología',
+            'psicologia' => 'Psicología',
+            default => Str::title(str_replace('_', ' ', $areaKey)),
+        };
+    }
+
+    private function areaSectionTitle(string $areaKey): string
+    {
+        return match ($areaKey) {
+            'audiometria' => 'Tamiz Auditivo',
+            'odontologia' => 'Tamiz Odontologico',
+            default => $this->areaLabel($areaKey),
+        };
     }
 }

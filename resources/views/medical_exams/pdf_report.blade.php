@@ -71,8 +71,8 @@
         }
 
         .odontograma-img {
-            width: 100%;
-            max-width: 550px;
+            width: 60%;
+            max-width: 250px;
             height: auto;
         }
 

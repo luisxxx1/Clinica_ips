@@ -185,8 +185,21 @@
             </div>
         </div>
 
-        {{-- Specialty Evaluations --}}
-        @foreach($exam->results as $result)
+        {{-- Specialty Evaluations (Ordered) --}}
+        @php
+            // Define exact priority order: audiometria first, then odontologia
+            $orderPriority = [
+                'audiometria' => 1,
+                'audiometría' => 1,
+                'odontologia' => 2,
+                'odontología' => 2,
+            ];
+
+            $orderedResults = $exam->results->sortBy(function($result) use ($orderPriority) {
+                $areaNormalized = mb_strtolower(trim($result->area));
+                return $orderPriority[$areaNormalized] ?? 999;
+            })->values();
+        @endphp
             <div class="specialty-section">
                 <div class="specialty-title">
                     {{ ucfirst(str_replace('_', ' ', $result->area)) }}

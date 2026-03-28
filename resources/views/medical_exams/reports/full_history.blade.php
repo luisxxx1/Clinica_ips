@@ -9,9 +9,9 @@
         .header-table { width: 100%; border-bottom: 2px solid #2d3748; margin-bottom: 20px; }
         .logo { width: 120px; }
         .title { text-align: right; text-transform: uppercase; }
-        
+
         .section-title { background: #edf2f7; padding: 6px 10px; font-weight: bold; margin-top: 20px; border-left: 4px solid #2b6cb0; font-size: 12px; }
-        
+
         .data-table { width: 100%; border-collapse: collapse; margin-top: 8px; }
         .data-table td { padding: 6px; border: 1px solid #e2e8f0; vertical-align: top; }
         .label { font-weight: bold; color: #4a5568; width: 30%; }
@@ -21,8 +21,8 @@
         .pending { background: #fed7d7; color: #822727; }
 
         .odontograma-container { text-align: center; margin-top: 10px; border: 1px solid #e2e8f0; padding: 10px; border-radius: 8px; }
-        .odontograma-img { max-width: 400px; height: auto; }
-        
+        .odontograma-img { max-width: 200px; height: auto; }
+
         .footer { position: fixed; bottom: -30px; left: 0; right: 0; text-align: center; font-size: 9px; color: #a0aec0; }
     </style>
 </head>
@@ -63,9 +63,9 @@
 
     {{-- Detalle por Área --}}
     <div class="section-title">VALORACIONES MÉDICAS</div>
-    
+
     @foreach($exam->requested_areas as $areaName)
-        @php 
+        @php
             $slug = Str::slug($areaName, '_');
             $resultado = $exam->results->where('area', $slug)->first();
         @endphp

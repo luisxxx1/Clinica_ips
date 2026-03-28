@@ -1,6 +1,6 @@
 {{-- NOTA: Este archivo NO debe tener layouts, solo el div principal --}}
 <div class="bg-white rounded-[3rem] shadow-2xl shadow-slate-200/50 border border-slate-100 overflow-hidden">
-    
+
     {{-- HEADER DEL FORMULARIO --}}
     <div class="p-10 border-b border-slate-50 bg-slate-50/30 text-center md:text-left">
         <div class="flex flex-col md:flex-row justify-between items-center gap-4">
@@ -89,6 +89,17 @@
                         </div>
                     </div>
                 </div>
+
+                {{-- VISIÓN DE CERCA GENERAL --}}
+                <div class="bg-teal-50/40 p-8 rounded-[2.5rem] border border-teal-100">
+                    <p class="text-center text-[10px] font-black text-teal-600 uppercase tracking-[0.2em] mb-6">Visión de Cerca</p>
+                    <div class="flex justify-center">
+                        <div class="w-full max-w-xs">
+                            <label class="block text-[9px] font-black text-slate-400 uppercase mb-2 ml-2 tracking-tighter">VP (Sin Corrección)</label>
+                            <input type="text" name="vp" placeholder="Ej: 0.50, 0.60, 0.70" class="w-full bg-white border-none rounded-2xl p-4 font-bold text-slate-700 focus:ring-2 focus:ring-teal-500/20 shadow-sm">
+                        </div>
+                    </div>
+                </div>
             </div>
         </section>
 
@@ -159,7 +170,7 @@
 
             <div class="bg-slate-900 rounded-[2.5rem] p-8 shadow-2xl">
                 <label class="block text-[10px] font-black text-teal-400 uppercase mb-4 ml-2 tracking-widest text-center md:text-left">Plan de Manejo y Recomendaciones Médicas</label>
-                <textarea name="observations" rows="5" placeholder="Indique el tratamiento, remisión o formula óptica necesaria..." 
+                <textarea name="observations" rows="5" placeholder="Indique el tratamiento, remisión o formula óptica necesaria..."
                           class="w-full bg-slate-800 border-none rounded-2xl p-6 text-white placeholder:text-slate-500 focus:ring-2 focus:ring-teal-500/40 resize-none font-medium" required></textarea>
             </div>
         </section>

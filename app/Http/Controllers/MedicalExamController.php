@@ -161,8 +161,10 @@ class MedicalExamController extends Controller
     public function storeEvaluation(Request $request, MedicalExam $medical_exam)
     {
         $request->validate([
-            'notes'   => 'required|string|max:1000',
-            'results' => 'required|array',
+            'notes' => 'nullable|string|max:1000',
+            'results' => 'nullable|array',
+            'observations' => 'nullable|string|max:1000',
+            'detalles' => 'nullable|string|max:1000',
         ]);
 
         $userArea = $this->getAreaSlug(Auth::user()->role->name);
@@ -170,7 +172,31 @@ class MedicalExamController extends Controller
         try {
             DB::beginTransaction();
 
+            // Compatibilidad: soportar results[...] y formularios legados con campos planos.
             $evaluationData = $request->input('results');
+            if (!is_array($evaluationData) || empty($evaluationData)) {
+                $evaluationData = collect($request->all())
+                    ->except(['_token', '_method', 'notes', 'observations', 'detalles', 'audiogram_base64'])
+                    ->toArray();
+            }
+
+            if (empty($evaluationData)) {
+                return back()->withInput()->withErrors([
+                    'results' => 'Debes registrar al menos un dato en la valoración antes de finalizar.',
+                ]);
+            }
+
+            $notes = trim((string) (
+                $request->input('notes')
+                ?? $request->input('observations')
+                ?? $request->input('detalles')
+                ?? ''
+            ));
+
+            if ($notes === '') {
+                $notes = 'Evaluación clínica realizada.';
+            }
+
             $chartPath = null;
             $pta_od = null;
             $pta_oi = null;
@@ -200,7 +226,7 @@ class MedicalExamController extends Controller
             $payload = [
                 'user_id' => Auth::id(),
                 'data'    => $evaluationData,
-                'notes'   => $request->notes,
+                'notes'   => $notes,
             ];
 
             if (Schema::hasColumn('exam_results', 'chart_path')) {
