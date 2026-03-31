@@ -1,11 +1,19 @@
 <x-app-layout>
     <x-slot name="header">
         <div class="flex justify-between items-center">
-            <h2 class="font-black text-xl text-slate-800 leading-tight uppercase tracking-tighter">
-                {{ __('Dashboard Operativo') }} <span class="text-blue-600 ml-2">|</span> <span class="text-slate-400 text-sm ml-2 font-bold italic">Crear Integral</span>
-            </h2>
-            <div class="text-[10px] font-black text-slate-400 uppercase tracking-widest bg-slate-100 px-3 py-1 rounded-full">
-                Sistema v2.0
+            <div>
+                <h2 class="font-black text-xl text-slate-800 leading-tight uppercase tracking-tighter">
+                    {{ __('Dashboard Operativo') }} <span class="text-blue-600 ml-2">|</span> <span class="text-slate-400 text-sm ml-2 font-bold italic">Crear Integral</span>
+                </h2>
+            </div>
+
+            <div class="flex items-center gap-3">
+                <a href="{{ route('medical_exams.index') }}" class="inline-flex items-center px-4 py-2.5 rounded-xl bg-slate-900 hover:bg-blue-600 text-white text-[10px] font-black uppercase tracking-[0.2em] transition shadow-lg shadow-slate-200">
+                    Iniciar Evaluación
+                </a>
+                <div class="text-[10px] font-black text-slate-400 uppercase tracking-widest bg-slate-100 px-3 py-1 rounded-full">
+                    Sistema v2.0
+                </div>
             </div>
         </div>
     </x-slot>

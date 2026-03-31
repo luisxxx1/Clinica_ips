@@ -208,7 +208,7 @@
 
                 <div class="pt-4">
                     <label class="block text-[10px] font-black uppercase text-slate-400 tracking-widest ml-4 mb-3">Observaciones Generales</label>
-                    <textarea name="notes" rows="3" required class="w-full border-none bg-slate-50 rounded-[2rem] p-6 text-xs font-medium focus:ring-2 focus:ring-blue-500/10" placeholder="Escriba detalles adicionales..."></textarea>
+                    <textarea name="notes" rows="3" class="w-full border-none bg-slate-50 rounded-[2rem] p-6 text-xs font-medium focus:ring-2 focus:ring-blue-500/10" placeholder="Escriba detalles adicionales..."></textarea>
                 </div>
             </div>
 

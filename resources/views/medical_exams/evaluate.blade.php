@@ -42,20 +42,115 @@
                     };
                 @endphp
 
-                @if(view()->exists($view))
+                @if(view()->exists($view) || ($showBothAudioExams ?? false))
                     {{-- Contenedor principal con bordes suavizados SnakeDEV --}}
                     <div class="bg-white p-8 md:p-12 rounded-[3rem] shadow-sm border border-slate-100">
-                        {{--
-                            CORRECCIÓN FINAL:
-                            Enviamos ambas llaves para que cualquier sub-vista funcione sin importar
-                            si pide $exam o $medical_exam.
-                        --}}
-                        @include($view, [
-                            'exam' => $medical_exam,
-                            'medical_exam' => $medical_exam,
-                            'area' => $area
-                        ])
+                        {{-- LÓGICA UNIFICADA: Si se deben mostrar ambos exámenes de audio --}}
+                        @if($showBothAudioExams ?? false)
+                            {{-- Mostrar vista unificada con Audiometría + Fonoaudiología --}}
+                            @include('medical_exams.evaluations.audio_combined', [
+                                'exam' => $medical_exam,
+                                'medical_exam' => $medical_exam,
+                                'area' => 'audiometria'
+                            ])
+                        @else
+                            {{--
+                                CORRECCIÓN FINAL:
+                                Enviamos ambas llaves para que cualquier sub-vista funcione sin importar
+                                si pide $exam o $medical_exam.
+                            --}}
+                            @include($view, [
+                                'exam' => $medical_exam,
+                                'medical_exam' => $medical_exam,
+                                'area' => $area
+                            ])
+                        @endif
                     </div>
+
+                    <script>
+                        document.addEventListener('DOMContentLoaded', function () {
+                            const existingData = @json($existingEvaluationData ?? []);
+                            const existingNotes = @json($existingEvaluationNotes ?? null);
+                            const existingAudioNotes = @json($existingAudioNotes ?? null);
+                            const existingFonoNotes = @json($existingFonoNotes ?? null);
+
+                            const fillFieldByName = (name, value) => {
+                                const fields = document.querySelectorAll(`[name="${name}"]`);
+                                if (!fields.length) return false;
+
+                                fields.forEach((field) => {
+                                    const type = (field.type || '').toLowerCase();
+
+                                    if (type === 'checkbox') {
+                                        if (Array.isArray(value)) {
+                                            field.checked = value.map(String).includes(String(field.value));
+                                        } else {
+                                            field.checked = [true, 1, '1', 'true', 'on', String(field.value)].includes(value);
+                                        }
+                                        return;
+                                    }
+
+                                    if (type === 'radio') {
+                                        field.checked = String(field.value) === String(value);
+                                        return;
+                                    }
+
+                                    field.value = Array.isArray(value) ? value.join(', ') : (value ?? '');
+                                });
+
+                                return true;
+                            };
+
+                            const fillValue = (key, value) => {
+                                const candidates = [
+                                    key,
+                                    `${key}[]`,
+                                    `results[${key}]`,
+                                    `results[${key}][]`,
+                                ];
+
+                                for (const candidate of candidates) {
+                                    if (fillFieldByName(candidate, value)) {
+                                        return;
+                                    }
+                                }
+                            };
+
+                            Object.entries(existingData || {}).forEach(([key, value]) => {
+                                if (value !== null && typeof value === 'object' && !Array.isArray(value)) {
+                                    Object.entries(value).forEach(([childKey, childValue]) => {
+                                        fillValue(`${key}[${childKey}]`, childValue);
+                                    });
+                                    return;
+                                }
+
+                                fillValue(key, value);
+                            });
+
+                            if (typeof existingNotes === 'string' && existingNotes.trim() !== '') {
+                                ['notes', 'observations', 'detalles'].forEach((name) => {
+                                    const field = document.querySelector(`[name="${name}"]`);
+                                    if (field && String(field.value || '').trim() === '') {
+                                        field.value = existingNotes;
+                                    }
+                                });
+                            }
+
+                            if (typeof existingAudioNotes === 'string' && existingAudioNotes.trim() !== '') {
+                                const notesField = document.querySelector('[name="notes"]');
+                                if (notesField && String(notesField.value || '').trim() === '') {
+                                    notesField.value = existingAudioNotes;
+                                }
+                            }
+
+                            if (typeof existingFonoNotes === 'string' && existingFonoNotes.trim() !== '') {
+                                const observationsField = document.querySelector('[name="observations"]');
+                                if (observationsField && String(observationsField.value || '').trim() === '') {
+                                    observationsField.value = existingFonoNotes;
+                                }
+                            }
+                        });
+                    </script>
                 @else
                     <div class="bg-white p-12 rounded-[3.5rem] shadow-sm border border-slate-100 text-center">
                         <div class="w-20 h-20 bg-red-50 text-red-500 rounded-3xl flex items-center justify-center mx-auto mb-6">

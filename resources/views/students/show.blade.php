@@ -97,7 +97,7 @@
                                 </div>
                                 <div class="flex flex-col">
                                     <span class="text-[10px] font-bold text-slate-400 uppercase">Fecha de Alta en Sistema</span>
-                                    <span class="text-sm font-semibold text-slate-700">{{ $student->created_at->format('d F, Y') }}</span>
+                                    <span class="text-sm font-semibold text-slate-700">{{ $student->created_at->timezone('America/Bogota')->translatedFormat('d F, Y') }}</span>
                                 </div>
                             </div>
                         </div>
@@ -157,7 +157,7 @@
                                         @foreach($student->medicalExams as $exam)
                                             <tr class="hover:bg-slate-50 transition-colors">
                                                 <td class="px-6 py-4 whitespace-nowrap text-xs font-bold text-slate-800">
-                                                    {{ $exam->created_at->format('d/m/Y') }}
+                                                    {{ $exam->created_at->timezone('America/Bogota')->format('d/m/Y') }}
                                                 </td>
                                                 <td class="px-6 py-4 whitespace-nowrap">
                                                     <span class="text-xs font-black text-blue-600 uppercase">{{ $exam->type }}</span>

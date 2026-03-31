@@ -127,18 +127,53 @@
                                             </td>
                                             <td class="px-8 py-6">
                                                 <div class="text-[10px] font-black text-slate-700 uppercase tracking-tighter">
-                                                    {{ $exam->created_at->diffForHumans() }}
+                                                    {{ $exam->created_at->timezone('America/Bogota')->diffForHumans() }}
                                                 </div>
-                                                <div class="text-[9px] font-bold text-slate-400 mt-1 italic uppercase">{{ $exam->created_at->format('h:i A') }}</div>
+                                                <div class="text-[9px] font-bold text-slate-400 mt-1 italic uppercase">{{ $exam->created_at->timezone('America/Bogota')->format('h:i A') }}</div>
                                             </td>
                                             <td class="px-8 py-6 text-right">
-                                                <a href="{{ route('medical_exams.evaluate', $exam) }}"
-                                                   class="inline-flex items-center px-6 py-3 bg-slate-900 hover:bg-blue-600 text-white text-[10px] font-black rounded-2xl transition-all duration-500 shadow-xl hover:shadow-blue-200/50 uppercase tracking-[0.2em] group/btn">
-                                                    <span>Iniciar Evaluación</span>
-                                                    <svg class="w-4 h-4 ml-2 group-hover/btn:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
-                                                    </svg>
-                                                </a>
+                                                @php
+                                                    $roleSlug = \Illuminate\Support\Str::slug((string) $userArea, '_');
+                                                    $requestedAreas = collect($exam->requested_areas ?? [])->map(fn ($a) => \Illuminate\Support\Str::slug((string) $a, '_'));
+                                                    $completedAreas = $exam->results->pluck('area')->map(fn ($a) => \Illuminate\Support\Str::slug((string) $a, '_'));
+                                                    $canOpenAudio = $roleSlug === 'audiometria';
+                                                    $isAdmin = $roleSlug === 'administrador';
+                                                    $pendingByArea = $requestedAreas->diff($completedAreas)->values();
+                                                    $nextPendingArea = $pendingByArea->first();
+                                                    $areaLabels = [
+                                                        'valoracion_medica' => 'Valoración Médica',
+                                                        'odontologia' => 'Odontología',
+                                                        'optometria' => 'Optometría',
+                                                        'audiometria' => 'Audiometría',
+                                                        'fonoaudiologia' => 'Fonoaudiología',
+                                                        'psicologia' => 'Psicología',
+                                                    ];
+                                                @endphp
+
+                                                @if($canOpenAudio)
+                                                    <div class="flex justify-end gap-2">
+                                                        @if($requestedAreas->contains('audiometria') && !$completedAreas->contains('audiometria'))
+                                                            <a href="{{ route('medical_exams.evaluate', ['medical_exam' => $exam->id, 'area' => 'audiometria']) }}"
+                                                               class="inline-flex items-center px-4 py-3 bg-slate-900 hover:bg-blue-600 text-white text-[10px] font-black rounded-2xl transition-all duration-500 shadow-xl hover:shadow-blue-200/50 uppercase tracking-[0.15em] group/btn">
+                                                                <span>Audiometría</span>
+                                                            </a>
+                                                        @endif
+                                                        @if($requestedAreas->contains('fonoaudiologia') && !$completedAreas->contains('fonoaudiologia'))
+                                                            <a href="{{ route('medical_exams.evaluate', ['medical_exam' => $exam->id, 'area' => 'fonoaudiologia']) }}"
+                                                               class="inline-flex items-center px-4 py-3 bg-orange-600 hover:bg-orange-500 text-white text-[10px] font-black rounded-2xl transition-all duration-500 shadow-xl uppercase tracking-[0.15em] group/btn">
+                                                                <span>Fonoaudiología</span>
+                                                            </a>
+                                                        @endif
+                                                    </div>
+                                                @else
+                                                    <a href="{{ route('medical_exams.evaluate', $exam) }}"
+                                                       class="inline-flex items-center px-6 py-3 bg-slate-900 hover:bg-blue-600 text-white text-[10px] font-black rounded-2xl transition-all duration-500 shadow-xl hover:shadow-blue-200/50 uppercase tracking-[0.2em] group/btn">
+                                                        <span>Iniciar Evaluación</span>
+                                                        <svg class="w-4 h-4 ml-2 group-hover/btn:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
+                                                        </svg>
+                                                    </a>
+                                                @endif
                                             </td>
                                         </tr>
                                         @endif

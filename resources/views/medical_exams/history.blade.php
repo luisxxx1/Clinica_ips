@@ -115,21 +115,31 @@
                                         </td>
 
                                         <td class="px-6 py-4 text-center">
-                                            <span class="text-sm text-slate-800 font-black block tracking-tighter">{{ $exam->updated_at->format('d/m/Y') }}</span>
-                                            <span class="text-[10px] text-slate-400 uppercase font-bold">{{ $exam->updated_at->format('h:i A') }}</span>
+                                            <span class="text-sm text-slate-800 font-black block tracking-tighter">{{ $exam->updated_at->timezone('America/Bogota')->format('d/m/Y') }}</span>
+                                            <span class="text-[10px] text-slate-400 uppercase font-bold">{{ $exam->updated_at->timezone('America/Bogota')->format('h:i A') }}</span>
                                         </td>
 
                                         <td class="px-6 py-4">
                                             <div class="flex justify-center gap-2">
-                                                {{-- Botón Detalles --}}
-                                                <a href="{{ route('medical_exams.evaluate', $exam) }}"
-                                                   class="p-2.5 bg-white border border-slate-200 rounded-xl text-slate-600 hover:text-blue-600 hover:border-blue-200 hover:shadow-md transition-all"
-                                                   title="Ver Detalles">
-                                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                                                    </svg>
-                                                </a>
+                                                @php
+                                                    $roleSlug = \Illuminate\Support\Str::slug((string) (auth()->user()->role->name ?? ''), '_');
+                                                    $requestedAreasRaw = collect($exam->requested_areas ?? [])->map(fn ($a) => \Illuminate\Support\Str::slug((string) $a, '_'));
+                                                    $completedAreasRaw = $exam->results->pluck('area')->map(fn ($a) => \Illuminate\Support\Str::slug((string) $a, '_'));
+                                                    $pendingAreas = $requestedAreasRaw->diff($completedAreasRaw)->values();
+                                                    $nextPendingArea = $pendingAreas->first();
+                                                    $isAdmin = in_array($roleSlug, ['administrador'], true);
+                                                @endphp
+
+                                                @if($nextPendingArea && !$isAdmin)
+                                                    <a href="{{ route('medical_exams.evaluate', ['medical_exam' => $exam->id, 'area' => $nextPendingArea]) }}"
+                                                       class="inline-flex items-center px-4 py-2.5 bg-slate-900 border border-slate-900 rounded-xl text-white text-[10px] font-black hover:bg-blue-600 hover:border-blue-600 transition shadow-lg shadow-slate-200 uppercase tracking-widest"
+                                                       title="Iniciar Evaluación">
+                                                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                                                        </svg>
+                                                        Iniciar Evaluación
+                                                    </a>
+                                                @endif
 
                                                 {{-- Botón PDF --}}
                                                 @if($exam->status === 'completado' && in_array(auth()->user()->role->name ?? '', ['Administrador', 'Admisión']))

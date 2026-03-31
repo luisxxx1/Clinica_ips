@@ -105,7 +105,7 @@
             </div>
 
             <div class="bg-slate-900 p-8 rounded-[2.5rem] shadow-xl">
-                   <textarea name="notes" id="notes" rows="3" required class="w-full bg-slate-800/50 border-none rounded-2xl text-white p-5" placeholder="Observaciones...">Odontograma capturado y evaluado.</textarea>
+                   <textarea name="notes" id="notes" rows="3" class="w-full bg-slate-800/50 border-none rounded-2xl text-white p-5" placeholder="Observaciones...">Odontograma capturado y evaluado.</textarea>
                 <div class="flex justify-between items-center pt-8">
                     <p class="text-slate-400 text-[9px] font-bold uppercase tracking-widest max-w-xs">Se capturará el estado actual del odontograma.</p>
                     <button type="submit" id="btn-save" class="bg-blue-600 text-white px-10 py-4 rounded-xl font-black uppercase text-xs hover:bg-blue-500 transition-all">

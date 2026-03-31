@@ -47,7 +47,16 @@
 
                         <div>
                             <label class="block text-[11px] font-black uppercase tracking-widest text-slate-500 mb-2">Área que registra</label>
-                            <input type="text" value="{{ $currentAreaLabel }}" readonly class="w-full rounded-xl border-slate-200 bg-slate-50 text-sm font-bold text-slate-600">
+                            @if($canSelectEntryArea)
+                                <select id="new_entry_area" name="area" class="w-full rounded-xl border-slate-200 text-sm font-bold text-slate-700 focus:border-blue-500 focus:ring-blue-500">
+                                    @foreach($entryAreaOptions as $areaKey => $areaLabel)
+                                        <option value="{{ $areaKey }}" {{ old('area', $defaultEntryArea ?? 'valoracion_medica') === $areaKey ? 'selected' : '' }}>{{ $areaLabel }}</option>
+                                    @endforeach
+                                </select>
+                            @else
+                                <input type="hidden" name="area" value="{{ old('area', $defaultEntryArea ?? '') }}">
+                                <input type="text" value="{{ $currentAreaLabel }}" readonly class="w-full rounded-xl border-slate-200 bg-slate-50 text-sm font-bold text-slate-600">
+                            @endif
                         </div>
 
                         <div>
@@ -57,7 +66,7 @@
 
                         <div>
                             <label for="recorded_at" class="block text-[11px] font-black uppercase tracking-widest text-slate-500 mb-2">Fecha y hora</label>
-                            <input id="recorded_at" name="recorded_at" value="{{ old('recorded_at', now()->format('Y-m-d\\TH:i')) }}" type="datetime-local" class="w-full rounded-xl border-slate-200 text-sm font-semibold text-slate-700 focus:border-blue-500 focus:ring-blue-500">
+                            <input id="recorded_at" name="recorded_at" value="{{ old('recorded_at', now('America/Bogota')->format('Y-m-d\\TH:i')) }}" type="datetime-local" class="w-full rounded-xl border-slate-200 text-sm font-semibold text-slate-700 focus:border-blue-500 focus:ring-blue-500">
                         </div>
 
                         <div>
@@ -92,7 +101,7 @@
                             </div>
                             <div class="text-left md:text-right">
                                 <p class="text-[11px] font-bold text-slate-500 uppercase tracking-widest">
-                                    {{ optional($entry->recorded_at)->format('d/m/Y H:i') }}
+                                    {{ optional($entry->recorded_at)->timezone('America/Bogota')->format('d/m/Y H:i') }}
                                 </p>
                                 <p class="text-[11px] font-bold text-slate-400 uppercase tracking-widest mt-1">
                                     {{ $entry->specialist->name ?? 'Especialista' }}
@@ -120,6 +129,17 @@
                                         @csrf
                                         @method('PATCH')
 
+                                        @if($isAdmin)
+                                            <div>
+                                                <label class="block text-[11px] font-black uppercase tracking-widest text-slate-500 mb-1">Área</label>
+                                                <select name="area" class="w-full rounded-xl border-slate-200 text-sm font-semibold text-slate-700 focus:border-blue-500 focus:ring-blue-500">
+                                                    @foreach($availableAreas as $areaKey => $areaLabel)
+                                                        <option value="{{ $areaKey }}" {{ old('area', $entry->area) === $areaKey ? 'selected' : '' }}>{{ $areaLabel }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                        @endif
+
                                         <div>
                                             <label class="block text-[11px] font-black uppercase tracking-widest text-slate-500 mb-1">Título</label>
                                             <input type="text" name="title" maxlength="150" value="{{ old('title', $entry->title) }}" class="w-full rounded-xl border-slate-200 text-sm font-semibold text-slate-700 focus:border-blue-500 focus:ring-blue-500">
@@ -127,7 +147,7 @@
 
                                         <div>
                                             <label class="block text-[11px] font-black uppercase tracking-widest text-slate-500 mb-1">Fecha y hora</label>
-                                            <input type="datetime-local" name="recorded_at" value="{{ old('recorded_at', optional($entry->recorded_at)->format('Y-m-d\\TH:i')) }}" class="w-full rounded-xl border-slate-200 text-sm font-semibold text-slate-700 focus:border-blue-500 focus:ring-blue-500">
+                                            <input type="datetime-local" name="recorded_at" value="{{ old('recorded_at', optional($entry->recorded_at)->timezone('America/Bogota')->format('Y-m-d\\TH:i')) }}" class="w-full rounded-xl border-slate-200 text-sm font-semibold text-slate-700 focus:border-blue-500 focus:ring-blue-500">
                                         </div>
 
                                         <div>
@@ -152,4 +172,48 @@
             </div>
         </div>
     </div>
+
+    @if($canSelectEntryArea)
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                const areaSelect = document.getElementById('new_entry_area');
+                const titleInput = document.getElementById('title');
+                const entryInput = document.getElementById('entry');
+                const defaultTitles = @json($defaultClinicalTitlesByArea ?? []);
+                const defaultEntries = @json($defaultClinicalEntriesByArea ?? []);
+
+                if (!areaSelect || !titleInput || !entryInput) {
+                    return;
+                }
+
+                const applyDefaultContentByArea = () => {
+                    const selectedArea = areaSelect.value;
+                    const suggestedTitle = defaultTitles[selectedArea] ?? '';
+                    const suggestedEntry = defaultEntries[selectedArea] ?? '';
+
+                    const hasCustomTitle = String(titleInput.value || '').trim() !== '';
+                    const hasCustomEntry = String(entryInput.value || '').trim() !== '';
+
+                    if (hasCustomTitle || hasCustomEntry) {
+                        const shouldReplace = window.confirm(
+                            'Ya hay información escrita. ¿Deseas reemplazar el título y la nota por la plantilla del área seleccionada?'
+                        );
+
+                        if (!shouldReplace) {
+                            return;
+                        }
+
+                        titleInput.value = suggestedTitle;
+                        entryInput.value = suggestedEntry;
+                        return;
+                    }
+
+                    titleInput.value = suggestedTitle;
+                    entryInput.value = suggestedEntry;
+                };
+
+                areaSelect.addEventListener('change', applyDefaultContentByArea);
+            });
+        </script>
+    @endif
 </x-app-layout>

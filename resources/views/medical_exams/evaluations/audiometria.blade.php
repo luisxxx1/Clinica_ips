@@ -22,6 +22,7 @@
     {{-- FORMULARIO UNIFICADO --}}
     <form action="{{ route('medical_exams.store_evaluation', $medical_exam) }}" method="POST" id="audiometriaForm" class="p-8 md:p-12 space-y-12">
         @csrf
+        <input type="hidden" name="evaluation_area" value="audiometria">
         {{-- Campo oculto para la imagen de la gráfica --}}
         <input type="hidden" name="audiogram_base64" id="audiogram_base64">
 
@@ -162,7 +163,7 @@
 
             <div class="space-y-3">
                 <label class="block text-[10px] font-black text-blue-400 uppercase tracking-widest">Observaciones Clínicas</label>
-                <textarea name="notes" rows="5" required class="w-full bg-slate-800/50 border-none rounded-[2rem] p-8 text-white" placeholder="Describa los hallazgos..."></textarea>
+                <textarea name="notes" rows="5" class="w-full bg-slate-800/50 border-none rounded-[2rem] p-8 text-white" placeholder="Describa los hallazgos..."></textarea>
             </div>
 
             <div class="mt-12 flex justify-end">

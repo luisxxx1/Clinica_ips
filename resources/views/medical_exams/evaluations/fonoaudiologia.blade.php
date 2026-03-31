@@ -18,7 +18,8 @@
 
 <form action="{{ route('medical_exams.store_evaluation', $medical_exam) }}" method="POST" class="space-y-8">
     @csrf
-    
+    <input type="hidden" name="evaluation_area" value="fonoaudiologia">
+
     {{-- 1. Componentes del Lenguaje y Habla - Extendido --}}
     <div class="bg-white p-10 rounded-[3rem] shadow-sm border border-slate-100">
         <div class="flex items-center mb-8">
@@ -94,11 +95,11 @@
             <div class="w-2 h-8 bg-orange-500 rounded-full mr-4"></div>
             <label class="text-xs font-black text-orange-400 uppercase tracking-[0.2em]">Diagnóstico y Plan de Acción</label>
         </div>
-        
-        <textarea name="observations" rows="4" required
-                  class="w-full bg-slate-800/50 border-none rounded-3xl text-white text-base p-6 focus:ring-4 focus:ring-orange-500/20 placeholder:text-slate-500 transition-all" 
+
+        <textarea name="observations" rows="4"
+                  class="w-full bg-slate-800/50 border-none rounded-3xl text-white text-base p-6 focus:ring-4 focus:ring-orange-500/20 placeholder:text-slate-500 transition-all"
                   placeholder="Escriba aquí la conducta a seguir..."></textarea>
-        
+
         <div class="mt-10 flex flex-col md:flex-row justify-between items-center gap-6">
             <p class="text-slate-400 text-[10px] font-bold uppercase tracking-widest max-w-xs">
                 SnakeDEV System v2.1 - Registro de Fonoaudiología

@@ -27,14 +27,15 @@ class StudentService
                 'valoracion_medica',
                 'odontologia',
                 'optometria',
-                'audiometria',
                 'fonoaudiologia',
+                'audiometria',
                 'psicologia'
             ];
 
             $normalizedAreas = collect($requestedAreas)
                 ->map(fn($area) => Str::slug($area, '_'))
                 ->filter()
+                ->unique()
                 ->values()
                 ->toArray();
 

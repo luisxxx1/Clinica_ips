@@ -171,7 +171,7 @@
             <div class="bg-slate-900 rounded-[2.5rem] p-8 shadow-2xl">
                 <label class="block text-[10px] font-black text-teal-400 uppercase mb-4 ml-2 tracking-widest text-center md:text-left">Plan de Manejo y Recomendaciones Médicas</label>
                 <textarea name="observations" rows="5" placeholder="Indique el tratamiento, remisión o formula óptica necesaria..."
-                          class="w-full bg-slate-800 border-none rounded-2xl p-6 text-white placeholder:text-slate-500 focus:ring-2 focus:ring-teal-500/40 resize-none font-medium" required></textarea>
+                          class="w-full bg-slate-800 border-none rounded-2xl p-6 text-white placeholder:text-slate-500 focus:ring-2 focus:ring-teal-500/40 resize-none font-medium"></textarea>
             </div>
         </section>
 

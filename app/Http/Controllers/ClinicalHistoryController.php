@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
 
 class ClinicalHistoryController extends Controller
 {
@@ -51,6 +52,11 @@ class ClinicalHistoryController extends Controller
     {
         $this->ensureAccess();
 
+        $isAdmin = $this->normalizedRoleName() === 'administrador';
+        $entryAreaOptions = $this->entryAreaOptionsForCurrentUser();
+        $canSelectEntryArea = count($entryAreaOptions) > 1;
+        $defaultEntryArea = array_key_first($entryAreaOptions) ?? $this->currentAreaSlug();
+
         $student->load([
             'clinicalHistories' => function ($query) {
                 $query->with('specialist.role')
@@ -61,9 +67,16 @@ class ClinicalHistoryController extends Controller
 
         return view('clinical_histories.show', [
             'student' => $student,
+            'isAdmin' => $isAdmin,
+            'entryAreaOptions' => $entryAreaOptions,
+            'canSelectEntryArea' => $canSelectEntryArea,
+            'defaultEntryArea' => $defaultEntryArea,
+            'availableAreas' => $this->availableAreas(),
             'currentAreaLabel' => $this->currentAreaLabel(),
             'defaultClinicalTitle' => $this->defaultClinicalTitle(),
             'defaultClinicalEntry' => $this->defaultClinicalEntry($student),
+            'defaultClinicalTitlesByArea' => $this->defaultClinicalTitlesByArea(),
+            'defaultClinicalEntriesByArea' => $this->defaultClinicalEntriesByArea($student),
         ]);
     }
 
@@ -71,16 +84,25 @@ class ClinicalHistoryController extends Controller
     {
         $this->ensureAccess();
 
+        $isAdmin = $this->normalizedRoleName() === 'administrador';
+        $allowedAreaKeys = array_keys($this->entryAreaOptionsForCurrentUser());
+
         $validated = $request->validate([
+            'area' => ['nullable', 'string', Rule::in($allowedAreaKeys)],
             'title' => 'nullable|string|max:150',
             'entry' => 'required|string|max:3000',
             'recorded_at' => 'nullable|date',
         ]);
 
+        $selectedArea = $this->normalizeAreaKey($validated['area'] ?? $this->currentAreaSlug());
+        $areaToSave = in_array($selectedArea, $allowedAreaKeys, true)
+            ? $selectedArea
+            : $this->currentAreaSlug();
+
         ClinicalHistory::create([
             'student_id' => $student->id,
             'user_id' => Auth::id(),
-            'area' => $this->currentAreaSlug(),
+            'area' => $areaToSave,
             'title' => $validated['title'] ?? null,
             'entry' => $validated['entry'],
             'recorded_at' => $validated['recorded_at'] ?? now(),
@@ -95,6 +117,8 @@ class ClinicalHistoryController extends Controller
     {
         $this->ensureAccess();
 
+        $isAdmin = $this->normalizedRoleName() === 'administrador';
+
         if ((int) $clinical_history->student_id !== (int) $student->id) {
             abort(404);
         }
@@ -104,12 +128,16 @@ class ClinicalHistoryController extends Controller
         }
 
         $validated = $request->validate([
+            'area' => ['nullable', 'string', Rule::in(array_keys($this->availableAreas()))],
             'title' => 'nullable|string|max:150',
             'entry' => 'required|string|max:3000',
             'recorded_at' => 'nullable|date',
         ]);
 
+        $selectedArea = $this->normalizeAreaKey($validated['area'] ?? $clinical_history->area);
+
         $clinical_history->update([
+            'area' => $isAdmin ? $selectedArea : $clinical_history->area,
             'title' => $validated['title'] ?? null,
             'entry' => $validated['entry'],
             'recorded_at' => $validated['recorded_at'] ?? $clinical_history->recorded_at ?? now(),
@@ -257,6 +285,11 @@ class ClinicalHistoryController extends Controller
 
     private function defaultClinicalEntry(Student $student): string
     {
+        return $this->defaultClinicalEntryForArea($student, $this->currentAreaSlug());
+    }
+
+    private function defaultClinicalEntryForArea(Student $student, string $areaSlug): string
+    {
         $medicalData = $this->getLatestMedicalAssessmentData($student->id);
         $optometryData = $this->getLatestOptometryAssessmentData($student->id);
 
@@ -276,7 +309,7 @@ class ClinicalHistoryController extends Controller
             ?? ''
         ));
 
-        return match ($this->currentAreaSlug()) {
+        return match ($areaSlug) {
             'audiometria' => "A la valoración auditiva mediante audiometría comportamental de tonos puros realizada en la IE, NO se evidencian dificultades auditivas, presentando Normoacusia.\n\n"
                 . "OBSERVACIONES:\n"
                 . "- Durante la exploración física se evidencia:\n"
@@ -366,7 +399,12 @@ class ClinicalHistoryController extends Controller
 
     private function defaultClinicalTitle(): string
     {
-        return match ($this->currentAreaSlug()) {
+        return $this->defaultClinicalTitleForArea($this->currentAreaSlug());
+    }
+
+    private function defaultClinicalTitleForArea(string $areaSlug): string
+    {
+        return match ($areaSlug) {
             'audiometria' => 'Audiometria',
             'valoracion_medica', 'medicina_general' => 'Valoracion Medica',
             'odontologia' => 'Odontologia',
@@ -375,6 +413,61 @@ class ClinicalHistoryController extends Controller
             'psicologia' => 'Psicologia',
             default => 'Control Clinico',
         };
+    }
+
+    private function defaultClinicalEntriesByArea(Student $student): array
+    {
+        $entries = [];
+
+        foreach (array_keys($this->availableAreas()) as $area) {
+            $entries[$area] = $this->defaultClinicalEntryForArea($student, $area);
+        }
+
+        return $entries;
+    }
+
+    private function defaultClinicalTitlesByArea(): array
+    {
+        $titles = [];
+
+        foreach (array_keys($this->availableAreas()) as $area) {
+            $titles[$area] = $this->defaultClinicalTitleForArea($area);
+        }
+
+        return $titles;
+    }
+
+    private function availableAreas(): array
+    {
+        return [
+            'valoracion_medica' => 'Valoración Médica',
+            'odontologia' => 'Odontología',
+            'optometria' => 'Optometría',
+            'audiometria' => 'Audiometría',
+            'fonoaudiologia' => 'Fonoaudiología',
+            'psicologia' => 'Psicología',
+        ];
+    }
+
+    private function entryAreaOptionsForCurrentUser(): array
+    {
+        $allAreas = $this->availableAreas();
+        $role = $this->normalizedRoleName();
+        $currentArea = $this->currentAreaSlug();
+
+        if ($role === 'administrador') {
+            return $allAreas;
+        }
+
+        if ($currentArea === 'audiometria') {
+            return array_intersect_key($allAreas, array_flip(['audiometria', 'fonoaudiologia']));
+        }
+
+        if (array_key_exists($currentArea, $allAreas)) {
+            return [$currentArea => $allAreas[$currentArea]];
+        }
+
+        return [];
     }
 
     private function getLatestMedicalAssessmentData(int $studentId): array

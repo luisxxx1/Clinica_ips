@@ -19,7 +19,6 @@ class RoleSeeder extends Seeder
             ['name' => 'Optometría',        'color' => 'cyan'],
             ['name' => 'Odontología',       'color' => 'indigo'],
             ['name' => 'Psicología',        'color' => 'purple'],
-            ['name' => 'Fonoaudiología',    'color' => 'orange'],
             ['name' => 'Audiometría',       'color' => 'amber'],
         ];
 
