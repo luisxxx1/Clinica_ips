@@ -453,7 +453,9 @@ class ClinicalHistoryController extends Controller
     {
         $allAreas = $this->availableAreas();
         $role = $this->normalizedRoleName();
-        $currentArea = $this->currentAreaSlug();
+        // Normaliza aliases de rol (ej. medicina_general -> valoracion_medica)
+        // para que el valor enviado por el formulario siempre sea una clave valida.
+        $currentArea = $this->normalizeAreaKey($this->currentAreaSlug());
 
         if ($role === 'administrador') {
             return $allAreas;

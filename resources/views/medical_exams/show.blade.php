@@ -8,10 +8,10 @@
             </h2>
             <p class="text-xs font-bold text-slate-400 uppercase tracking-widest">Detalle de Valoraciones Realizadas</p>
         </div>
-        
+
         <div class="flex space-x-3">
-            <a href="{{ route('medical_exams.report', $medical_exam) }}" target="_blank" 
-               class="inline-flex items-center px-4 py-2 bg-slate-900 hover:bg-red-600 text-white text-xs font-black rounded-xl transition-all duration-300 shadow-lg hover:shadow-red-200 uppercase tracking-widest">
+                <a href="{{ route('medical_exams.report', $medical_exam) }}" target="_blank"
+                    class="inline-flex items-center px-4 py-2 bg-slate-900 hover:bg-teal-700 text-white text-xs font-black rounded-full transition-all duration-300 shadow-lg hover:shadow-teal-200 uppercase tracking-widest">
                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                 </svg>
@@ -24,12 +24,12 @@
 @section('content')
 <div class="py-6 px-4 sm:px-6 lg:px-8">
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        
+
         {{-- Columna Izquierda: Info Paciente --}}
         <div class="space-y-6">
-            <div class="bg-white p-8 rounded-[2rem] shadow-xl shadow-slate-200/50 border border-slate-200/60">
+            <div class="app-panel-strong p-8 rounded-[2rem]">
                 <div class="flex items-center mb-6">
-                    <div class="h-12 w-12 rounded-2xl bg-blue-600 flex items-center justify-center text-white font-black text-xl shadow-lg shadow-blue-200">
+                    <div class="h-12 w-12 rounded-2xl bg-teal-700 flex items-center justify-center text-white font-black text-xl shadow-lg shadow-teal-900/10">
                         {{ substr($medical_exam->student->first_name, 0, 1) }}
                     </div>
                     <div class="ml-4">
@@ -56,7 +56,7 @@
 
             {{-- Resumen de Áreas --}}
             <div class="bg-slate-900 p-8 rounded-[2rem] text-white shadow-xl shadow-slate-900/20">
-                <h4 class="text-xs font-black uppercase tracking-[0.2em] mb-4 text-slate-400 text-center">Checklist del Circuito</h4>
+                <h4 class="text-xs font-black uppercase tracking-[0.2em] mb-4 text-teal-300 text-center">Checklist del Circuito</h4>
                 <div class="space-y-3">
                     @foreach($medical_exam->requested_areas as $area)
                         @php $haEvaluado = $medical_exam->results->where('area', Str::slug($area, '_'))->first(); @endphp
@@ -76,8 +76,8 @@
         {{-- Columna Derecha: Resultados --}}
         <div class="lg:col-span-2 space-y-6">
             @forelse($medical_exam->results as $result)
-                <div class="bg-white rounded-[2.5rem] shadow-xl shadow-slate-200/50 border border-slate-200/60 overflow-hidden group">
-                    <div class="bg-slate-50 px-8 py-4 border-b border-slate-100 flex justify-between items-center group-hover:bg-blue-50/30 transition-colors">
+                <div class="app-panel-strong rounded-[2.5rem] overflow-hidden group">
+                    <div class="bg-slate-50 px-8 py-4 border-b border-slate-100 flex justify-between items-center group-hover:bg-teal-50/40 transition-colors">
                         <h3 class="font-black text-slate-800 uppercase tracking-tighter text-sm">
                             {{ str_replace('_', ' ', $result->area) }}
                         </h3>
@@ -87,7 +87,7 @@
                     </div>
 
                     <div class="p-8">
-                        @php 
+                        @php
                             $slug = Str::slug($result->getAttributes()['area'], '_');
                             $viewName = "medical_exams.evaluations.views." . $slug;
                         @endphp
@@ -116,8 +116,8 @@
                         @endif
 
                         @if($result->notes)
-                            <div class="mt-6 p-4 bg-blue-50/50 rounded-2xl border-l-4 border-blue-500">
-                                <span class="text-[10px] font-black text-blue-600 uppercase tracking-widest">Observaciones Clínicas:</span>
+                            <div class="mt-6 p-4 bg-teal-50/50 rounded-2xl border-l-4 border-teal-600">
+                                <span class="text-[10px] font-black text-teal-700 uppercase tracking-widest">Observaciones Clínicas:</span>
                                 <p class="text-sm text-slate-700 font-medium mt-1 italic">"{{ $result->notes }}"</p>
                             </div>
                         @endif

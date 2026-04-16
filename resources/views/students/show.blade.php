@@ -12,7 +12,7 @@
                 <a href="{{ route('students.index') }}" class="text-xs font-black uppercase tracking-widest text-slate-400 hover:text-slate-900 transition-colors self-center">
                     &larr; Volver
                 </a>
-                <a href="{{ route('clinical_histories.show', $student) }}" class="bg-blue-600 text-white px-4 sm:px-6 py-2.5 rounded-xl text-xs font-black uppercase tracking-[0.2em] hover:bg-blue-700 transition shadow-lg shadow-blue-200 flex items-center">
+                <a href="{{ route('clinical_histories.show', $student) }}" class="bg-teal-700 text-white px-4 sm:px-6 py-2.5 rounded-full text-xs font-black uppercase tracking-[0.2em] hover:bg-teal-600 transition shadow-lg shadow-teal-900/10 flex items-center">
                     <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
                     Historial Clínico
                 </a>
@@ -22,7 +22,7 @@
                         Descargar Historial PDF
                     </a>
                 @endif
-                <button onclick="window.print()" class="bg-slate-900 text-white px-4 sm:px-6 py-2.5 rounded-xl text-xs font-black uppercase tracking-[0.2em] hover:bg-blue-600 transition shadow-lg shadow-slate-200 flex items-center">
+                <button onclick="window.print()" class="bg-slate-900 text-white px-4 sm:px-6 py-2.5 rounded-full text-xs font-black uppercase tracking-[0.2em] hover:bg-teal-700 transition shadow-lg shadow-slate-200 flex items-center">
                     <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
                     Imprimir Reporte
                 </button>
@@ -32,16 +32,16 @@
 
     <div class="py-12 bg-slate-50/50 min-h-screen">
         <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-2xl sm:rounded-[2.5rem] border border-slate-200 printable-card">
+            <div class="app-panel-strong overflow-hidden rounded-[2.5rem] printable-card">
 
                 {{-- Encabezado Estilo Reporte Corporativo --}}
                 <div class="p-6 sm:p-10 border-b border-slate-100 bg-gradient-to-r from-slate-50 to-white flex flex-col md:flex-row md:justify-between md:items-center gap-4">
                     <div class="flex items-center">
-                        <div class="w-12 h-12 bg-blue-600 rounded-2xl flex items-center justify-center mr-4 shadow-lg shadow-blue-200">
+                        <div class="w-12 h-12 bg-teal-700 rounded-2xl flex items-center justify-center mr-4 shadow-lg shadow-teal-900/10">
                             <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2-2z"></path></svg>
                         </div>
                         <div>
-                            <h1 class="text-xl font-black text-slate-800 tracking-tight uppercase">Clínica IPS <span class="text-blue-600">Escolar</span></h1>
+                            <h1 class="text-xl font-black text-slate-800 tracking-tight uppercase">Clínica IPS <span class="text-teal-700">Escolar</span></h1>
                             <p class="text-[10px] font-bold text-slate-400 uppercase tracking-[0.3em]">Historia Clínica Estudiantil</p>
                         </div>
                     </div>
@@ -55,8 +55,8 @@
                     {{-- SECCIÓN 1: DATOS DEL ESTUDIANTE --}}
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-12 mb-12">
                         <div class="space-y-4">
-                            <h4 class="text-[10px] font-black text-blue-600 uppercase tracking-[0.2em] mb-6 flex items-center">
-                                <span class="w-2 h-2 rounded-full bg-blue-600 mr-2"></span> Identificación Básica
+                            <h4 class="text-[10px] font-black text-teal-700 uppercase tracking-[0.2em] mb-6 flex items-center">
+                                <span class="w-2 h-2 rounded-full bg-teal-700 mr-2"></span> Identificación Básica
                             </h4>
                             <div class="space-y-3">
                                 <div class="flex flex-col">
@@ -81,14 +81,14 @@
                         </div>
 
                         <div class="space-y-4">
-                            <h4 class="text-[10px] font-black text-blue-600 uppercase tracking-[0.2em] mb-6 flex items-center">
-                                <span class="w-2 h-2 rounded-full bg-blue-600 mr-2"></span> Registro Institucional
+                            <h4 class="text-[10px] font-black text-teal-700 uppercase tracking-[0.2em] mb-6 flex items-center">
+                                <span class="w-2 h-2 rounded-full bg-teal-700 mr-2"></span> Registro Institucional
                             </h4>
                             <div class="space-y-3">
                                 <div class="flex flex-col">
                                     <span class="text-[10px] font-bold text-slate-400 uppercase">Grado Académico</span>
                                     <div>
-                                        <span class="inline-block bg-blue-600 text-white px-3 py-0.5 rounded-lg text-xs font-black uppercase tracking-wider">{{ $student->grade }}</span>
+                                        <span class="inline-block bg-teal-700 text-white px-3 py-0.5 rounded-full text-xs font-black uppercase tracking-wider">{{ $student->grade }}</span>
                                     </div>
                                 </div>
                                 <div class="flex flex-col">
@@ -110,7 +110,7 @@
                             <svg class="w-24 h-24" fill="currentColor" viewBox="0 0 20 20"><path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"></path></svg>
                         </div>
 
-                        <h4 class="text-[10px] font-black text-blue-400 uppercase mb-6 tracking-[0.3em]">Responsable Legal</h4>
+                        <h4 class="text-[10px] font-black text-teal-300 uppercase mb-6 tracking-[0.3em]">Responsable Legal</h4>
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-8 relative z-10">
                             <div>
                                 <p class="text-[10px] text-slate-500 font-bold uppercase tracking-widest mb-1">Nombre Completo</p>
@@ -139,7 +139,7 @@
 
                     {{-- Sección de Exámenes --}}
                     <div>
-                        <h4 class="text-[10px] font-black text-slate-400 uppercase mb-6 tracking-[0.2em] flex items-center">
+                            <h4 class="text-[10px] font-black text-slate-400 uppercase mb-6 tracking-[0.2em] flex items-center">
                             <span class="w-8 h-[1px] bg-slate-200 mr-3"></span> Historial Clínico Reciente
                         </h4>
 

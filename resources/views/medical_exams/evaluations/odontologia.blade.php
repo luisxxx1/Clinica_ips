@@ -4,25 +4,69 @@
 --}}
 
 <style>
-    .tooth-container { transition: all 0.2s ease-in-out; cursor: pointer; }
-    .tooth-container:hover { transform: translateY(-4px) scale(1.05); z-index: 10; }
-    .tooth-label { font-size: 10px; font-weight: 900; color: #475569; letter-spacing: -0.02em; }
-    #capture-area { background-color: #f8fafc; background-image: radial-gradient(#e2e8f0 1px, transparent 1px); background-size: 20px 20px; }
-    .legend-item { display: flex; align-items: center; gap: 0.5rem; padding: 0.375rem 0.75rem; border-radius: 0.75rem; border-width: 1px; }
+    .odontology-shell {
+        position: relative;
+        isolation: isolate;
+        background:
+            radial-gradient(circle at top right, rgba(29, 78, 216, 0.08), transparent 28%),
+            radial-gradient(circle at bottom left, rgba(15, 23, 42, 0.06), transparent 30%);
+    }
+
+    .tooth-container {
+        transition: all 0.25s ease-in-out;
+        cursor: pointer;
+        border-radius: 1rem;
+        padding: 0.25rem;
+    }
+
+    .tooth-container:hover {
+        transform: translateY(-6px) scale(1.04);
+        z-index: 10;
+        background: rgba(255, 255, 255, 0.65);
+        box-shadow: 0 14px 35px rgba(15, 23, 42, 0.08);
+    }
+
+    .tooth-label {
+        font-size: 10px;
+        font-weight: 900;
+        color: #334155;
+        letter-spacing: 0.22em;
+        text-transform: uppercase;
+    }
+
+    #capture-area {
+        background:
+            linear-gradient(180deg, rgba(248, 250, 252, 0.98), rgba(241, 245, 249, 0.96)),
+            radial-gradient(circle at top left, rgba(148, 163, 184, 0.12) 1px, transparent 1px);
+        background-size: auto, 20px 20px;
+    }
+
+    .legend-item {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.5rem 0.85rem;
+        border-radius: 999px;
+        border-width: 1px;
+        box-shadow: 0 10px 20px rgba(15, 23, 42, 0.05);
+    }
 </style>
 
-<div class="py-2 bg-transparent" x-data="odontogramaLogic()">
-    <div class="max-w-7xl mx-auto">
+<div class="odontology-shell py-4 md:py-6 bg-transparent" x-data="odontogramaLogic()">
+    <div class="max-w-7xl mx-auto px-3 md:px-6">
 
         {{-- Encabezado Profesional --}}
-        <div class="mb-10 flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
+        <div class="mb-8 app-panel-strong rounded-[2.5rem] p-6 md:p-8 flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
             <div>
-                <span class="text-[10px] font-black text-blue-500 uppercase tracking-[0.3em] mb-2 block">Módulo de Salud Oral</span>
-                <h2 class="text-4xl font-black text-slate-900 tracking-tighter uppercase leading-none">
+                <span class="text-[10px] font-black text-blue-600 uppercase tracking-[0.35em] mb-2 block">Módulo de Salud Oral</span>
+                <h2 class="app-display text-4xl md:text-5xl font-black text-slate-900 leading-none">
                     Valoración: <span class="text-blue-600">Odontología</span>
                 </h2>
-                <div class="flex items-center mt-4">
-                    <div class="h-10 w-10 rounded-xl bg-slate-900 text-white flex items-center justify-center font-black text-xs shadow-lg mr-3 uppercase">
+                <p class="mt-3 text-sm text-slate-500 max-w-2xl leading-6">
+                    Captura el odontograma como una pieza visual limpia, legible y lista para reporte. Los cambios se guardan en base64 para mantener el flujo consistente con audiometría.
+                </p>
+                <div class="flex items-center mt-5">
+                    <div class="h-11 w-11 rounded-2xl bg-slate-900 text-white flex items-center justify-center font-black text-xs shadow-lg mr-3 uppercase">
                         @php
                             $p_nombre = $exam->student->name ?? $exam->student->first_name ?? 'P';
                             $p_apellido = $exam->student->last_name ?? '';
@@ -37,7 +81,7 @@
             </div>
 
             {{-- Leyenda de Colores --}}
-            <div class="flex flex-wrap gap-3 bg-white p-4 rounded-3xl shadow-sm border border-slate-100 items-center justify-center md:justify-start">
+            <div class="flex flex-wrap gap-3 app-panel bg-white/80 p-4 rounded-[2rem] items-center justify-center md:justify-start">
                 <span class="text-[9px] font-black text-slate-400 uppercase tracking-widest mr-2 w-full md:w-auto text-center">Convenciones:</span>
                 <div class="legend-item bg-red-50 border-red-100"><span class="w-2.5 h-2.5 bg-red-500 rounded-full"></span><span class="text-[10px] font-black text-red-700 uppercase">Caries</span></div>
                 <div class="legend-item bg-green-50 border-green-100"><span class="w-2.5 h-2.5 bg-green-500 rounded-full"></span><span class="text-[10px] font-black text-green-700 uppercase">Sellante</span></div>
@@ -52,10 +96,10 @@
             <input type="hidden" name="results[odontograma_path]" id="odontograma_imagen">
 
             {{-- Área del Odontograma --}}
-            <div class="bg-white p-2 md:p-6 rounded-[3rem] shadow-sm border border-slate-100 mb-8 overflow-x-auto">
-                <div id="capture-area" class="min-w-[800px] p-8 bg-slate-50 rounded-[2rem] border-2 border-dashed border-slate-200">
+            <div class="app-panel rounded-[3rem] p-3 md:p-6 mb-8 overflow-x-auto">
+                <div id="capture-area" class="min-w-[800px] p-8 rounded-[2.25rem] border border-slate-200/80">
                     <div class="space-y-12">
-                        <div class="flex justify-center gap-2">
+                        <div class="flex justify-center gap-2 md:gap-3">
                             @foreach([55,54,53,52,51,61,62,63,64,65] as $n)
                                 <div class="tooth-container">
                                     <x-tooth :number="$n" />
@@ -63,7 +107,7 @@
                                 </div>
                             @endforeach
                         </div>
-                        <div class="flex justify-center gap-2">
+                        <div class="flex justify-center gap-2 md:gap-3">
                             @foreach([85,84,83,82,81,71,72,73,74,75] as $n)
                                 <div class="tooth-container">
                                     <div class="text-center mb-2 tooth-label">{{ $n }}</div>
@@ -76,39 +120,39 @@
 
                 {{-- Botón Explícito de Captura --}}
                 <div class="flex justify-center mt-6">
-                    <button type="button" id="btn-capture" class="bg-purple-600 hover:bg-purple-500 text-white px-8 py-4 rounded-xl font-black uppercase text-xs tracking-widest transition-all shadow-lg">
+                    <button type="button" id="btn-capture" class="bg-slate-900 hover:bg-blue-600 text-white px-8 py-4 rounded-2xl font-black uppercase text-xs tracking-[0.24em] transition-all shadow-[0_16px_30px_rgba(15,23,42,0.18)]">
                         📸 Capturar Odontograma
                     </button>
                 </div>
 
                 {{-- Preview de la Captura --}}
-                <div id="capture-preview" style="display:none; margin-top: 20px; text-align: center;">
-                    <p class="text-sm font-bold text-slate-700 mb-3">Vista previa de lo que se guardará:</p>
-                    <img id="preview-img" style="max-width: 100%; max-height: 300px; border: 2px solid #10b981; border-radius: 1rem;">
+                <div id="capture-preview" style="display:none; margin-top: 20px; text-align: center;" class="app-panel rounded-[2rem] p-4 mt-6">
+                    <p class="text-sm font-black text-slate-700 mb-3 uppercase tracking-[0.2em]">Vista previa de lo que se guardará</p>
+                    <img id="preview-img" style="max-width: 100%; max-height: 300px; border: 1px solid rgba(148,163,184,0.35); border-radius: 1.25rem; box-shadow: 0 14px 30px rgba(15,23,42,0.08);">
                 </div>
             </div>
 
             {{-- Diagnóstico --}}
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-                <div class="bg-white p-6 rounded-[2rem] shadow-sm border border-slate-100">
-                    <label class="text-[10px] font-black text-slate-400 uppercase mb-3 block tracking-[0.2em]">Higiene Oral</label>
-                    <select name="results[higiene]" class="w-full border-none bg-slate-50 rounded-xl py-3 font-bold text-slate-700">
+                <div class="app-panel p-6 rounded-[2rem]">
+                    <label class="text-[10px] font-black text-slate-400 uppercase mb-3 block tracking-[0.24em]">Higiene Oral</label>
+                    <select name="results[higiene]" class="w-full border-none bg-slate-50 rounded-2xl py-3 px-4 font-bold text-slate-700 shadow-inner focus:ring-4 focus:ring-blue-500/10">
                         <option value="Buena">🟢 Buena Higiene</option>
                         <option value="Regular">🟡 Regular Higiene</option>
                         <option value="Mala">🔴 Mala Higiene</option>
                     </select>
                 </div>
-                <div class="bg-white p-6 rounded-[2rem] shadow-sm border border-slate-100">
-                    <label class="text-[10px] font-black text-slate-400 uppercase mb-3 block tracking-[0.2em]">Tejidos Blandos</label>
-                    <input type="text" name="results[tejidos_blandos]" class="w-full border-none bg-slate-50 rounded-xl py-3 font-bold text-slate-700" placeholder="Describa hallazgos...">
+                <div class="app-panel p-6 rounded-[2rem]">
+                    <label class="text-[10px] font-black text-slate-400 uppercase mb-3 block tracking-[0.24em]">Tejidos Blandos</label>
+                    <input type="text" name="results[tejidos_blandos]" class="w-full border-none bg-slate-50 rounded-2xl py-3 px-4 font-bold text-slate-700 shadow-inner focus:ring-4 focus:ring-blue-500/10" placeholder="Describa hallazgos...">
                 </div>
             </div>
 
-            <div class="bg-slate-900 p-8 rounded-[2.5rem] shadow-xl">
-                   <textarea name="notes" id="notes" rows="3" class="w-full bg-slate-800/50 border-none rounded-2xl text-white p-5" placeholder="Observaciones...">Odontograma capturado y evaluado.</textarea>
-                <div class="flex justify-between items-center pt-8">
-                    <p class="text-slate-400 text-[9px] font-bold uppercase tracking-widest max-w-xs">Se capturará el estado actual del odontograma.</p>
-                    <button type="submit" id="btn-save" class="bg-blue-600 text-white px-10 py-4 rounded-xl font-black uppercase text-xs hover:bg-blue-500 transition-all">
+            <div class="app-panel-strong p-8 rounded-[2.5rem]">
+                   <textarea name="notes" id="notes" rows="3" class="w-full bg-white border border-slate-200 rounded-[1.75rem] text-slate-800 p-5 shadow-inner placeholder:text-slate-400" placeholder="Observaciones...">Odontograma capturado y evaluado.</textarea>
+                <div class="flex flex-col md:flex-row md:justify-between md:items-center gap-4 pt-8">
+                    <p class="text-slate-500 text-[9px] font-black uppercase tracking-[0.24em] max-w-xs">Se capturará el estado actual del odontograma.</p>
+                    <button type="submit" id="btn-save" class="bg-blue-600 text-white px-10 py-4 rounded-2xl font-black uppercase text-xs hover:bg-slate-900 transition-all shadow-[0_16px_32px_rgba(37,99,235,0.24)]">
                         Finalizar Registro
                     </button>
                 </div>

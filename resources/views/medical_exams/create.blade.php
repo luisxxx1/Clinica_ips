@@ -18,14 +18,14 @@
 
                 {{-- Sidebar --}}
                 <div class="lg:col-span-1">
-                    <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200 sticky top-6 text-center">
-                        <div class="h-20 w-20 bg-blue-600 text-white rounded-full flex items-center justify-center text-3xl font-bold mx-auto mb-2 shadow-inner">
+                    <div class="app-panel-strong p-6 rounded-[2rem] sticky top-6 text-center">
+                                <div class="h-20 w-20 bg-teal-700 text-white rounded-full flex items-center justify-center text-3xl font-bold mx-auto mb-2 shadow-inner">
                             {{ substr($student->first_name, 0, 1) }}{{ substr($student->last_name, 0, 1) }}
                         </div>
                         <h3 class="font-bold text-gray-900 leading-tight">{{ $student->full_name }}</h3>
                         <p class="text-xs text-gray-500 uppercase tracking-tighter">{{ $student->document_type }}: {{ $student->document_number }}</p>
                         <hr class="my-4 border-gray-100">
-                        <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold {{ $medicalExam->status === 'en_proceso' ? 'bg-yellow-100 text-yellow-800 border border-yellow-200' : 'bg-blue-100 text-blue-800 border border-blue-200' }}">
+                        <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold {{ $medicalExam->status === 'en_proceso' ? 'bg-amber-100 text-amber-800 border border-amber-200' : 'bg-teal-100 text-teal-800 border border-teal-200' }}">
                             {{ ucfirst(str_replace('_', ' ', $medicalExam->status)) }}
                         </span>
                     </div>
@@ -33,7 +33,7 @@
 
                 {{-- Panel Principal --}}
                 <div class="lg:col-span-3">
-                    <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg border border-gray-200">
+                    <div class="app-panel-strong overflow-hidden rounded-[2rem]">
                         <div class="p-8">
                             <form id="form-odontologia" action="{{ route('medical_exams.store_result', $medicalExam) }}" method="POST">
                                 @csrf
@@ -41,7 +41,7 @@
 
                                 <div class="space-y-10">
                                     {{-- ODONTOGRAMA --}}
-                                    <div id="capture-area" class="bg-slate-50 p-8 rounded-3xl border border-slate-200 shadow-inner">
+                                    <div id="capture-area" class="bg-slate-50 p-8 rounded-[2rem] border border-slate-200 shadow-inner">
                                         <h4 class="text-slate-500 font-black mb-10 text-xs uppercase text-center tracking-[0.2em]">Odontograma Interactivo</h4>
 
                                         {{-- Leyenda --}}
@@ -105,22 +105,22 @@
                                     </div>
 
                                     {{-- ANTECEDENTES --}}
-                                    <div class="bg-blue-50/40 p-6 rounded-xl border border-blue-100">
-                                        <h4 class="text-blue-700 font-bold mb-6 text-xs uppercase tracking-widest flex items-center gap-2">
+                                    <div class="bg-teal-50/50 p-6 rounded-[1.5rem] border border-teal-100">
+                                        <h4 class="text-teal-700 font-bold mb-6 text-xs uppercase tracking-widest flex items-center gap-2">
                                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" /></svg>
                                             Antecedentes y Hábitos
                                         </h4>
                                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                             @foreach(['cepillado' => '¿Se cepilla los dientes diariamente?', 'caries' => '¿Ha tenido caries anteriormente?', 'tratamiento' => '¿Ha recibido tratamiento dental?', 'visita' => '¿Visitó al odontólogo el último año?'] as $key => $pregunta)
-                                                <div class="bg-white p-4 rounded-xl border border-gray-100 shadow-sm">
+                                                <div class="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm">
                                                     <p class="text-sm font-semibold text-gray-700 mb-3">{{ $pregunta }}</p>
                                                     <div class="flex gap-4">
                                                         <label class="inline-flex items-center">
-                                                            <input type="radio" name="habitos[{{ $key }}]" value="si" class="text-blue-600 focus:ring-blue-500" required>
+                                                            <input type="radio" name="habitos[{{ $key }}]" value="si" class="text-teal-600 focus:ring-teal-500" required>
                                                             <span class="ml-2 text-sm">Sí</span>
                                                         </label>
                                                         <label class="inline-flex items-center">
-                                                            <input type="radio" name="habitos[{{ $key }}]" value="no" class="text-blue-600 focus:ring-blue-500" required>
+                                                            <input type="radio" name="habitos[{{ $key }}]" value="no" class="text-teal-600 focus:ring-teal-500" required>
                                                             <span class="ml-2 text-sm">No</span>
                                                         </label>
                                                     </div>
@@ -130,14 +130,14 @@
                                     </div>
 
                                     {{-- Observaciones --}}
-                                    <div class="bg-white p-6 rounded-xl border border-gray-200">
-                                        <label class="block text-sm font-bold text-gray-700 mb-2 uppercase">Observaciones / Recomendaciones</label>
-                                        <textarea name="notes" rows="4" class="w-full border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 text-sm" placeholder="Diagnóstico..."></textarea>
+                                    <div class="bg-white p-6 rounded-[1.5rem] border border-slate-200">
+                                        <label class="block text-sm font-bold text-slate-700 mb-2 uppercase">Observaciones / Recomendaciones</label>
+                                        <textarea name="notes" rows="4" class="w-full border-slate-300 rounded-2xl focus:ring-teal-500 focus:border-teal-500 text-sm" placeholder="Diagnóstico..."></textarea>
                                     </div>
                                 </div>
 
                                 <div class="mt-8 flex justify-end">
-                                    <button type="submit" id="btn-save" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-10 rounded-lg shadow-lg transition transform hover:scale-105">
+                                    <button type="submit" id="btn-save" class="bg-teal-700 hover:bg-teal-600 text-white font-black py-3 px-10 rounded-full text-[10px] uppercase tracking-[0.22em] shadow-lg transition transform hover:scale-105">
                                         GUARDAR DIAGNÓSTICO
                                     </button>
                                 </div>
@@ -154,7 +154,7 @@
             e.preventDefault();
             const form = this;
             const btn = document.getElementById('btn-save');
-            
+
             btn.disabled = true;
             btn.innerHTML = "PROCESANDO...";
 

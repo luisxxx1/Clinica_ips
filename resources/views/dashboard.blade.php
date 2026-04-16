@@ -1,169 +1,97 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex justify-between items-center">
-            <div>
-                <h2 class="font-black text-xl text-slate-800 leading-tight uppercase tracking-tighter">
-                    {{ __('Dashboard Operativo') }} <span class="text-blue-600 ml-2">|</span> <span class="text-slate-400 text-sm ml-2 font-bold italic">Crear Integral</span>
-                </h2>
-            </div>
-
-            <div class="flex items-center gap-3">
-                <a href="{{ route('medical_exams.index') }}" class="inline-flex items-center px-4 py-2.5 rounded-xl bg-slate-900 hover:bg-blue-600 text-white text-[10px] font-black uppercase tracking-[0.2em] transition shadow-lg shadow-slate-200">
-                    Iniciar Evaluación
-                </a>
-                <div class="text-[10px] font-black text-slate-400 uppercase tracking-widest bg-slate-100 px-3 py-1 rounded-full">
-                    Sistema v2.0
-                </div>
-            </div>
-        </div>
+        <h2 class="text-sm font-semibold text-slate-700">Menu principal</h2>
     </x-slot>
 
-    <div class="py-12 bg-slate-50/50 min-h-screen">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+    <div class="py-6 md:py-8 min-h-screen">
+        <div class="max-w-screen-2xl mx-auto px-4 md:px-8">
 
-            {{-- Grid de Estadísticas Rápidas --}}
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-10">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                <section class="lg:col-span-12 app-panel-strong rounded-[1.5rem] p-5 md:p-6 relative overflow-hidden">
 
-                {{-- Card: Pacientes --}}
-                <div class="bg-white overflow-hidden shadow-sm rounded-[2rem] border border-slate-200 p-8 hover:shadow-xl hover:shadow-blue-900/5 transition-all duration-300 group">
-                    <div class="flex items-center justify-between">
+                    <div class="flex justify-between items-start gap-4 mb-5">
                         <div>
-                            <p class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-1">Total Pacientes</p>
-                            <h3 class="text-3xl font-black text-slate-800 tracking-tighter">{{ $totalPacientes }}</h3>
+                            <h3 class="app-display text-lg md:text-xl font-semibold text-slate-900">Circuito Médico</h3>
+                            <p class="text-sm text-slate-500 mt-1">Flujo operativo de pacientes en evaluación integral.</p>
                         </div>
-                        <div class="p-4 bg-blue-50 text-blue-600 rounded-2xl group-hover:bg-blue-600 group-hover:text-white transition-colors duration-300">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
-                        </div>
-                    </div>
-                </div>
-
-                {{-- Card: Certificados --}}
-                <div class="bg-white overflow-hidden shadow-sm rounded-[2rem] border border-slate-200 p-8 hover:shadow-xl hover:shadow-green-900/5 transition-all duration-300 group">
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <p class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-1">Certificados Listos</p>
-                            <h3 class="text-3xl font-black text-slate-800 tracking-tighter">{{ $totalCertificados }}</h3>
-                        </div>
-                        <div class="p-4 bg-green-50 text-green-600 rounded-2xl group-hover:bg-green-600 group-hover:text-white transition-colors duration-300">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                        </div>
-                    </div>
-                </div>
-
-                {{-- Card: Pendientes --}}
-                <div class="bg-white overflow-hidden shadow-sm rounded-[2rem] border border-slate-200 p-8 hover:shadow-xl hover:shadow-orange-900/5 transition-all duration-300 group">
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <p class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-1">En Espera</p>
-                            <h3 class="text-3xl font-black text-orange-600 tracking-tighter">{{ $pendientes }}</h3>
-                        </div>
-                        <div class="p-4 bg-orange-50 text-orange-600 rounded-2xl group-hover:bg-orange-600 group-hover:text-white transition-colors duration-300">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            {{-- Tarjeta de Circuito Médico (Solo Administrador y Admisión) --}}
-            @if($isAdminOrAdmision)
-            <div class="mb-10">
-                <div class="bg-gradient-to-br from-slate-50 to-slate-100 overflow-hidden shadow-sm rounded-[2rem] border border-slate-300 p-8">
-                    <div class="mb-8">
-                        <h3 class="text-lg font-black text-slate-800 tracking-tight mb-2">Circuito Médico</h3>
-                        <p class="text-xs font-bold text-slate-500">Flujo de pacientes en el proceso de evaluación integral</p>
+                        <span class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-teal-50 text-teal-800 text-[10px] font-semibold uppercase tracking-[0.12em] border border-teal-100">
+                            Flujo activo
+                        </span>
                     </div>
 
-                    {{-- Flujo Visual del Circuito --}}
-                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-                        {{-- Pendiente --}}
-                        <div class="bg-white rounded-xl p-6 border-2 border-gray-200 hover:border-yellow-400 transition-all duration-300 shadow-sm group">
-                            <div class="flex flex-col items-center text-center">
-                                <div class="w-12 h-12 bg-yellow-50 text-yellow-600 rounded-full flex items-center justify-center mb-4 group-hover:bg-yellow-100 transition-colors">
-                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                                </div>
-                                <p class="text-[11px] font-black text-gray-500 uppercase tracking-wider mb-2">Pendiente</p>
-                                <p class="text-3xl font-black text-gray-800">{{ $circuitoMedico['pendiente'] }}</p>
-                                <p class="text-[10px] font-bold text-gray-400 mt-2">Esperando inicio</p>
+                    <div class="space-y-3">
+                        <div class="group flex items-center gap-4 p-4 rounded-2xl bg-slate-50 hover:bg-slate-50 transition-colors border border-slate-100">
+                            <div class="w-12 h-12 rounded-xl bg-white flex items-center justify-center text-amber-600 border border-slate-100 flex-none">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            </div>
+                            <div class="min-w-0 flex-1">
+                                <p class="text-[10px] font-semibold uppercase tracking-[0.12em] text-slate-400">Pendientes</p>
+                                <h4 class="text-base md:text-lg font-medium text-slate-900 leading-tight">Pacientes esperando inicio</h4>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-2xl font-semibold text-slate-900 leading-none">{{ $circuitoMedico['pendiente'] }}</p>
+                                <p class="text-[10px] text-slate-400 mt-1 uppercase tracking-[0.12em]">Hoy</p>
                             </div>
                         </div>
 
-                        {{-- Flecha --}}
-                        <div class="hidden md:flex items-center justify-center">
-                            <div class="text-slate-300">
-                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 5l7 7m0 0l-7 7m7-7H6"></path></svg>
+                        <div class="group flex items-center gap-4 p-4 rounded-2xl bg-slate-50 hover:bg-slate-50 transition-colors border border-slate-100">
+                            <div class="w-12 h-12 rounded-xl bg-white flex items-center justify-center text-sky-600 border border-slate-100 flex-none">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m7 0a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            </div>
+                            <div class="min-w-0 flex-1">
+                                <p class="text-[10px] font-semibold uppercase tracking-[0.12em] text-slate-400">En proceso</p>
+                                <h4 class="text-base md:text-lg font-medium text-slate-900 leading-tight">Evaluaciones activas en curso</h4>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-2xl font-semibold text-slate-900 leading-none">{{ $circuitoMedico['en_proceso'] }}</p>
+                                <p class="text-[10px] text-slate-400 mt-1 uppercase tracking-[0.12em]">Ahora</p>
                             </div>
                         </div>
 
-                        {{-- En Proceso --}}
-                        <div class="bg-white rounded-xl p-6 border-2 border-blue-200 hover:border-blue-400 transition-all duration-300 shadow-sm group md:order-3">
-                            <div class="flex flex-col items-center text-center">
-                                <div class="w-12 h-12 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center mb-4 group-hover:bg-blue-100 transition-colors">
-                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m7 0a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                                </div>
-                                <p class="text-[11px] font-black text-blue-600 uppercase tracking-wider mb-2">En Proceso</p>
-                                <p class="text-3xl font-black text-slate-800">{{ $circuitoMedico['en_proceso'] }}</p>
-                                <p class="text-[10px] font-bold text-gray-400 mt-2">Evaluación activa</p>
+                        <div class="group flex items-center gap-4 p-4 rounded-2xl bg-slate-50 hover:bg-slate-50 transition-colors border border-slate-100">
+                            <div class="w-12 h-12 rounded-xl bg-white flex items-center justify-center text-emerald-600 border border-slate-100 flex-none">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg>
                             </div>
-                        </div>
-
-                        {{-- Flecha --}}
-                        <div class="hidden md:flex items-center justify-center md:order-4">
-                            <div class="text-slate-300">
-                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 5l7 7m0 0l-7 7m7-7H6"></path></svg>
+                            <div class="min-w-0 flex-1">
+                                <p class="text-[10px] font-semibold uppercase tracking-[0.12em] text-slate-400">Completados</p>
+                                <h4 class="text-base md:text-lg font-medium text-slate-900 leading-tight">Casos listos para entrega</h4>
                             </div>
-                        </div>
-
-                        {{-- Completado --}}
-                        <div class="bg-white rounded-xl p-6 border-2 border-green-200 hover:border-green-400 transition-all duration-300 shadow-sm group md:order-5">
-                            <div class="flex flex-col items-center text-center">
-                                <div class="w-12 h-12 bg-green-50 text-green-600 rounded-full flex items-center justify-center mb-4 group-hover:bg-green-100 transition-colors">
-                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-                                </div>
-                                <p class="text-[11px] font-black text-green-600 uppercase tracking-wider mb-2">Completado</p>
-                                <p class="text-3xl font-black text-slate-800">{{ $circuitoMedico['completado'] }}</p>
-                                <p class="text-[10px] font-bold text-gray-400 mt-2">Listo para entregar</p>
+                            <div class="text-right">
+                                <p class="text-2xl font-semibold text-slate-900 leading-none">{{ $circuitoMedico['completado'] }}</p>
+                                <p class="text-[10px] text-slate-400 mt-1 uppercase tracking-[0.12em]">Total</p>
                             </div>
                         </div>
                     </div>
 
-                    {{-- Barra de Progreso Total --}}
-                    <div class="mt-8 pt-6 border-t border-slate-300">
+                    <div class="mt-6 pt-5 border-t border-slate-200">
                         <div class="flex justify-between items-center mb-3">
-                            <p class="text-xs font-bold text-slate-600">Progreso General del Circuito</p>
-                            <p class="text-xs font-black text-slate-700">{{ $circuitoMedico['completado'] }} / {{ $circuitoMedico['total'] }} completados</p>
+                            <p class="text-xs font-semibold text-slate-500 uppercase tracking-[0.12em]">Progreso general del circuito</p>
+                            <p class="text-xs font-semibold text-slate-700">{{ $circuitoMedico['completado'] }} / {{ $circuitoMedico['total'] }}</p>
                         </div>
-                        <div class="w-full bg-slate-200 rounded-full h-3 overflow-hidden">
-                            <div class="bg-gradient-to-r from-green-400 to-green-600 h-full rounded-full transition-all duration-300" style="width: {{ $circuitoMedico['total'] > 0 ? ($circuitoMedico['completado'] / $circuitoMedico['total'] * 100) : 0 }}%"></div>
+                        <div class="w-full bg-slate-200 rounded-full h-2.5 overflow-hidden">
+                            <div class="bg-teal-600 h-full rounded-full transition-all duration-300" style="width: {{ $circuitoMedico['total'] > 0 ? ($circuitoMedico['completado'] / $circuitoMedico['total'] * 100) : 0 }}%"></div>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="lg:col-span-12 bg-slate-50/90 app-panel rounded-[1.5rem] p-5 md:p-6">
+                    <div class="flex items-center justify-between mb-6 gap-4">
+                        <div>
+                            <h3 class="app-display text-lg md:text-xl font-semibold text-slate-900">Análisis de Crecimiento</h3>
+                            <p class="text-sm text-slate-500 mt-1">Flujo mensual de registros de pacientes.</p>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="w-3 h-3 rounded-full bg-teal-600"></span>
+                            <span class="text-[10px] font-semibold text-slate-400 uppercase tracking-[0.12em]">Nuevos ingresos</span>
                         </div>
                     </div>
 
-                </div>
-            </div>
-            @endif
-
-            {{-- Sección de Gráfico --}}
-            <div class="bg-white overflow-hidden shadow-sm rounded-[2.5rem] border border-slate-200 p-10 relative">
-                <div class="flex justify-between items-center mb-10">
-                    <div>
-                        <h4 class="text-lg font-black text-slate-800 tracking-tight">Análisis de Crecimiento</h4>
-                        <p class="text-xs font-bold text-slate-400">Flujo mensual de registros de pacientes</p>
+                    <div class="relative" style="height: 360px;">
+                        <canvas id="pacientesChart"></canvas>
                     </div>
-                    <div class="flex items-center space-x-2">
-                        <span class="w-3 h-3 rounded-full bg-blue-600"></span>
-                        <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Nuevos Ingresos</span>
-                    </div>
-                </div>
+                </section>
 
-                <div class="relative" style="height: 400px;">
-                    <canvas id="pacientesChart"></canvas>
-                </div>
             </div>
-
-            {{-- Footer Técnico --}}
-            <div class="mt-8 text-center">
-                <p class="text-[10px] font-black text-slate-300 uppercase tracking-[0.4em]">Powered by SnakeDev Engine</p>
-            </div>
-
         </div>
     </div>
 

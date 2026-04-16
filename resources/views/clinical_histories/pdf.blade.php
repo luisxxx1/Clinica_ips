@@ -8,32 +8,32 @@
         }
         body {
             font-family: Arial, sans-serif;
-            color: #1f2937;
-            font-size: 12px;
+            color: #0f172a;
+            font-size: 11px;
             margin: 0;
-            padding: 20px;
-            line-height: 1.45;
+            padding: 14px 16px;
+            line-height: 1.38;
         }
         .header {
-            border-bottom: 2px solid #2563eb;
-            padding-bottom: 12px;
-            margin-bottom: 18px;
+            border-bottom: 2px solid #0f766e;
+            padding-bottom: 8px;
+            margin-bottom: 10px;
         }
         .title {
-            font-size: 20px;
+            font-size: 18px;
             font-weight: 700;
-            color: #1d4ed8;
-            margin-bottom: 4px;
+            color: #0f172a;
+            margin-bottom: 2px;
         }
         .subtitle {
-            font-size: 11px;
-            color: #6b7280;
+            font-size: 10px;
+            color: #64748b;
         }
         .patient-card {
-            border: 1px solid #dbeafe;
-            background: #f8fbff;
-            padding: 12px;
-            margin-bottom: 18px;
+            border: 1px solid #cbd5e1;
+            background: #f8fafc;
+            padding: 9px 10px;
+            margin-bottom: 10px;
         }
         .patient-row {
             margin-bottom: 5px;
@@ -45,78 +45,79 @@
         .patient-grid td {
             width: 50%;
             vertical-align: top;
-            padding: 3px 4px;
+            padding: 2px 4px;
         }
         .label {
             display: inline-block;
-            min-width: 150px;
+            min-width: 132px;
             font-weight: 700;
-            color: #1d4ed8;
+            color: #0f766e;
         }
         .entry {
-            border: 1px solid #e5e7eb;
-            margin-bottom: 14px;
+            border: 1px solid #cbd5e1;
+            margin-bottom: 8px;
             page-break-inside: avoid;
         }
         .entry-head {
-            background: #eff6ff;
-            border-bottom: 1px solid #dbeafe;
-            padding: 8px 10px;
+            background: #f1f5f9;
+            border-bottom: 1px solid #e2e8f0;
+            padding: 6px 8px;
         }
         .entry-title {
-            font-size: 13px;
-            font-weight: 700;
-            margin-bottom: 2px;
-            color: #1f2937;
-        }
-        .entry-meta {
-            font-size: 10px;
-            color: #4b5563;
-        }
-        .entry-body {
-            padding: 10px;
-            white-space: pre-line;
-            color: #374151;
-        }
-        .graphics-title {
-            margin: 16px 0 10px;
             font-size: 12px;
             font-weight: 700;
-            color: #1d4ed8;
+            margin-bottom: 2px;
+            color: #0f172a;
+        }
+        .entry-meta {
+            font-size: 9px;
+            color: #64748b;
+        }
+        .entry-body {
+            padding: 8px;
+            white-space: pre-line;
+            color: #1f2937;
+            line-height: 1.42;
+        }
+        .graphics-title {
+            margin: 12px 0 8px;
+            font-size: 11px;
+            font-weight: 700;
+            color: #0f766e;
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
         .graphic-card {
-            border: 1px solid #dbeafe;
-            background: #f8fbff;
-            margin-bottom: 12px;
+            border: 1px solid #cbd5e1;
+            background: #f8fafc;
+            margin-bottom: 8px;
             page-break-inside: avoid;
-            padding: 10px;
+            padding: 7px;
         }
         .graphic-card-tight {
-            margin-bottom: 4px;
+            margin-bottom: 2px;
         }
         .graphic-meta {
-            font-size: 10px;
-            color: #4b5563;
-            margin-bottom: 8px;
+            font-size: 9px;
+            color: #475569;
+            margin-bottom: 5px;
         }
         .graphic-image {
-            border: 1px solid #d1d5db;
+            border: 1px solid #cbd5e1;
             background: #ffffff;
-            padding: 6px;
+            padding: 4px;
             text-align: center;
         }
         .graphic-image img {
             max-width: 100%;
-            max-height: 300px;
+            max-height: 240px;
             display: inline-block;
         }
         .section-title {
-            margin: 16px 0 8px;
-            font-size: 12px;
+            margin: 10px 0 6px;
+            font-size: 11px;
             font-weight: 700;
-            color: #1d4ed8;
+            color: #0f766e;
             text-transform: uppercase;
             letter-spacing: 0.5px;
             page-break-after: avoid;
@@ -142,22 +143,27 @@
         .section-history-cell {
             padding-top: 2px;
         }
+        .section-visual-anchor {
+            page-break-inside: avoid;
+            break-inside: avoid-page;
+            margin-bottom: 6px;
+        }
         .section-subtitle {
-            margin: 10px 0 8px;
-            font-size: 11px;
+            margin: 6px 0 5px;
+            font-size: 10px;
             font-weight: 700;
-            color: #1f2937;
+            color: #0f172a;
             text-transform: uppercase;
         }
         .audio-main {
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: 4px;
+            margin-bottom: 2px;
         }
         .audio-left {
             width: 40%;
             vertical-align: top;
-            padding-right: 10px;
+            padding-right: 8px;
         }
         .audio-right {
             width: 60%;
@@ -170,42 +176,43 @@
         }
         .audio-table th,
         .audio-table td {
-            border: 1px solid #111827;
-            padding: 4px;
+            border: 1px solid #334155;
+            padding: 3px;
             text-align: center;
         }
         .audio-head {
-            background: #e5e7eb;
-            font-size: 10pt;
+            background: #e2e8f0;
+            font-size: 9pt;
             font-weight: 700;
-            color: #1e293b;
+            color: #0f172a;
         }
         .audio-graph-box {
-            border: 1px solid #111827;
+            border: 1px solid #334155;
             background: #fff;
-            padding: 4px;
+            padding: 3px;
         }
         .audio-graph-box img {
             width: 100%;
-            max-height: 220px;
+            max-height: 180px;
             height: auto;
             display: block;
         }
         .empty {
-            border: 1px dashed #d1d5db;
-            padding: 20px;
+            border: 1px dashed #94a3b8;
+            background: #f8fafc;
+            padding: 12px;
             text-align: center;
-            color: #6b7280;
+            color: #475569;
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 0.8px;
         }
         .footer {
-            margin-top: 20px;
-            padding-top: 10px;
-            border-top: 1px solid #e5e7eb;
-            font-size: 10px;
-            color: #6b7280;
+            margin-top: 12px;
+            padding-top: 8px;
+            border-top: 1px solid #cbd5e1;
+            font-size: 9px;
+            color: #64748b;
             text-align: center;
         }
     </style>
@@ -246,14 +253,9 @@
                 $supportsGraphic = in_array($section['area'], ['audiometria', 'odontologia']);
             @endphp
             @if($supportsGraphic)
-                <table class="section-flow">
-                    <tr>
-                        <td class="section-title-cell">
-                            <div class="section-title">{{ $section['title'] }}</div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="section-graphic-cell">
+                <div class="section-visual-anchor">
+                    <div class="section-title">{{ $section['title'] }}</div>
+                    <div class="section-graphic-cell">
                             @if(!empty($section['graphic']) && $section['area'] === 'audiometria')
                                 @php
                                     $graphic = $section['graphic'];
@@ -305,12 +307,12 @@
                                                     <tr style="height: 90px;">
                                                         <td style="font-weight: bold; font-size: 10pt;">Via Aerea</td>
                                                         <td>
-                                                            <div style="font-size: 42pt; color: #ef4444; font-weight: bold; line-height: 1;">O</div>
-                                                            <div style="font-size: 9pt; font-weight: bold; color: #ef4444;">OIDO<br>DERECHO</div>
+                                                            <div style="font-size: 42pt; color: #dc2626; font-weight: bold; line-height: 1;">O</div>
+                                                            <div style="font-size: 9pt; font-weight: bold; color: #dc2626;">OIDO<br>DERECHO</div>
                                                         </td>
                                                         <td>
-                                                            <div style="font-size: 42pt; color: #2563eb; font-weight: bold; line-height: 1;">X</div>
-                                                            <div style="font-size: 9pt; font-weight: bold; color: #2563eb;">OIDO<br>IZQUIERDO</div>
+                                                            <div style="font-size: 42pt; color: #1d4ed8; font-weight: bold; line-height: 1;">X</div>
+                                                            <div style="font-size: 9pt; font-weight: bold; color: #1d4ed8;">OIDO<br>IZQUIERDO</div>
                                                         </td>
                                                     </tr>
                                                 </table>
@@ -318,8 +320,8 @@
                                                 <table class="audio-table" style="margin-top: 14px;">
                                                     <tr>
                                                         <th rowspan="2" style="width: 40%; background: #f1f5f9;">PTA</th>
-                                                        <th style="color: #ef4444;">OD</th>
-                                                        <th style="color: #2563eb;">OI</th>
+                                                        <th style="color: #dc2626;">OD</th>
+                                                        <th style="color: #1d4ed8;">OI</th>
                                                     </tr>
                                                     <tr>
                                                         <td style="font-weight: bold; font-size: 12pt;">{{ $ptaOd !== null ? number_format((float) $ptaOd, 2, '.', '') : '--' }}</td>
@@ -350,29 +352,40 @@
                             @else
                                 <div class="empty" style="margin-bottom: 10px;">No se encontró gráfica para {{ $section['label'] }}.</div>
                             @endif
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="section-history-cell">
-                            @if($section['entries']->isNotEmpty())
-                                @foreach($section['entries'] as $entry)
-                                    <div class="entry">
-                                        <div class="entry-head">
-                                            <div class="entry-title">{{ $entry->title ?: 'Nota clinica' }}</div>
-                                            <div class="entry-meta">
-                                                Profesional: {{ $entry->specialist->name ?? 'No registrado' }} |
-                                                Fecha: {{ optional($entry->recorded_at)->format('d/m/Y H:i') }}
-                                            </div>
-                                        </div>
-                                        <div class="entry-body">{{ $entry->entry }}</div>
+                    </div>
+                    @if($section['entries']->isNotEmpty())
+                        @php $firstEntry = $section['entries']->first(); @endphp
+                        <div class="entry">
+                            <div class="entry-head">
+                                <div class="entry-title">{{ $firstEntry->title ?: 'Nota clinica' }}</div>
+                                <div class="entry-meta">
+                                    Profesional: {{ $firstEntry->specialist->name ?? 'No registrado' }} |
+                                    Fecha: {{ optional($firstEntry->recorded_at)->format('d/m/Y H:i') }}
+                                </div>
+                            </div>
+                            <div class="entry-body">{{ $firstEntry->entry }}</div>
+                        </div>
+                    @else
+                        <div class="empty" style="margin-bottom: 12px;">No hay entradas clínicas registradas para {{ $section['label'] }}.</div>
+                    @endif
+                </div>
+
+                <div class="section-history-cell">
+                    @if($section['entries']->count() > 1)
+                        @foreach($section['entries']->slice(1) as $entry)
+                            <div class="entry">
+                                <div class="entry-head">
+                                    <div class="entry-title">{{ $entry->title ?: 'Nota clinica' }}</div>
+                                    <div class="entry-meta">
+                                        Profesional: {{ $entry->specialist->name ?? 'No registrado' }} |
+                                        Fecha: {{ optional($entry->recorded_at)->format('d/m/Y H:i') }}
                                     </div>
-                                @endforeach
-                            @else
-                                <div class="empty" style="margin-bottom: 12px;">No hay entradas clínicas registradas para {{ $section['label'] }}.</div>
-                            @endif
-                        </td>
-                    </tr>
-                </table>
+                                </div>
+                                <div class="entry-body">{{ $entry->entry }}</div>
+                            </div>
+                        @endforeach
+                    @endif
+                </div>
             @else
                 @if($section['entries']->isNotEmpty())
                     @foreach($section['entries'] as $entry)

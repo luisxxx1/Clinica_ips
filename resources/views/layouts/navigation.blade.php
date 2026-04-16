@@ -17,19 +17,31 @@
     $isStaffAdministrativo = $isAdmision || $isAdmin;
 @endphp
 
-<div class="flex flex-col h-full bg-white border-r border-slate-100">
+<div class="flex flex-col h-full bg-white/98 border-r border-slate-200/70">
+
+    <div class="px-4 pt-4 pb-3 border-b border-slate-100">
+        <div class="flex flex-col items-center transition-all duration-300">
+            <div class="h-16 w-16 rounded-xl bg-white border border-slate-200 flex items-center justify-center overflow-hidden">
+                <img src="{{ asset('LOGIN.png') }}" alt="Logo IPS" class="h-14 w-14 object-contain pointer-events-none">
+            </div>
+            <div x-show="sidebarOpen" class="mt-2 min-w-0 text-center">
+                <p class="text-sm font-semibold text-slate-700 truncate">IPS Crear Integral</p>
+                <p class="text-[10px] text-slate-400 uppercase tracking-[0.08em]">Sistema clínico</p>
+            </div>
+        </div>
+    </div>
 
     {{-- BUSCADOR GLOBAL --}}
-    <div class="px-4 pt-6 mb-4">
+    <div class="px-4 pt-4 mb-4">
         <div x-show="sidebarOpen" class="relative group">
             <form action="{{ route('medical_exams.index') }}" method="GET">
                 <span class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                    <svg class="w-4 h-4 text-slate-400 group-focus-within:text-blue-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg class="w-4 h-4 text-slate-400 group-focus-within:text-teal-600 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                     </svg>
                 </span>
-                <input type="text" name="search" value="{{ request('search') }}" placeholder="Buscar paciente..."
-                       class="w-full py-2 pl-10 pr-4 text-xs font-medium bg-slate-50 border border-slate-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/10 focus:border-blue-500 focus:bg-white transition-all">
+                  <input type="text" name="search" value="{{ request('search') }}" placeholder="Buscar paciente..."
+                      class="w-full py-2.5 pl-10 pr-4 text-xs font-medium bg-slate-50 border border-slate-200 rounded-full focus:outline-none focus:ring-2 focus:ring-teal-500/10 focus:border-teal-400 transition-all">
             </form>
         </div>
     </div>
@@ -39,66 +51,66 @@
         {{-- SECCIÓN GESTIÓN: Inicio y Registro --}}
         @if($isStaffAdministrativo)
             <div class="pt-2 pb-1 px-3" x-show="sidebarOpen">
-                <span class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Gestión</span>
+                <span class="text-[10px] font-semibold text-slate-400 uppercase tracking-[0.22em]">Gestión</span>
             </div>
 
             <a href="{{ route('dashboard') }}"
-               class="flex items-center p-3 rounded-xl transition group {{ request()->routeIs('dashboard') ? 'bg-blue-50 text-blue-600' : 'text-slate-600 hover:bg-slate-100' }}">
+               class="flex items-center p-3.5 rounded-2xl transition group {{ request()->routeIs('dashboard') ? 'bg-teal-50 text-teal-700 border border-teal-100' : 'text-slate-600 hover:bg-slate-100' }}">
                 <svg class="w-6 h-6 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
                 </svg>
-                <span x-show="sidebarOpen" class="ml-3 font-medium text-sm truncate uppercase tracking-tighter">Inicio</span>
+                <span x-show="sidebarOpen" class="ml-3 font-semibold text-sm truncate">Inicio</span>
             </a>
 
             <a href="{{ route('students.index') }}"
-               class="flex items-center p-3 rounded-xl transition group {{ request()->routeIs('students.*') ? 'bg-blue-50 text-blue-600' : 'text-slate-600 hover:bg-slate-100' }}">
+               class="flex items-center p-3.5 rounded-2xl transition group {{ request()->routeIs('students.*') ? 'bg-teal-50 text-teal-700 border border-teal-100' : 'text-slate-600 hover:bg-slate-100' }}">
                 <svg class="w-6 h-6 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
                 </svg>
-                <span x-show="sidebarOpen" class="ml-3 font-medium text-sm truncate uppercase tracking-tighter">Registrar Estudiante</span>
+                <span x-show="sidebarOpen" class="ml-3 font-semibold text-sm truncate">Registrar Estudiante</span>
             </a>
 
             <a href="{{ route('followup') }}"
-               class="flex items-center p-3 rounded-xl transition group {{ request()->routeIs('followup') ? 'bg-blue-50 text-blue-600' : 'text-slate-600 hover:bg-slate-100' }}">
+               class="flex items-center p-3.5 rounded-2xl transition group {{ request()->routeIs('followup') ? 'bg-teal-50 text-teal-700 border border-teal-100' : 'text-slate-600 hover:bg-slate-100' }}">
                 <svg class="w-6 h-6 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-6m3 6V7m3 10v-3m3 7H6a2 2 0 01-2-2V5a2 2 0 012-2h12a2 2 0 012 2v14a2 2 0 01-2 2z" />
                 </svg>
-                <span x-show="sidebarOpen" class="ml-3 font-medium text-sm truncate uppercase tracking-tighter">Seguimiento Circuito</span>
+                <span x-show="sidebarOpen" class="ml-3 font-semibold text-sm truncate">Seguimiento Circuito</span>
             </a>
         @endif
 
         {{-- SECCIÓN MÉDICA --}}
         <div class="pt-4 pb-2 px-3" x-show="sidebarOpen">
-            <span class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Atención Médica</span>
+            <span class="text-[10px] font-semibold text-slate-400 uppercase tracking-[0.22em]">Atención Médica</span>
         </div>
 
         {{-- BANDEJA: Oculta para Admisión Y para Administrador --}}
         @if(!$isAdmision && !$isAdmin)
             <a href="{{ route('medical_exams.index') }}"
-               class="flex items-center p-3 rounded-xl transition group {{ request()->routeIs('medical_exams.index') ? 'bg-blue-50 text-blue-600' : 'text-slate-600 hover:bg-slate-100' }}">
+               class="flex items-center p-3.5 rounded-2xl transition group {{ request()->routeIs('medical_exams.index') ? 'bg-teal-50 text-teal-700 border border-teal-100' : 'text-slate-600 hover:bg-slate-100' }}">
                 <svg class="w-6 h-6 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
                 </svg>
-                <span x-show="sidebarOpen" class="ml-3 font-medium text-sm truncate uppercase tracking-tighter">Bandeja de Pacientes</span>
+                <span x-show="sidebarOpen" class="ml-3 font-semibold text-sm truncate">Bandeja de Pacientes</span>
             </a>
         @endif
 
         {{-- HISTORIAL: Siempre visible para todos los roles autorizados --}}
         <a href="{{ route('medical_exams.history') }}"
-           class="flex items-center p-3 rounded-xl transition group {{ request()->routeIs('medical_exams.history') ? 'bg-blue-50 text-blue-600' : 'text-slate-600 hover:bg-slate-100' }}">
+           class="flex items-center p-3.5 rounded-2xl transition group {{ request()->routeIs('medical_exams.history') ? 'bg-teal-50 text-teal-700 border border-teal-100' : 'text-slate-600 hover:bg-slate-100' }}">
             <svg class="w-6 h-6 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
-            <span x-show="sidebarOpen" class="ml-3 font-medium text-sm truncate uppercase tracking-tighter">Historial de Pacientes</span>
+            <span x-show="sidebarOpen" class="ml-3 font-semibold text-sm truncate">Historial de Pacientes</span>
         </a>
 
         @if(!$isAdmision)
             <a href="{{ route('clinical_histories.index') }}"
-               class="flex items-center p-3 rounded-xl transition group {{ request()->routeIs('clinical_histories.*') ? 'bg-blue-50 text-blue-600' : 'text-slate-600 hover:bg-slate-100' }}">
+               class="flex items-center p-3.5 rounded-2xl transition group {{ request()->routeIs('clinical_histories.*') ? 'bg-teal-50 text-teal-700 border border-teal-100' : 'text-slate-600 hover:bg-slate-100' }}">
                 <svg class="w-6 h-6 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                 </svg>
-                <span x-show="sidebarOpen" class="ml-3 font-medium text-sm truncate uppercase tracking-tighter">Historial Clínico</span>
+                <span x-show="sidebarOpen" class="ml-3 font-semibold text-sm truncate">Historial Clínico</span>
             </a>
         @endif
     </nav>
@@ -106,7 +118,7 @@
     {{-- FOOTER: Perfil y Configuración --}}
     <div class="p-4 border-t border-slate-100 bg-slate-50 flex-shrink-0">
         <div class="flex items-center transition-all duration-300" :class="sidebarOpen ? 'justify-start' : 'justify-center'">
-            <div class="h-12 w-12 rounded-full flex items-center justify-center text-white font-bold border-2 border-white shadow-md flex-shrink-0 overflow-hidden"
+              <div class="h-12 w-12 rounded-full flex items-center justify-center text-white font-bold border border-white flex-shrink-0 overflow-hidden ring-1 ring-slate-200"
                  style="background-color: {{ $userColor }};">
                 @if($user->profile_photo_path)
                     <img src="{{ $user->profile_photo_url }}" class="h-full w-full object-cover">
@@ -116,37 +128,37 @@
             </div>
 
             <div x-show="sidebarOpen" class="ml-3 overflow-hidden">
-                <p class="text-xs font-black text-slate-800 truncate uppercase tracking-tighter">{{ $user->name }}</p>
-                <span class="inline-block px-2 py-0.5 rounded text-[9px] font-black {{ $colorClass }} border mt-1 uppercase tracking-widest">
+                <p class="text-xs font-semibold text-slate-800 truncate">{{ $user->name }}</p>
+                <span class="inline-block px-2 py-0.5 rounded text-[9px] font-black {{ $colorClass }} border mt-1 uppercase tracking-[0.22em]">
                     {{ $user->role->name ?? 'Sin Rol' }}
                 </span>
             </div>
         </div>
 
-        <div class="mt-4 space-y-1">
-            <a href="{{ route('profile.edit') }}" class="flex items-center p-2 rounded-lg text-slate-600 hover:bg-white hover:shadow-sm transition group">
-                <svg class="w-5 h-5 flex-shrink-0 text-slate-400 group-hover:text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div class="mt-4 space-y-1.5">
+            <a href="{{ route('profile.edit') }}" class="flex items-center p-2.5 rounded-2xl text-slate-600 hover:bg-white transition group">
+                <svg class="w-5 h-5 flex-shrink-0 text-slate-400 group-hover:text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                 </svg>
-                <span x-show="sidebarOpen" class="ml-3 text-[10px] font-bold uppercase text-slate-500 group-hover:text-slate-800">Cuenta</span>
+                <span x-show="sidebarOpen" class="ml-3 text-[10px] font-semibold uppercase tracking-[0.18em] text-slate-500 group-hover:text-slate-800">Cuenta</span>
             </a>
 
             @if($isAdmin)
-                <a href="{{ route('admin.settings') }}" class="flex items-center p-2 rounded-lg text-blue-600 bg-blue-50/50 hover:bg-white hover:shadow-sm transition group border border-blue-100">
+                <a href="{{ route('admin.settings') }}" class="flex items-center p-2.5 rounded-2xl text-teal-700 bg-teal-50 hover:bg-white transition group border border-teal-100">
                     <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
                     </svg>
-                    <span x-show="sidebarOpen" class="ml-3 text-[10px] font-black uppercase tracking-widest">Panel Admin</span>
+                    <span x-show="sidebarOpen" class="ml-3 text-[10px] font-semibold uppercase tracking-[0.18em]">Panel Admin</span>
                 </a>
             @endif
 
             <form method="POST" action="{{ route('logout') }}">
                 @csrf
-                <button type="submit" class="w-full flex items-center p-2 rounded-lg text-red-500 hover:bg-red-50 transition group text-left">
+                <button type="submit" class="w-full flex items-center p-2.5 rounded-2xl text-red-500 hover:bg-red-50 transition group text-left">
                     <svg class="w-5 h-5 flex-shrink-0 text-red-400 group-hover:rotate-12 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
                     </svg>
-                    <span x-show="sidebarOpen" class="ml-3 text-[10px] font-black uppercase tracking-widest">Cerrar Sesión</span>
+                    <span x-show="sidebarOpen" class="ml-3 text-[10px] font-semibold uppercase tracking-[0.18em]">Cerrar Sesión</span>
                 </button>
             </form>
         </div>

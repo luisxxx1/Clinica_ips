@@ -1,12 +1,12 @@
 <x-app-layout>
-    <div class="py-12 bg-slate-50/50 min-h-screen">
+    <div class="py-12 min-h-screen">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
 
             {{-- Encabezado de la Sección (SnakeDEV Style) --}}
             <div class="mb-8 flex flex-col xl:flex-row xl:items-center xl:justify-between gap-4">
                 <div>
-                    <span class="text-[10px] font-black text-blue-500 uppercase tracking-[0.3em] mb-1 block">Panel de Auditoría</span>
-                    <h2 class="text-2xl sm:text-3xl font-black text-slate-900 tracking-tighter uppercase">Historial de <span class="text-blue-600">Pacientes</span></h2>
+                    <span class="text-[10px] font-black text-teal-700 uppercase tracking-[0.3em] mb-1 block">Panel de Auditoría</span>
+                    <h2 class="text-2xl sm:text-3xl font-black text-slate-900 tracking-tighter uppercase">Historial de <span class="text-teal-700">Pacientes</span></h2>
                     <p class="text-slate-500 text-sm font-medium">Consulta de estados médicos y generación de Historias Clínicas unificadas.</p>
                 </div>
 
@@ -16,8 +16,8 @@
                         <div class="relative group w-full sm:w-auto">
                             <input type="text" name="search" value="{{ $search }}"
                                 placeholder="Buscar nombre o documento..."
-                                class="pl-10 pr-4 py-2.5 bg-white border border-slate-200 rounded-2xl text-sm focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 w-full sm:w-72 transition-all shadow-sm group-hover:border-slate-300 font-bold text-slate-700">
-                            <div class="absolute left-3 top-3 text-slate-400 group-hover:text-blue-500 transition-colors">
+                                class="pl-10 pr-4 py-2.5 bg-white/90 border border-slate-200 rounded-full text-sm focus:ring-4 focus:ring-teal-500/10 focus:border-teal-500 w-full sm:w-72 transition-all shadow-sm group-hover:border-slate-300 font-bold text-slate-700 dark:bg-slate-900/70">
+                            <div class="absolute left-3 top-3 text-slate-400 group-hover:text-teal-600 transition-colors">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                                 </svg>
@@ -33,15 +33,15 @@
                             @endforeach
                         </select>
 
-                        <button type="submit" class="px-4 py-2.5 rounded-2xl bg-blue-600 text-white text-xs font-black uppercase tracking-widest hover:bg-blue-700 transition shadow-sm w-full sm:w-auto">
+                        <button type="submit" class="px-4 py-2.5 rounded-full bg-teal-700 text-white text-[10px] font-black uppercase tracking-[0.22em] hover:bg-teal-600 transition shadow-sm w-full sm:w-auto">
                             Filtrar
                         </button>
                     </form>
 
                     {{-- Contador de Registros --}}
-                    <div class="bg-white px-5 py-2.5 rounded-2xl shadow-sm border border-slate-100 flex items-center gap-3">
-                        <div class="p-2 bg-blue-50 rounded-xl">
-                            <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div class="app-panel-strong px-5 py-2.5 rounded-[1.5rem] flex items-center gap-3">
+                        <div class="p-2 bg-teal-50 rounded-xl border border-teal-100">
+                            <svg class="w-5 h-5 text-teal-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                             </svg>
                         </div>
@@ -54,7 +54,7 @@
             </div>
 
             {{-- Contenedor de Tabla --}}
-            <div class="bg-white overflow-hidden shadow-sm rounded-[2rem] border border-slate-100">
+            <div class="app-panel-strong overflow-hidden rounded-[2rem]">
                 @if($completedExams->isEmpty())
                     <div class="p-10 sm:p-16 lg:p-24 flex flex-col items-center justify-center text-center">
                         <div class="w-24 h-24 bg-slate-50 rounded-full flex items-center justify-center mb-6 border border-slate-100 shadow-inner">
@@ -64,7 +64,7 @@
                         </div>
                         <h3 class="text-slate-800 font-black text-xl uppercase tracking-tighter">Sin resultados</h3>
                         <p class="text-slate-400 text-sm max-w-xs mx-auto font-medium mt-2">No encontramos pacientes con los filtros aplicados.</p>
-                        <a href="{{ route('medical_exams.history') }}" class="mt-6 text-blue-600 font-bold text-xs uppercase tracking-widest hover:underline">Limpiar búsqueda</a>
+                        <a href="{{ route('medical_exams.history') }}" class="mt-6 text-teal-700 font-bold text-xs uppercase tracking-widest hover:underline">Limpiar búsqueda</a>
                     </div>
                 @else
                     <div class="overflow-x-auto">
@@ -80,7 +80,7 @@
                             </thead>
                             <tbody class="divide-y divide-slate-50">
                                 @foreach($completedExams as $exam)
-                                    <tr class="hover:bg-blue-50/30 transition-colors group">
+                                    <tr class="hover:bg-teal-50/30 transition-colors group">
                                         <td class="px-6 py-4 text-center">
                                             <span class="text-xs font-black text-slate-300 group-hover:text-blue-400 transition-colors">
                                                 #{{ $exam->id }}
@@ -121,31 +121,17 @@
 
                                         <td class="px-6 py-4">
                                             <div class="flex justify-center gap-2">
-                                                @php
-                                                    $roleSlug = \Illuminate\Support\Str::slug((string) (auth()->user()->role->name ?? ''), '_');
-                                                    $requestedAreasRaw = collect($exam->requested_areas ?? [])->map(fn ($a) => \Illuminate\Support\Str::slug((string) $a, '_'));
-                                                    $completedAreasRaw = $exam->results->pluck('area')->map(fn ($a) => \Illuminate\Support\Str::slug((string) $a, '_'));
-                                                    $pendingAreas = $requestedAreasRaw->diff($completedAreasRaw)->values();
-                                                    $nextPendingArea = $pendingAreas->first();
-                                                    $isAdmin = in_array($roleSlug, ['administrador'], true);
-                                                @endphp
-
-                                                @if($nextPendingArea && !$isAdmin)
-                                                    <a href="{{ route('medical_exams.evaluate', ['medical_exam' => $exam->id, 'area' => $nextPendingArea]) }}"
-                                                       class="inline-flex items-center px-4 py-2.5 bg-slate-900 border border-slate-900 rounded-xl text-white text-[10px] font-black hover:bg-blue-600 hover:border-blue-600 transition shadow-lg shadow-slate-200 uppercase tracking-widest"
-                                                       title="Iniciar Evaluación">
-                                                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
-                                                        </svg>
-                                                        Iniciar Evaluación
-                                                    </a>
+                                                @if($exam->status !== 'completado')
+                                                    <span class="inline-flex items-center px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-full text-slate-500 text-[10px] font-black uppercase tracking-widest" title="Inicia la evaluación desde la Bandeja de Pacientes">
+                                                        Solo desde bandeja
+                                                    </span>
                                                 @endif
 
                                                 {{-- Botón PDF --}}
                                                 @if($exam->status === 'completado' && in_array(auth()->user()->role->name ?? '', ['Administrador', 'Admisión']))
                                                     <a href="{{ route('medical_exams.unified_report', $exam) }}"
                                                        target="_blank"
-                                                       class="flex items-center gap-2 px-4 py-2 bg-slate-900 border border-slate-900 rounded-xl text-white text-[10px] font-black hover:bg-blue-600 hover:border-blue-600 transition shadow-lg shadow-slate-200 uppercase tracking-widest"
+                                                       class="flex items-center gap-2 px-4 py-2 bg-slate-900 border border-slate-900 rounded-full text-white text-[10px] font-black hover:bg-teal-700 hover:border-teal-700 transition shadow-lg shadow-slate-200 uppercase tracking-widest"
                                                        title="Descargar Reporte Unificado">
                                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />

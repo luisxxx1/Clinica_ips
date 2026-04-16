@@ -389,30 +389,37 @@
                     }
                 @endphp
                 @if($imagePath)
-                    <div style="text-align: center; margin-bottom: 15px;">
-                        <img src="{{ $imagePath }}" style="max-height: 250px; width: auto; border: 1px solid #eee;">
-                        <div style="font-size: 7pt; font-weight: bold;">ODONTOGRAMA INICIAL</div>
+                    <div style="margin-bottom: 14px; border: 1px solid #bfd3ea; background: #f8fbff; padding: 10px; border-radius: 10px;">
+                        <div style="font-size: 12pt; font-weight: bold; color: #1d4ed8; text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 6px;">
+                            Tamiz Odontológico
+                        </div>
+                        <div style="font-size: 8pt; color: #334155; margin-bottom: 8px;">
+                            Area: Odontologia | Profesional: {{ $result->specialist->name ?? 'N/A' }} | Fecha: {{ optional($result->created_at)->format('d/m/Y H:i') }}
+                        </div>
+                        <div style="border: 1px solid #dbe4ef; background: #ffffff; padding: 10px; text-align: center; border-radius: 8px;">
+                            <img src="{{ $imagePath }}" style="max-height: 245px; width: 100%; object-fit: contain; display: block; margin: 0 auto;">
+                        </div>
                     </div>
                 @endif
 
-                <table class="data-table" style="width: 100%; margin-top: 8px; margin-bottom: 15px;">
+                <table class="data-table" style="width: 100%; margin-top: 8px; margin-bottom: 15px; border-collapse: collapse;">
                     <tr>
-                        <th colspan="4" style="font-size: 9pt; background: #f1f5f9; color: #1e293b;">CONVENCIONES DE COLORES DEL ODONTOGRAMA</th>
+                        <th colspan="4" style="font-size: 9pt; background: #f1f5f9; color: #1e293b; text-transform: uppercase; letter-spacing: 0.6px;">Convenciones de Colores del Odontograma</th>
                     </tr>
                     <tr>
-                        <td style="text-align: left; font-weight: bold;">
+                        <td style="text-align: left; font-weight: bold; padding: 6px 8px;">
                             <span style="display: inline-block; width: 9px; height: 9px; background: #ef4444; border: 1px solid #b91c1c; vertical-align: middle;"></span>
                             <span style="margin-left: 6px; vertical-align: middle;">Rojo: Caries</span>
                         </td>
-                        <td style="text-align: left; font-weight: bold;">
+                        <td style="text-align: left; font-weight: bold; padding: 6px 8px;">
                             <span style="display: inline-block; width: 9px; height: 9px; background: #22c55e; border: 1px solid #15803d; vertical-align: middle;"></span>
                             <span style="margin-left: 6px; vertical-align: middle;">Verde: Sellante</span>
                         </td>
-                        <td style="text-align: left; font-weight: bold;">
+                        <td style="text-align: left; font-weight: bold; padding: 6px 8px;">
                             <span style="display: inline-block; width: 9px; height: 9px; background: #3b82f6; border: 1px solid #1d4ed8; vertical-align: middle;"></span>
                             <span style="margin-left: 6px; vertical-align: middle;">Azul: Restauración</span>
                         </td>
-                        <td style="text-align: left; font-weight: bold;">
+                        <td style="text-align: left; font-weight: bold; padding: 6px 8px;">
                             <span style="display: inline-block; width: 9px; height: 9px; background: #000000; border: 1px solid #000000; vertical-align: middle;"></span>
                             <span style="margin-left: 6px; vertical-align: middle;">Negro: Ausente</span>
                         </td>

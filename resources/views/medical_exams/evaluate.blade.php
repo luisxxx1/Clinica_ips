@@ -8,7 +8,32 @@
             </div>
         </header>
 
-        <div class="p-6 md:p-12">
+        <div class="p-4 md:p-10">
+            <div class="max-w-6xl mx-auto space-y-6">
+                <div class="app-panel-strong rounded-[2.5rem] p-6 md:p-8 overflow-hidden">
+                    <div class="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6">
+                        <div class="space-y-3">
+                            <span class="inline-flex items-center app-accent-chip text-[10px] font-black text-blue-700 uppercase tracking-[0.28em] px-3 py-2 rounded-full">Circuito clínico</span>
+                            <h2 class="app-display text-3xl md:text-4xl font-black text-slate-900 tracking-tight">
+                                Evaluación <span class="text-blue-600">clínica</span> del paciente
+                            </h2>
+                            <p class="max-w-2xl text-sm md:text-base text-slate-500 leading-6">
+                                Formulario unificado para registrar el examen con una composición más clara, premium y orientada a consulta rápida.
+                            </p>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <div class="px-4 py-3 rounded-2xl bg-white/90 border border-slate-200 shadow-sm">
+                                <span class="block text-[10px] font-black uppercase tracking-[0.24em] text-slate-400">Estado</span>
+                                <span class="block text-sm font-bold text-slate-800">Activo</span>
+                            </div>
+                            <div class="px-4 py-3 rounded-2xl bg-white/90 border border-slate-200 shadow-sm">
+                                <span class="block text-[10px] font-black uppercase tracking-[0.24em] text-slate-400">Vista</span>
+                                <span class="block text-sm font-bold text-slate-800">{{ strtoupper($area ?? 'general') }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
             <div class="max-w-5xl mx-auto">
                 @php
                     /** * SOPORTE DINÁMICO SNAKEDEV:
@@ -44,7 +69,7 @@
 
                 @if(view()->exists($view) || ($showBothAudioExams ?? false))
                     {{-- Contenedor principal con bordes suavizados SnakeDEV --}}
-                    <div class="bg-white p-8 md:p-12 rounded-[3rem] shadow-sm border border-slate-100">
+                    <div class="app-panel-strong p-6 md:p-10 rounded-[3rem]">
                         {{-- LÓGICA UNIFICADA: Si se deben mostrar ambos exámenes de audio --}}
                         @if($showBothAudioExams ?? false)
                             {{-- Mostrar vista unificada con Audiometría + Fonoaudiología --}}
