@@ -37,6 +37,12 @@ class RegisteredUserController extends Controller
             'role_id' => ['required', 'exists:roles,id'], // Validamos que el rol enviado sea válido
         ]);
 
+        // 🔒 SEGURIDAD: Impedir que se cree un usuario con rol Administrador
+        $selectedRole = Role::findOrFail($request->role_id);
+        if (strtolower($selectedRole->name) === 'administrador') {
+            return back()->withErrors(['role_id' => 'No se puede crear un usuario con rol Administrador. Solo el administrador puede asignarse a sí mismo.']);
+        }
+
         // Ya no buscamos un rol fijo, usamos el que viene del request ($request->role_id)
         $user = User::create([
             'name' => $request->name,

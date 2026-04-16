@@ -1,4 +1,4 @@
-{{-- 
+{{--
     VISTA: Registro (Crear Cuenta)
     Hereda de: x-guest-layout
 --}}
@@ -32,8 +32,8 @@
             <x-input-label for="role_id" :value="__('Especialidad / Rol Médico')" />
             <select name="role_id" id="role_id" class="block mt-1 w-full border-gray-300 focus:border-blue-500 focus:ring-blue-500 rounded-md shadow-sm text-sm py-2" required>
                 <option value="" disabled selected>Seleccione una opción...</option>
-                {{-- Bucle para cargar roles desde la base de datos --}}
-                @foreach(\App\Models\Role::all() as $role)
+                {{-- Bucle para cargar roles desde la base de datos (excluyendo Administrador) --}}
+                @foreach(\App\Models\Role::where('name', '!=', 'Administrador')->get() as $role)
                     <option value="{{ $role->id }}" {{ old('role_id') == $role->id ? 'selected' : '' }}>
                         {{ ucfirst($role->name) }}
                     </option>

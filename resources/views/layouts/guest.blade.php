@@ -1,8 +1,8 @@
-{{-- 
+{{--
     SISTEMA DE GESTIÓN - I.P.S CREAR INTEGRAL S.A.S
     Layout: Guest (Invitado)
     Desarrollado por: SnakeDEV
-    Descripción: Estructura de pantalla dividida (Split Screen). 
+    Descripción: Estructura de pantalla dividida (Split Screen).
     Lado izquierdo para Branding y lado derecho para formularios dinámicos.
 --}}
 
@@ -13,10 +13,10 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
-        <title>{{ config('app.name', 'Laravel') }}</title>
+        <title>IPS Integral</title>
 
         {{-- Fuentes e Iconos --}}
-        <link rel="icon" href="{{ asset('favicon.ico') }}" type="image/x-icon">
+        <link rel="icon" href="{{ asset('LOGIN.png') }}" type="image/png">
         <link rel="preconnect" href="https://fonts.bunny.net">
         <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
 
@@ -24,13 +24,13 @@
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
     <body class="font-sans text-gray-900 antialiased bg-slate-100">
-        
+
         {{-- Contenedor principal centrado --}}
         <div class="min-h-screen flex items-center justify-center p-4">
-            
+
             {{-- Tarjeta Principal: 'max-w-5xl' para un ancho profesional y 'rounded-3xl' para bordes modernos --}}
             <div class="flex flex-col md:flex-row bg-white shadow-2xl rounded-3xl overflow-hidden max-w-5xl w-full min-h-[550px]">
-                
+
                 {{-- LADO IZQUIERDO: IDENTIDAD VISUAL --}}
                 <div class="md:w-1/2 bg-gradient-to-br from-blue-50 to-white flex flex-col items-center justify-center p-12 border-b md:border-b-0 md:border-r border-gray-100">
                     <div class="transition-all duration-700 hover:scale-110">
@@ -48,7 +48,7 @@
 
                 {{-- LADO DERECHO: FORMULARIOS (LOGIN / REGISTRO) --}}
                 <div class="md:w-1/2 p-8 md:p-16 flex flex-col justify-center">
-                    
+
                     {{-- SLOT DE ENCABEZADO: Si la vista hija define un <x-slot name="header">, se muestra aquí --}}
                     @if (isset($header))
                         <div class="mb-8 border-l-4 border-blue-500 pl-4">
