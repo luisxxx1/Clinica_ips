@@ -130,7 +130,7 @@
                         </div>
 
                         {{-- SECCIÓN 3: CIRCUITO MÉDICO --}}
-                        <div class="bg-teal-50/70 p-6 rounded-[1.5rem] border border-teal-100 shadow-sm">
+                        <div class="bg-white p-6 rounded-[1.5rem] border border-slate-200 shadow-sm">
                             <h3 class="text-lg font-bold text-teal-700 mb-4 flex items-center">
                                 <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                                 Exámenes Médicos Requeridos
@@ -148,11 +148,11 @@
                                 @endphp
 
                                 @foreach($especialidades as $value => $label)
-                                    <label class="relative flex items-center p-3 rounded-lg border border-white hover:bg-white hover:shadow-sm cursor-pointer transition">
-                                        <input type="checkbox" name="requested_areas[]" value="{{ $value }}"
-                                            class="rounded border-gray-300 text-teal-600 shadow-sm focus:ring-teal-500 w-5 h-5"
+                                    <label class="relative flex items-center p-3 rounded-xl border border-slate-200 bg-white shadow-sm hover:border-teal-300 hover:shadow-md cursor-pointer transition-all peer-checked:border-teal-600 peer-checked:bg-teal-50 peer-checked:shadow-md">
+                                            <input type="checkbox" name="requested_areas[]" value="{{ $value }}"
+                                                class="peer rounded border-gray-300 text-teal-600 shadow-sm focus:ring-teal-500 focus:ring-offset-0 w-5 h-5 accent-teal-600"
                                             {{ (is_array(old('requested_areas')) && in_array($value, old('requested_areas'))) || !old('requested_areas') ? 'checked' : '' }}>
-                                        <span class="ml-3 text-sm font-medium text-gray-700">{{ $label }}</span>
+                                            <span class="ml-3 text-sm font-semibold text-slate-700 peer-checked:text-teal-800">{{ $label }}</span>
                                     </label>
                                 @endforeach
                             </div>

@@ -40,9 +40,13 @@ html.dark [class*="text-slate-300"] {
 }
 
 /* Background colors for dark mode */
-html.dark [class*="bg-slate-50"],
-html.dark [class*="bg-white"] {
+html.dark [class*="bg-slate-50"] {
 	background-color: #1a2530 !important;
+	background-image: none !important;
+}
+
+html.dark [class*="bg-white"] {
+	background-color: #ffffff !important;
 	background-image: none !important;
 }
 
@@ -94,13 +98,19 @@ html.dark [class*="border-r"] {
 
 /* Search input dark mode */
 html.dark input[type="text"] {
-	background-color: #1a2530 !important;
-	color: #e0e7eb !important;
+	background-color: #ffffff !important;
+	color: #1f2937 !important;
 	border-color: #2a3a4d !important;
 }
 
 html.dark input[type="text"]::placeholder {
-	color: #7a8490 !important;
+	color: #94a3b8 !important;
+}
+
+html.dark input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="color"]) {
+	background-color: #ffffff !important;
+	color: #1f2937 !important;
+	border-color: #cbd5e1 !important;
 }
 
 html.dark [class*="focus:border-blue-300"],
@@ -111,14 +121,14 @@ html.dark [class*="focus:ring-blue-500"] {
 body.dark input,
 body.dark select,
 body.dark textarea {
-	background-color: #111827 !important;
-	color: #e5e7eb !important;
-	border-color: #374151 !important;
+	background-color: #ffffff !important;
+	color: #1f2937 !important;
+	border-color: #cbd5e1 !important;
 }
 
 body.dark input::placeholder,
 body.dark textarea::placeholder {
-	color: #6b7280 !important;
+	color: #94a3b8 !important;
 }
 
 body.dark .shadow-sm,

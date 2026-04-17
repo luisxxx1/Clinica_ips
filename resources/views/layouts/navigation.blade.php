@@ -17,7 +17,17 @@
     $isStaffAdministrativo = $isAdmision || $isAdmin;
 @endphp
 
-<div class="flex flex-col h-full bg-white/98 border-r border-slate-200/70">
+<div
+    class="flex flex-col h-full bg-white/98 border-r border-slate-200/70"
+    x-data="{
+        menuQuery: '',
+        matches(label) {
+            const query = this.menuQuery.trim().toLowerCase();
+            if (! query) return true;
+            return label.toLowerCase().includes(query);
+        }
+    }"
+>
 
     <div class="px-4 pt-4 pb-3 border-b border-slate-100">
         <div class="flex flex-col items-center transition-all duration-300">
@@ -34,14 +44,18 @@
     {{-- BUSCADOR GLOBAL --}}
     <div class="px-4 pt-4 mb-4">
         <div x-show="sidebarOpen" class="relative group">
-            <form action="{{ route('medical_exams.index') }}" method="GET">
+            <form @submit.prevent>
                 <span class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
                     <svg class="w-4 h-4 text-slate-400 group-focus-within:text-teal-600 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                     </svg>
                 </span>
-                  <input type="text" name="search" value="{{ request('search') }}" placeholder="Buscar paciente..."
-                      class="w-full py-2.5 pl-10 pr-4 text-xs font-medium bg-slate-50 border border-slate-200 rounded-full focus:outline-none focus:ring-2 focus:ring-teal-500/10 focus:border-teal-400 transition-all">
+                <input
+                    type="text"
+                    x-model="menuQuery"
+                    placeholder="Buscar módulo..."
+                    class="w-full py-2.5 pl-10 pr-4 text-xs font-medium bg-white border border-slate-200 rounded-full focus:outline-none focus:ring-2 focus:ring-teal-500/10 focus:border-teal-400 transition-all dark:bg-white dark:text-slate-700 dark:placeholder:text-slate-400"
+                >
             </form>
         </div>
     </div>
@@ -50,11 +64,12 @@
 
         {{-- SECCIÓN GESTIÓN: Inicio y Registro --}}
         @if($isStaffAdministrativo)
-            <div class="pt-2 pb-1 px-3" x-show="sidebarOpen">
+            <div class="pt-2 pb-1 px-3" x-show="sidebarOpen && matches('gestión')">
                 <span class="text-[10px] font-semibold text-slate-400 uppercase tracking-[0.22em]">Gestión</span>
             </div>
 
             <a href="{{ route('dashboard') }}"
+               x-show="matches('inicio')"
                class="flex items-center p-3.5 rounded-2xl transition group {{ request()->routeIs('dashboard') ? 'bg-teal-50 text-teal-700 border border-teal-100' : 'text-slate-600 hover:bg-slate-100' }}">
                 <svg class="w-6 h-6 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
@@ -63,6 +78,7 @@
             </a>
 
             <a href="{{ route('students.index') }}"
+                   x-show="matches('registrar estudiante')"
                class="flex items-center p-3.5 rounded-2xl transition group {{ request()->routeIs('students.*') ? 'bg-teal-50 text-teal-700 border border-teal-100' : 'text-slate-600 hover:bg-slate-100' }}">
                 <svg class="w-6 h-6 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
@@ -71,6 +87,7 @@
             </a>
 
             <a href="{{ route('followup') }}"
+               x-show="matches('seguimiento circuito')"
                class="flex items-center p-3.5 rounded-2xl transition group {{ request()->routeIs('followup') ? 'bg-teal-50 text-teal-700 border border-teal-100' : 'text-slate-600 hover:bg-slate-100' }}">
                 <svg class="w-6 h-6 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-6m3 6V7m3 10v-3m3 7H6a2 2 0 01-2-2V5a2 2 0 012-2h12a2 2 0 012 2v14a2 2 0 01-2 2z" />
@@ -80,13 +97,14 @@
         @endif
 
         {{-- SECCIÓN MÉDICA --}}
-        <div class="pt-4 pb-2 px-3" x-show="sidebarOpen">
+        <div class="pt-4 pb-2 px-3" x-show="sidebarOpen && matches('atención médica')">
             <span class="text-[10px] font-semibold text-slate-400 uppercase tracking-[0.22em]">Atención Médica</span>
         </div>
 
         {{-- BANDEJA: Oculta para Admisión Y para Administrador --}}
         @if(!$isAdmision && !$isAdmin)
             <a href="{{ route('medical_exams.index') }}"
+               x-show="matches('bandeja de pacientes')"
                class="flex items-center p-3.5 rounded-2xl transition group {{ request()->routeIs('medical_exams.index') ? 'bg-teal-50 text-teal-700 border border-teal-100' : 'text-slate-600 hover:bg-slate-100' }}">
                 <svg class="w-6 h-6 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
@@ -97,6 +115,7 @@
 
         {{-- HISTORIAL: Siempre visible para todos los roles autorizados --}}
         <a href="{{ route('medical_exams.history') }}"
+              x-show="matches('historial de pacientes')"
            class="flex items-center p-3.5 rounded-2xl transition group {{ request()->routeIs('medical_exams.history') ? 'bg-teal-50 text-teal-700 border border-teal-100' : 'text-slate-600 hover:bg-slate-100' }}">
             <svg class="w-6 h-6 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -106,6 +125,7 @@
 
         @if(!$isAdmision)
             <a href="{{ route('clinical_histories.index') }}"
+               x-show="matches('historial clínico')"
                class="flex items-center p-3.5 rounded-2xl transition group {{ request()->routeIs('clinical_histories.*') ? 'bg-teal-50 text-teal-700 border border-teal-100' : 'text-slate-600 hover:bg-slate-100' }}">
                 <svg class="w-6 h-6 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />

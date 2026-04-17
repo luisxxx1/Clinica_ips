@@ -125,42 +125,45 @@
                                 </summary>
 
                                 <div class="px-4 pb-4 pt-1 border-t border-slate-100">
-                                                <label class="block text-[11px] font-semibold uppercase tracking-[0.08em] text-slate-500 mb-1">Área</label>
-                                                <select name="area" class="w-full rounded-xl border-slate-200 text-sm font-medium text-slate-700 focus:border-teal-500 focus:ring-teal-500">
+                                    <form method="POST" action="{{ route('clinical_histories.update', [$student, $entry]) }}" class="space-y-4">
+                                        @csrf
                                         @method('PATCH')
 
-                                        @if($isAdmin)
-                                            <div>
-                                                <label class="block text-[11px] font-black uppercase tracking-widest text-slate-500 mb-1">Área</label>
-                                                <select name="area" class="w-full rounded-xl border-slate-200 text-sm font-semibold text-slate-700 focus:border-blue-500 focus:ring-blue-500">
+                                        <div>
+                                            <label class="block text-[11px] font-semibold uppercase tracking-[0.08em] text-slate-500 mb-2">Área</label>
+                                            @if($isAdmin)
+                                                <select name="area" class="w-full rounded-xl border-slate-200 text-sm font-medium text-slate-700 focus:border-amber-500 focus:ring-amber-500">
                                                     @foreach($availableAreas as $areaKey => $areaLabel)
                                                         <option value="{{ $areaKey }}" {{ old('area', $entry->area) === $areaKey ? 'selected' : '' }}>{{ $areaLabel }}</option>
-                                            <label class="block text-[11px] font-semibold uppercase tracking-[0.08em] text-slate-500 mb-1">Título</label>
-                                            <input type="text" name="title" maxlength="150" value="{{ old('title', $entry->title) }}" class="w-full rounded-xl border-slate-200 text-sm font-medium text-slate-700 focus:border-teal-500 focus:ring-teal-500">
-                                            </div>
-                                        @endif
-
-                                            <label class="block text-[11px] font-semibold uppercase tracking-[0.08em] text-slate-500 mb-1">Fecha y hora</label>
-                                            <input type="datetime-local" name="recorded_at" value="{{ old('recorded_at', optional($entry->recorded_at)->timezone('America/Bogota')->format('Y-m-d\TH:i')) }}" class="w-full rounded-xl border-slate-200 text-sm font-medium text-slate-700 focus:border-teal-500 focus:ring-teal-500">
-                                            <input type="text" name="title" maxlength="150" value="{{ old('title', $entry->title) }}" class="w-full rounded-xl border-slate-200 text-sm font-semibold text-slate-700 focus:border-blue-500 focus:ring-blue-500">
+                                                    @endforeach
+                                                </select>
+                                            @else
+                                                <input type="hidden" name="area" value="{{ $entry->area }}">
+                                                <input type="text" value="{{ $availableAreas[$entry->area] ?? str_replace('_', ' ', $entry->area) }}" readonly class="w-full rounded-xl border-slate-200 bg-slate-50 text-sm font-medium text-slate-600">
+                                            @endif
                                         </div>
 
-                                            <label class="block text-[11px] font-semibold uppercase tracking-[0.08em] text-slate-500 mb-1">Nota clínica</label>
-                                            <textarea name="entry" rows="7" required maxlength="3000" class="w-full rounded-xl border-slate-200 text-sm font-medium text-slate-700 focus:border-teal-500 focus:ring-teal-500">{{ old('entry', $entry->entry) }}</textarea>
-                                            <input type="datetime-local" name="recorded_at" value="{{ old('recorded_at', optional($entry->recorded_at)->timezone('America/Bogota')->format('Y-m-d\\TH:i')) }}" class="w-full rounded-xl border-slate-200 text-sm font-semibold text-slate-700 focus:border-blue-500 focus:ring-blue-500">
-                                        </div>
-                                        <button type="submit" class="px-4 py-2 rounded-xl bg-amber-500 text-white text-xs font-semibold uppercase tracking-[0.08em] hover:bg-amber-600 transition w-full sm:w-auto">
                                         <div>
-                                            <label class="block text-[11px] font-black uppercase tracking-widest text-slate-500 mb-1">Nota clínica</label>
-                                            <textarea name="entry" rows="7" required maxlength="3000" class="w-full rounded-xl border-slate-200 text-sm font-semibold text-slate-700 focus:border-blue-500 focus:ring-blue-500">{{ old('entry', $entry->entry) }}</textarea>
+                                            <label class="block text-[11px] font-semibold uppercase tracking-[0.08em] text-slate-500 mb-2">Título</label>
+                                            <input type="text" name="title" maxlength="150" value="{{ old('title', $entry->title) }}" class="w-full rounded-xl border-slate-200 text-sm font-medium text-slate-700 focus:border-amber-500 focus:ring-amber-500">
                                         </div>
 
-                                        <button type="submit" class="px-4 py-2 rounded-xl bg-amber-500 text-white text-xs font-black uppercase tracking-widest hover:bg-amber-600 transition w-full sm:w-auto">
+                                        <div>
+                                            <label class="block text-[11px] font-semibold uppercase tracking-[0.08em] text-slate-500 mb-2">Fecha y hora</label>
+                                            <input type="datetime-local" name="recorded_at" value="{{ old('recorded_at', optional($entry->recorded_at)->timezone('America/Bogota')->format('Y-m-d\TH:i')) }}" class="w-full rounded-xl border-slate-200 text-sm font-medium text-slate-700 focus:border-amber-500 focus:ring-amber-500">
+                                        </div>
+
+                                        <div>
+                                            <label class="block text-[11px] font-semibold uppercase tracking-[0.08em] text-slate-500 mb-2">Nota clínica</label>
+                                            <textarea name="entry" rows="7" required maxlength="3000" class="w-full rounded-xl border-slate-200 text-sm font-medium text-slate-700 focus:border-amber-500 focus:ring-amber-500">{{ old('entry', $entry->entry) }}</textarea>
+                                        </div>
+
+                                        <button type="submit" class="px-4 py-2 rounded-xl bg-amber-500 text-white text-xs font-semibold uppercase tracking-[0.08em] hover:bg-amber-600 transition w-full sm:w-auto">
                                             Guardar Cambios
                                         </button>
-                    <div class="bg-white rounded-2xl shadow-sm border-2 border-dashed border-slate-200 p-10 text-center">
-                        <h3 class="text-lg font-semibold text-slate-700">Sin entradas registradas</h3>
-                        <p class="text-sm font-medium text-slate-500 mt-2">Este paciente aún no tiene historial clínico en el nuevo módulo.</p>
+                                    </form>
+                                </div>
+                            </details>
                         @endif
                     </article>
                 @empty
