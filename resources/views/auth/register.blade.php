@@ -1,16 +1,14 @@
 {{--
-    VISTA: Registro (Crear Cuenta)
-    Hereda de: x-guest-layout
+    VISTA: Registro Interno (Solo Admin)
+    Hereda de: x-app-layout
 --}}
 
-<x-guest-layout>
-    {{-- Definimos el encabezado dinámico para esta página --}}
+<x-app-layout>
     <x-slot name="header">
-        <h1 class="text-3xl font-bold text-slate-800">Crear Cuenta</h1>
-        <p class="text-slate-500 mt-1 text-sm">Registre al nuevo personal de la IPS.</p>
+        <h2 class="text-sm font-semibold text-slate-700">Crear Nuevo Usuario</h2>
     </x-slot>
 
-    <form method="POST" action="{{ route('register') }}">
+    <form method="POST" action="{{ route('admin.users.store') }}" class="max-w-3xl">
         @csrf
 
         {{-- Nombre Completo --}}
@@ -57,8 +55,8 @@
 
         {{-- Botones finales --}}
         <div class="flex items-center justify-between mt-8">
-            <a class="text-sm text-gray-600 underline hover:text-blue-700 transition-colors" href="{{ route('login') }}">
-                ¿Ya tienes una cuenta?
+            <a class="text-sm text-gray-600 underline hover:text-blue-700 transition-colors" href="{{ route('admin.settings') }}">
+                Volver a configuración
             </a>
 
             <x-primary-button class="bg-blue-600 hover:bg-blue-700 px-8">
@@ -66,4 +64,4 @@
             </x-primary-button>
         </div>
     </form>
-</x-guest-layout>
+</x-app-layout>

@@ -21,6 +21,15 @@
                 </div>
             @endif
 
+            @if (Route::has('admin.users.create'))
+                <div class="flex justify-end">
+                    <a href="{{ route('admin.users.create') }}" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-teal-700 text-white text-xs font-semibold uppercase tracking-[0.12em] hover:bg-teal-800 transition">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>
+                        Crear Usuario Interno
+                    </a>
+                </div>
+            @endif
+
             <div class="app-panel-strong rounded-[2rem] overflow-hidden">
                 <table class="w-full text-sm text-left">
                     <thead class="bg-slate-50 text-slate-500 uppercase text-[10px] tracking-widest dark:bg-slate-900/60">
@@ -73,6 +82,14 @@
                                         <button type="submit" class="text-red-400 hover:text-red-600 transition"
                                             onclick="return confirm('¿Estás seguro de quitar los permisos a {{ $user->name }}?')">
                                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728L5.636 5.636"/></svg>
+                                        </button>
+                                    </form>
+
+                                    <form action="{{ route('admin.users.destroy', $user) }}" method="POST" class="inline">
+                                        @csrf @method('DELETE')
+                                        <button type="submit" class="text-rose-500 hover:text-rose-700 transition"
+                                            onclick="return confirm('¿Eliminar definitivamente al usuario {{ $user->name }}? Esta acción no se puede deshacer.')">
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6M9 7V4a1 1 0 011-1h4a1 1 0 011 1v3M4 7h16"/></svg>
                                         </button>
                                     </form>
                                 </td>

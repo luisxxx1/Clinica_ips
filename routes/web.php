@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\{ProfileController, StudentController, MedicalExamController, DashboardController, AdminSettingsController, ClinicalHistoryController};
 use Illuminate\Support\Facades\Route;
 
@@ -26,9 +27,15 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::get('/settings', 'index')->name('settings');
             Route::post('/settings/update-branding', 'updateBranding')->name('update_branding');
             Route::patch('/settings/user/{user}', 'updateUser')->name('user.update');
+            Route::delete('/users/{user}', 'destroyUser')->name('users.destroy');
             Route::post('/reset-access', 'resetAccess')->name('reset_access');
             Route::get('/roles/colors', 'editRoleColors')->name('role_colors');
             Route::delete('/users/{user}/permissions', 'revokePermissions')->name('users.revoke');
+        });
+
+        Route::controller(RegisteredUserController::class)->group(function () {
+            Route::get('/users/create', 'create')->name('users.create');
+            Route::post('/users', 'store')->name('users.store');
         });
 
         // ✅ Dashboard admin: ve todos los exámenes completados con sus 6 valoraciones

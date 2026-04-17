@@ -1,4 +1,4 @@
-{{-- 
+{{--
     VISTA: Login (Inicio de Sesión)
     Hereda de: x-guest-layout
 --}}
@@ -36,7 +36,7 @@
                 <input type="checkbox" name="remember" class="rounded border-gray-300 text-blue-600 shadow-sm">
                 <span class="ms-2 text-xs text-gray-600">Recordarme</span>
             </label>
-            
+
             @if (Route::has('password.request'))
                 <a class="text-xs text-gray-600 underline hover:text-blue-600 transition-colors" href="{{ route('password.request') }}">
                     ¿Olvidó su contraseña?
@@ -49,16 +49,6 @@
             <x-primary-button class="w-full justify-center py-3 bg-slate-800 hover:bg-slate-900 shadow-lg">
                 {{ __('INICIAR SESIÓN') }}
             </x-primary-button>
-        </div>
-
-        {{-- Link hacia el Registro --}}
-        <div class="mt-8 pt-6 border-t border-gray-100 text-center">
-            <p class="text-sm text-slate-500">
-                ¿No tienes una cuenta? 
-                <a href="{{ route('register') }}" class="font-bold text-blue-600 hover:underline">
-                    Nuevo Usuario
-                </a>
-            </p>
         </div>
     </form>
 </x-guest-layout>

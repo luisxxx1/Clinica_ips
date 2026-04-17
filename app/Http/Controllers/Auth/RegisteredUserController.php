@@ -8,7 +8,6 @@ use App\Models\Role;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
 use Illuminate\View\View;
@@ -53,11 +52,8 @@ class RegisteredUserController extends Controller
 
         event(new Registered($user));
 
-        // OJO: Si eres el Administrador creando empleados, quizás NO quieras
-        // que se inicie sesión automáticamente con el nuevo usuario.
-        // Si quieres seguir logueado como Admin, comenta la siguiente línea:
-        Auth::login($user);
-
-        return redirect(route('dashboard', absolute: false));
+        return redirect()
+            ->route('admin.settings')
+            ->with('success', 'Usuario creado correctamente.');
     }
 }
