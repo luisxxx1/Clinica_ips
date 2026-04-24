@@ -7,12 +7,43 @@
         @page { margin: 1.5cm 1cm; }
 
         body {
-            font-family: 'Helvetica', Arial, sans-serif;
+            font-family: Arial, sans-serif;
             color: #1e293b;
             margin: 0;
             padding: 0;
             line-height: 1.4;
             font-size: 10px;
+        }
+
+        html,
+        body,
+        table,
+        thead,
+        tbody,
+        tfoot,
+        tr,
+        th,
+        td,
+        div,
+        span,
+        p,
+        a,
+        strong,
+        em,
+        small,
+        b,
+        i,
+        u,
+        li,
+        ol,
+        ul,
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+            font-family: Arial, sans-serif !important;
         }
 
         /* Encabezado Corporativo */
@@ -28,7 +59,7 @@
 
         .section-title {
             font-size: 11px;
-            font-weight: bold;
+            font-weight: 700;
             background: #f8fafc;
             padding: 6px 10px;
             border-left: 4px solid #2563eb;

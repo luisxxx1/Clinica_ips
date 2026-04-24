@@ -107,6 +107,41 @@
             display: block;
             margin-bottom: 5px;
         }
+
+        .notes-section p {
+            margin: 0 0 5px 0;
+            line-height: 1.5;
+        }
+
+        .notes-heading {
+            font-weight: 900;
+            text-transform: uppercase;
+            margin: 8px 0 4px 0;
+            color: #704c00;
+            letter-spacing: 0.4px;
+        }
+
+        .notes-list {
+            margin: 2px 0 8px 0;
+        }
+
+        .notes-list-row {
+            margin: 0 0 4px 0;
+        }
+
+        .notes-list-index {
+            font-weight: 900;
+            margin-right: 4px;
+        }
+
+        .notes-list-text {
+            font-weight: 400;
+        }
+
+        .notes-inline-label {
+            font-weight: 900;
+            color: #704c00;
+        }
         .specialist-info {
             margin-top: 20px;
             padding-top: 15px;
@@ -195,6 +230,67 @@
                 'odontología' => 2,
             ];
 
+            $formatClinicalText = function ($text) {
+                $lines = preg_split('/\R/u', (string) $text) ?: [];
+                $html = '';
+                $listItems = [];
+                $listIndex = 1;
+
+                $flushList = function () use (&$html, &$listItems, &$listIndex) {
+                    if (empty($listItems)) {
+                        return;
+                    }
+
+                    $html .= '<div class="notes-list">';
+                    foreach ($listItems as $item) {
+                        $html .= '<div class="notes-list-row">'
+                            . '<span class="notes-list-index">' . $listIndex . '.</span>'
+                            . '<span class="notes-list-text">' . e($item) . '</span>'
+                            . '</div>';
+                        $listIndex++;
+                    }
+                    $html .= '</div>';
+                    $listItems = [];
+                };
+
+                foreach ($lines as $line) {
+                    $trimmed = trim((string) $line);
+
+                    if ($trimmed === '') {
+                        $flushList();
+                        continue;
+                    }
+
+                    if (preg_match('/^(OBSERVACIONES|RECOMENDACIONES)\s*:?$/iu', $trimmed, $matches)) {
+                        $flushList();
+                        $listIndex = 1;
+                        $heading = mb_strtoupper($matches[1], 'UTF-8');
+                        $html .= '<div class="notes-heading">' . e($heading) . ':</div>';
+                        continue;
+                    }
+
+                    if (preg_match('/^[-*]\s+(.+)$/u', $trimmed, $matches)) {
+                        $listItems[] = trim($matches[1]);
+                        continue;
+                    }
+
+                    $flushList();
+
+                    if (preg_match('/^([A-ZÁÉÍÓÚÑ]{2,25})\s*:\s*(.+)$/u', $trimmed, $matches)) {
+                        $label = e($matches[1]) . ':';
+                        $value = e($matches[2]);
+                        $html .= '<p><span class="notes-inline-label">' . $label . '</span> ' . $value . '</p>';
+                        continue;
+                    }
+
+                    $html .= '<p>' . e($trimmed) . '</p>';
+                }
+
+                $flushList();
+
+                return $html;
+            };
+
             $orderedResults = $exam->results->sortBy(function($result) use ($orderPriority) {
                 $areaNormalized = mb_strtolower(trim($result->area));
                 return $orderPriority[$areaNormalized] ?? 999;
@@ -231,7 +327,7 @@
                 @if(!empty($result->notes))
                     <div class="notes-section">
                         <span class="notes-label">Observaciones/Notas del Especialista:</span>
-                        <p>{{ $result->notes }}</p>
+                        {!! $formatClinicalText($result->notes) !!}
                     </div>
                 @endif
 

@@ -1,115 +1,505 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
+
 <head>
     <meta charset="UTF-8">
-    <title>Reporte Médico - {{ $exam->student->document_number }}</title>
+    <title>Examenes de Ingreso Escolar - {{ $exam->student->document_number }}</title>
     <style>
-        @page { margin: 1.5cm; }
-        body { font-family: 'Helvetica', sans-serif; font-size: 11px; color: #1a202c; line-height: 1.4; }
-        .header-table { width: 100%; border-bottom: 2px solid #2d3748; margin-bottom: 20px; }
-        .logo { width: 120px; }
-        .title { text-align: right; text-transform: uppercase; }
+        @page {
+            margin: 0;
+        }
 
-        .section-title { background: #edf2f7; padding: 6px 10px; font-weight: bold; margin-top: 20px; border-left: 4px solid #2b6cb0; font-size: 12px; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
 
-        .data-table { width: 100%; border-collapse: collapse; margin-top: 8px; }
-        .data-table td { padding: 6px; border: 1px solid #e2e8f0; vertical-align: top; }
-        .label { font-weight: bold; color: #4a5568; width: 30%; }
+        body {
+            font-size: 8.5pt;
+            color: #000;
+            line-height: 1.3;
+            background: #fff;
+            padding: 1.2cm 1.8cm;
+        }
 
-        .status-badge { padding: 2px 8px; border-radius: 4px; font-size: 9px; font-weight: bold; text-transform: uppercase; }
-        .completed { background: #c6f6d5; color: #22543d; }
-        .pending { background: #fed7d7; color: #822727; }
+        .page-break {
+            page-break-after: always;
+        }
 
-        .odontograma-container { text-align: center; margin-top: 10px; border: 1px solid #e2e8f0; padding: 10px; border-radius: 8px; }
-        .odontograma-img { max-width: 200px; height: auto; }
+        .page-break:last-child {
+            page-break-after: auto;
+        }
 
-        .footer { position: fixed; bottom: -30px; left: 0; right: 0; text-align: center; font-size: 9px; color: #a0aec0; }
+        .header-container {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 5px;
+        }
+
+        .ips-logo-cell {
+            width: 110px;
+            vertical-align: middle;
+        }
+
+        .ips-info {
+            padding-left: 10px;
+            vertical-align: middle;
+        }
+
+        .ips-name {
+            color: #3b82f6;
+            font-weight: bold;
+            font-size: 11.5pt;
+            font-style: italic;
+        }
+
+        .ips-nit {
+            font-size: 9pt;
+            color: #1d4ed8;
+            font-weight: bold;
+        }
+
+        .main-title {
+            text-align: center;
+            font-weight: bold;
+            font-size: 12pt;
+            margin: 15px 0;
+            text-transform: uppercase;
+            width: 100%;
+            display: block;
+        }
+
+        .top-data-row {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 15px;
+            border-top: 1px solid #000;
+            border-bottom: 1px solid #000;
+        }
+
+        .top-data-row td {
+            font-size: 8pt;
+            padding: 6px 0;
+            vertical-align: top;
+        }
+
+        .label-bold {
+            font-weight: bold;
+            display: block;
+            text-transform: uppercase;
+            font-size: 7.5pt;
+            margin-bottom: 2px;
+        }
+
+        .sub-title {
+            font-weight: bold;
+            font-size: 9.5pt;
+            text-transform: uppercase;
+            border-bottom: 1px solid #000;
+            padding-bottom: 2px;
+            margin-top: 10px;
+        }
+
+        .id-grid {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 15px;
+        }
+
+        .id-grid td {
+            padding: 5px 0;
+            font-size: 8.5pt;
+        }
+
+        .section-name {
+            text-align: center;
+            font-weight: bold;
+            font-size: 11pt;
+            margin: 15px 0;
+            text-transform: uppercase;
+        }
+
+        .data-table {
+            border-collapse: collapse;
+            text-align: center;
+            font-size: 8pt;
+            width: 100%;
+        }
+
+        .data-table th,
+        .data-table td {
+            border: 1px solid #000;
+            padding: 5px;
+        }
+
+        .purple-header {
+            background-color: #800080;
+            color: white;
+        }
+
+        .footer-content {
+            margin-top: 20px;
+            width: 100%;
+        }
+
+        .obs-title {
+            font-weight: bold;
+            text-decoration: underline;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+
+        .justified-text {
+            text-align: justify;
+            line-height: 1.4;
+        }
+
+        .justified-text p {
+            margin: 0 0 5px 0;
+            line-height: 1.5;
+        }
+
+        .notes-heading {
+            font-weight: 900;
+            text-transform: uppercase;
+            margin: 8px 0 4px 0;
+            color: #000;
+            letter-spacing: 0.4px;
+        }
+
+        .notes-list {
+            margin: 2px 0 8px 0;
+        }
+
+        .notes-list-row {
+            margin: 0 0 4px 0;
+        }
+
+        .notes-list-index {
+            font-weight: 900;
+            margin-right: 4px;
+        }
+
+        .notes-list-text {
+            font-weight: 400;
+        }
+
+        .notes-inline-label {
+            font-weight: 900;
+            color: #000;
+        }
+
+        .signature-block {
+            margin-top: 40px;
+            width: 350px;
+        }
+
+        .signature-line {
+            border-top: 1.2px solid #000;
+            padding-top: 5px;
+            position: relative;
+        }
+
+        .signature-img {
+            height: 70px;
+            position: absolute;
+            top: -65px;
+            left: 20px;
+        }
+
+        .blue-footer {
+            text-align: center;
+            color: #1d4ed8;
+            font-style: italic;
+            font-size: 8.5pt;
+            margin-top: 35px;
+            border-top: 0.5px solid #ccc;
+            padding-top: 10px;
+        }
     </style>
 </head>
+
 <body>
-    {{-- Encabezado --}}
-    <table class="header-table">
-        <tr>
-            <td>
-                <img src="{{ public_path('LOGIN.png') }}" class="logo">
-            </td>
-            <td class="title">
-                <h2 style="margin:0;">{{ $title }}</h2>
-                <p style="margin:0;">I.P.S CREAR INTEGRAL - SNAKEDEV</p>
-            </td>
-        </tr>
-    </table>
 
-    {{-- Información del Estudiante --}}
-    <div class="section-title">INFORMACIÓN DEL PACIENTE</div>
-    <table class="data-table">
-        <tr>
-            <td class="label">Nombre Completo:</td>
-            <td>{{ $exam->student->first_name }} {{ $exam->student->last_name }}</td>
-            <td class="label">Documento:</td>
-            <td>{{ $exam->student->document_number }}</td>
-        </tr>
-        <tr>
-            <td class="label">Fecha de Solicitud:</td>
-            <td>{{ $exam->created_at->format('d/m/Y') }}</td>
-            <td class="label">Estado del Circuito:</td>
-            <td>
-                <span class="status-badge {{ $exam->status == 'completado' ? 'completed' : 'pending' }}">
-                    {{ $exam->status }}
-                </span>
-            </td>
-        </tr>
-    </table>
+    @php
+        $titulosPersonalizados = [
+            'audiometria' => 'TAMIZ AUDITIVO',
+            'fonoaudiologia' => 'TAMIZ FONOAUDIOLOGIA',
+            'odontologia' => 'TAMIZ ODONTOLOGICO',
+            'optometria' => 'TAMIZ VISUAL',
+            'psicologia' => 'VALORACION PSICOLOGICA',
+            'valoracion_medica' => 'CERTIFICADO MEDICO',
+        ];
 
-    {{-- Detalle por Área --}}
-    <div class="section-title">VALORACIONES MÉDICAS</div>
+        $formatClinicalText = function ($text) {
+            $lines = preg_split('/\R/u', (string) $text) ?: [];
+            $html = '';
+            $listItems = [];
+            $listIndex = 1;
 
-    @foreach($exam->requested_areas as $areaName)
-        @php
-            $slug = Str::slug($areaName, '_');
-            $resultado = $exam->results->where('area', $slug)->first();
-        @endphp
+            $flushList = function () use (&$html, &$listItems, &$listIndex) {
+                if (empty($listItems)) {
+                    return;
+                }
 
-        <div style="margin-top: 15px; page-break-inside: avoid;">
-            <div style="border-bottom: 1px solid #cbd5e0; padding-bottom: 4px; margin-bottom: 8px;">
-                <strong style="font-size: 11px; color: #2b6cb0;">{{ strtoupper($areaName) }}</strong>
-                @if(!$resultado) <span class="status-badge pending" style="float: right;">Faltante</span> @endif
-            </div>
+                $html .= '<div class="notes-list">';
+                foreach ($listItems as $item) {
+                    $html .= '<div class="notes-list-row">'
+                        . '<span class="notes-list-index">' . $listIndex . '.</span>'
+                        . '<span class="notes-list-text">' . e($item) . '</span>'
+                        . '</div>';
+                    $listIndex++;
+                }
+                $html .= '</div>';
+                $listItems = [];
+            };
 
-            @if($resultado)
-                <table class="data-table">
-                    @foreach($resultado->data as $campo => $valor)
-                        @if(!is_array($valor) && $campo !== 'odontograma_path')
-                            <tr>
-                                <td class="label">{{ ucfirst(str_replace('_', ' ', $campo)) }}:</td>
-                                <td>{{ $valor ?: 'N/A' }}</td>
-                            </tr>
-                        @endif
-                    @endforeach
+            foreach ($lines as $line) {
+                $trimmed = trim((string) $line);
+
+                if ($trimmed === '') {
+                    $flushList();
+                    continue;
+                }
+
+                if (preg_match('/^(OBSERVACIONES|RECOMENDACIONES)\s*:?$/iu', $trimmed, $matches)) {
+                    $flushList();
+                    $listIndex = 1;
+                    $heading = mb_strtoupper($matches[1], 'UTF-8');
+                    $html .= '<div class="notes-heading">' . e($heading) . ':</div>';
+                    continue;
+                }
+
+                if (preg_match('/^[-*]\s+(.+)$/u', $trimmed, $matches)) {
+                    $listItems[] = trim($matches[1]);
+                    continue;
+                }
+
+                $flushList();
+
+                if (preg_match('/^([A-ZA-ZÁÉÍÓÚÑ]{2,25})\s*:\s*(.+)$/u', $trimmed, $matches)) {
+                    $label = e($matches[1]) . ':';
+                    $value = e($matches[2]);
+                    $html .= '<p><span class="notes-inline-label">' . $label . '</span> ' . $value . '</p>';
+                    continue;
+                }
+
+                $html .= '<p>' . e($trimmed) . '</p>';
+            }
+
+            $flushList();
+
+            return $html;
+        };
+    @endphp
+
+    @foreach ($exam->results->sortBy('area') as $result)
+        <div class="page-break">
+            <table class="header-container">
+                <tr>
+                    <td class="ips-logo-cell">
+                        <img src="{{ public_path('LOGIN.png') }}" style="height: 120px; width: auto;">
+                    </td>
+                    <td class="ips-info">
+                        <div class="ips-name">I.P.S CREAR INTEGRAL S.A.S</div>
+                        <div class="ips-nit">NIT 900727545-8</div>
+                    </td>
+                </tr>
+            </table>
+
+            <div class="main-title">EXAMENES DE INGRESO ESCOLAR</div>
+
+            <table class="top-data-row">
+                <tr>
+                    <td width="33%">
+                        <span class="label-bold">Fecha Emision</span>
+                        {{ $result->created_at->format('d-m-Y') }}
+                    </td>
+                    <td width="34%" style="text-align: center;">
+                        <span class="label-bold">Realizado Por</span>
+                        IPS CREAR INTEGRAL SAS
+                    </td>
+                    <td width="33%" style="text-align: right;">
+                        <span class="label-bold">Tipo Evaluacion - Enfasis</span>
+                        INGRESO ESCOLAR
+                    </td>
+                </tr>
+            </table>
+
+            <div class="sub-title">IDENTIFICACION DEL USUARIO</div>
+            <table class="id-grid">
+                <tr>
+                    <td width="45%"><span class="label-bold">Nombres y Apellidos</span>
+                        {{ strtoupper(trim(($exam->student->first_name ?? '') . ' ' . ($exam->student->last_name ?? ''))) }}</td>
+                    <td width="20%"><span class="label-bold">Identificacion</span>
+                        {{ $exam->student->document_type }} {{ $exam->student->document_number }}</td>
+                    <td width="20%"><span class="label-bold">Fecha de Nacimiento</span>
+                        {{ $exam->student->birth_date ? \Carbon\Carbon::parse($exam->student->birth_date)->format('d-m-Y') : 'N/A' }}</td>
+                    <td width="15%"><span class="label-bold">Edad</span>
+                        {{ $exam->student->birth_date ? \Carbon\Carbon::parse($exam->student->birth_date)->age : 'N/A' }} ANOS</td>
+                </tr>
+            </table>
+
+            @php
+                $areaKey = (string) $result->area;
+                $areaTitle = $titulosPersonalizados[$areaKey] ?? 'TAMIZ ' . strtoupper(str_replace('_', ' ', $areaKey));
+                $resultData = is_array($result->data) ? $result->data : [];
+            @endphp
+
+            <div class="section-name">{{ $areaTitle }}</div>
+
+            @if ($areaKey === 'audiometria')
+                <table width="100%" style="margin-bottom: 18px; border-collapse: collapse;">
+
+                    <tr>
+                        <td width="36%" style="vertical-align: top; padding-right: 12px;">
+                            <table class="data-table">
+                                <tr class="purple-header">
+                                    <th colspan="3" style="font-size: 8.5pt; padding: 6px;">Oido</th>
+                                </tr>
+                                <tr>
+                                    <td style="font-weight: bold; font-size: 8pt;">Via aerea enmasing</td>
+                                    <td style="color: #dc2626; font-size: 12pt; font-weight: bold;">O</td>
+                                    <td style="color: #1d4ed8; font-size: 12pt; font-weight: bold;">X</td>
+                                </tr>
+                            </table>
+
+                            @php
+                                $ptaOd = $result->pta_od;
+                                $ptaOi = $result->pta_oi;
+                                $ptaFreqs = [500, 1000, 2000];
+
+                                if ($ptaOd === null) {
+                                    $sumOd = 0;
+                                    $countOd = 0;
+                                    foreach ($ptaFreqs as $f) {
+                                        $v = data_get($resultData, "dB_od_{$f}");
+                                        if (is_numeric($v)) {
+                                            $sumOd += (float) $v;
+                                            $countOd++;
+                                        }
+                                    }
+                                    $ptaOd = $countOd > 0 ? round($sumOd / $countOd, 2) : null;
+                                }
+
+                                if ($ptaOi === null) {
+                                    $sumOi = 0;
+                                    $countOi = 0;
+                                    foreach ($ptaFreqs as $f) {
+                                        $v = data_get($resultData, "dB_oi_{$f}");
+                                        if (is_numeric($v)) {
+                                            $sumOi += (float) $v;
+                                            $countOi++;
+                                        }
+                                    }
+                                    $ptaOi = $countOi > 0 ? round($sumOi / $countOi, 2) : null;
+                                }
+                            @endphp
+
+                            <table class="data-table" style="margin-top: 16px; width: 72%; margin-left: 24px;">
+                                <tr>
+                                    <th>PTA</th>
+                                    <th>OD</th>
+                                    <th>OI</th>
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <td style="font-weight: bold;">{{ $ptaOd !== null ? number_format((float) $ptaOd, 2, '.', '') : '--' }}</td>
+                                    <td style="font-weight: bold;">{{ $ptaOi !== null ? number_format((float) $ptaOi, 2, '.', '') : '--' }}</td>
+                                </tr>
+                            </table>
+                        </td>
+                        <td width="64%" style="text-align: center; vertical-align: top;">
+                            @php
+                                $audiogramPath = $result->chart_path ?? data_get($resultData, 'audiogram_path');
+                                $audiogramImagePath = null;
+                                if ($audiogramPath) {
+                                    $storageAppPath = storage_path('app/public/' . ltrim($audiogramPath, '/'));
+                                    if (file_exists($storageAppPath)) {
+                                        $audiogramImagePath = $storageAppPath;
+                                    } else {
+                                        $publicStoragePath = public_path('storage/' . ltrim($audiogramPath, '/'));
+                                        if (file_exists($publicStoragePath)) {
+                                            $audiogramImagePath = $publicStoragePath;
+                                        }
+                                    }
+                                }
+                            @endphp
+
+                            <div style="border: 1px solid #9ca3af; padding: 4px; min-height: 230px;">
+                                @if($audiogramImagePath)
+                                    <img src="{{ $audiogramImagePath }}" style="width: 100%; max-height: 220px; object-fit: contain; display: block;">
+                                @endif
+                            </div>
+
+                        </td>
+                    </tr>
                 </table>
+            @elseif ($areaKey === 'odontologia')
+                @php
+                    $odontogramaPath = $result->chart_path ?? data_get($resultData, 'odontograma_path');
+                    $imagePath = null;
+                    if ($odontogramaPath) {
+                        $storageAppPath = storage_path('app/public/' . ltrim($odontogramaPath, '/'));
+                        if (file_exists($storageAppPath)) {
+                            $imagePath = $storageAppPath;
+                        } else {
+                            $publicStoragePath = public_path('storage/' . ltrim($odontogramaPath, '/'));
+                            if (file_exists($publicStoragePath)) {
+                                $imagePath = $publicStoragePath;
+                            }
+                        }
+                    }
+                @endphp
 
-                {{-- Caso especial: Odontograma --}}
-                @if(isset($resultado->data['odontograma_path']))
-                    <div class="odontograma-container">
-                        <p><strong>ODONTOGRAMA REGISTRADO:</strong></p>
-                        <img src="{{ storage_path('app/public/' . $resultado->data['odontograma_path']) }}" class="odontograma-img">
+                @if ($imagePath)
+                    <div style="text-align: center; margin-bottom: 12px;">
+                        <img src="{{ $imagePath }}" style="max-height: 220px; width: auto; max-width: 100%;">
                     </div>
                 @endif
+            @endif
 
-                <div style="margin-top: 5px; background: #f7fafc; padding: 8px; border: 1px solid #e2e8f0;">
-                    <strong>Observaciones:</strong> {{ $resultado->notes }} <br>
-                    <small>Realizado por: {{ $resultado->specialist->name }} el {{ $resultado->created_at->format('d/m/Y h:i A') }}</small>
-                </div>
-            @else
-                <div style="padding: 10px; color: #a0aec0; border: 1px dashed #cbd5e0; text-align: center;">
-                    Este examen aún no ha sido reportado por el especialista.
+            @if (!empty($resultData))
+                <div style="margin-bottom: 10px;">
+                    @foreach ($resultData as $campo => $valor)
+                        @if (!is_array($valor) && !in_array($campo, ['odontograma_path', 'audiogram_path'], true))
+                            <p style="margin-bottom: 2px;">
+                                {{ ucfirst(str_replace('_', ' ', $campo)) }}: {{ $valor !== null && $valor !== '' ? $valor : 'N/A' }}
+                            </p>
+                        @endif
+                    @endforeach
                 </div>
             @endif
+
+            <div class="footer-content">
+                <div class="obs-title">OBSERVACIONES/RECOMENDACIONES:</div>
+                <div class="justified-text" style="min-height: 90px;">
+                    {!! $formatClinicalText($result->notes ?? 'Sin observaciones adicionales.') !!}
+                </div>
+
+                <p style="margin-top: 8px;">Atentamente,</p>
+
+                <div class="signature-block">
+                    <div class="signature-line">
+                        @if ($result->specialist && $result->specialist->signature_path)
+                            <img src="{{ public_path('storage/' . $result->specialist->signature_path) }}" class="signature-img">
+                        @endif
+                        <strong>{{ strtoupper($result->specialist->name ?? 'PROFESIONAL DE LA SALUD') }}</strong><br>
+                        {{ strtoupper($result->specialist->specialty ?? 'ESPECIALISTA') }}<br>
+                        REG. PROFESIONAL {{ $result->specialist->license_number ?? '-------' }}
+                    </div>
+                </div>
+            </div>
+
+            <div class="blue-footer">
+                Direccion: Carrera 12 No 13-24 B/ Simon Bolivar - Jamundi (Valle)<br>
+                Telefono: 316 185 57 27
+            </div>
         </div>
     @endforeach
 
-    <div class="footer">
-        Cali, Valle del Cauca - Reporte generado por SnakeDEV System v2.0 - {{ $date }}
-    </div>
 </body>
+
 </html>
