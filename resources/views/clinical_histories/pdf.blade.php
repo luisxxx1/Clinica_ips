@@ -46,7 +46,7 @@
         }
 
         body {
-            margin-top: 170px;
+            margin-top: 130px;
             font-size: 8pt;
             color: #000;
             line-height: 1.28;
@@ -58,7 +58,7 @@
         .header-container {
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: 2px;
+            margin-bottom: 0px;
         }
 
         .ips-logo-cell {
@@ -72,16 +72,17 @@
         }
 
         .ips-name {
-            color: #000;
-            font-weight: 900;
+            color: #2f57b8;
+            font-weight: 700;
             font-size: 10.5pt;
-            font-style: normal;
+            font-style: italic;
+            text-transform: uppercase
             letter-spacing: 0.2px;
         }
 
         .ips-nit {
             font-size: 8pt;
-            color: #000;
+            color: #2f57b8;
             font-weight: 700;
         }
 
@@ -90,7 +91,7 @@
             text-align: center;
             font-weight: 900;
             font-size: 11.5pt;
-            margin: 10px 0 10px;
+            margin: 3px 0 6px;
             text-transform: uppercase;
             color: #000;
             letter-spacing: 0.3px;
@@ -409,6 +410,25 @@
 </head>
 <body>
 
+@php
+    $logoSrc = null;
+    $logoCandidates = [
+        public_path('Logo-Historial.png'),
+        base_path('public_html/Logo-Historial.png'),
+        dirname(base_path()) . DIRECTORY_SEPARATOR . 'public_html' . DIRECTORY_SEPARATOR . 'Logo-Historial.png',
+        public_path('LOGIN.png'),
+        base_path('public_html/LOGIN.png'),
+        dirname(base_path()) . DIRECTORY_SEPARATOR . 'public_html' . DIRECTORY_SEPARATOR . 'LOGIN.png',
+    ];
+
+    foreach ($logoCandidates as $candidate) {
+        if (is_string($candidate) && $candidate !== '' && file_exists($candidate)) {
+            $logoSrc = $candidate;
+            break;
+        }
+    }
+@endphp
+
 <!--  HEADER FIJO PARA TODAS LAS PAGINAS -->
 <div style="
     position: fixed;
@@ -423,11 +443,9 @@
     <table class="header-container">
         <tr>
             <td class="ips-logo-cell">
-                <img src="{{ public_path('LOGIN.png') }}" style="height: 120px; width: auto;">
-            </td>
-            <td class="ips-info">
-                <div class="ips-name">I.P.S CREAR INTEGRAL S.A.S</div>
-                <div class="ips-nit">NIT 900727545-8</div>
+                @if($logoSrc)
+                    <img src="{{ $logoSrc }}" style="height: 120px; width: auto;">
+                @endif
             </td>
         </tr>
     </table>
@@ -446,11 +464,11 @@
     font-size: 13pt;
     color: #2f57b8;
     font-style: italic;
-    font-weight: 500;
+    font-weight: 600;
     line-height: 1.12;
     z-index: 9999;
 ">
-    Dirección: Carrera 12 No 13-24 B/ Simón Bolívar - Jamundí (Valle)<br>
+    Dirección: Carrera 12 No 13-19 B/ Simón Bolívar - Jamundí (Valle)<br>
     Teléfono: 316 185 57 27
 </div>
 
@@ -537,21 +555,55 @@
         $getAreaSignaturePath = function (?string $area): ?string {
             $normalized = strtolower(trim((string) $area));
 
+            $publicRoots = [
+                public_path(),
+                base_path('public_html'),
+                dirname(base_path()) . DIRECTORY_SEPARATOR . 'public_html',
+            ];
+
+            $resolveFromRoots = function (array $relativeCandidates) use ($publicRoots): ?string {
+                foreach ($relativeCandidates as $relativeCandidate) {
+                    $relativePath = ltrim((string) $relativeCandidate, '/\\');
+                    if ($relativePath === '') {
+                        continue;
+                    }
+
+                    $relativePath = str_replace(['/', '\\'], DIRECTORY_SEPARATOR, $relativePath);
+
+                    foreach ($publicRoots as $root) {
+                        if (!is_string($root) || $root === '') {
+                            continue;
+                        }
+
+                        $absolutePath = rtrim($root, '/\\') . DIRECTORY_SEPARATOR . $relativePath;
+                        if (file_exists($absolutePath)) {
+                            return $absolutePath;
+                        }
+                    }
+                }
+
+                return null;
+            };
+
             $explicitMap = [
-                'psicologia' => 'Firma de psicologa.png',
-                'valoracion_medica' => 'Firma medico general.png',
-                'medicina_general' => 'Firma medico general.png',
-                'medico' => 'Firma medico general.png',
-                'odontologia' => 'Firma odontologa.png',
-                'optometria' => 'Firma optometra.png',
-                'audiometria' => 'Firma para fonoaudiologia y audiometria.png',
-                'fonoaudiologia' => 'Firma para fonoaudiologia y audiometria.png',
+                'psicologia' => 'Firma-de-psicologa.png',
+                'valoracion_medica' => 'Firma-medico-general.png',
+                'medicina_general' => 'Firma-medico-general.png',
+                'medico' => 'Firma-medico-general.png',
+                'odontologia' => 'Firma-odontologa.png',
+                'optometria' => 'Firma-optometra.png',
+                'audiometria' => 'Firma-para-fonoaudiologia-y-audiometria.png',
+                'fonoaudiologia' => 'Firma-para-fonoaudiologia-y-audiometria.png',
             ];
 
             if (isset($explicitMap[$normalized])) {
-                $publicRootSignature = public_path($explicitMap[$normalized]);
-                if (file_exists($publicRootSignature)) {
-                    return $publicRootSignature;
+                $signature = $resolveFromRoots([
+                    $explicitMap[$normalized],
+                    'firmas/' . $explicitMap[$normalized],
+                    'signatures/' . $explicitMap[$normalized],
+                ]);
+                if ($signature) {
+                    return $signature;
                 }
             }
 
@@ -574,11 +626,9 @@
                     "signatures/{$name}.jpeg",
                 ];
 
-                foreach ($candidates as $relativePath) {
-                    $absolutePath = public_path($relativePath);
-                    if (file_exists($absolutePath)) {
-                        return $absolutePath;
-                    }
+                $signature = $resolveFromRoots($candidates);
+                if ($signature) {
+                    return $signature;
                 }
             }
 
@@ -711,12 +761,12 @@
                                                 <tr style="height: 36px;">
                                                     <td style="border: 1px solid #000; text-align: center; font-weight: bold; font-size: 6.8pt; vertical-align: middle; color: #000;">Via Aerea</td>
                                                     <td style="border: 1px solid #000; text-align: center; vertical-align: middle;">
-                                                        <div style="font-size: 30pt; color: #ef4444; font-weight: bold; line-height: 1;">O</div>
-                                                        <div style="font-size: 6.8pt; font-weight: bold; color: #ef4444; margin-top: 1px;">OIDO<br>DERECHO</div>
+                                                        <div style="font-size: 7.5pt; color: #ef4444; font-weight: bold; line-height: 1;">O</div>
+                                                        <div style="font-size: 6.8pt; font-weight: bold; color: #ef4444; margin-top: 1px;">OD</div>
                                                     </td>
                                                     <td style="border: 1px solid #000; text-align: center; vertical-align: middle;">
-                                                        <div style="font-size: 30pt; color: #2563eb; font-weight: bold; line-height: 1;">X</div>
-                                                        <div style="font-size: 6.8pt; font-weight: bold; color: #2563eb; margin-top: 1px;">OIDO<br>IZQUIERDO</div>
+                                                        <div style="font-size: 7.5pt; color: #2563eb; font-weight: bold; line-height: 1;">X</div>
+                                                        <div style="font-size: 6.8pt; font-weight: bold; color: #2563eb; margin-top: 1px;">OI</div>
                                                     </td>
                                                 </tr>
                                             </table>

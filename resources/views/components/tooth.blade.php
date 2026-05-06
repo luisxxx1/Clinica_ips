@@ -35,19 +35,19 @@
     {{-- SVG interactivo --}}
     <svg width="45" height="45" viewBox="0 0 100 100" class="drop-shadow-sm transition-transform group-hover:scale-110">
         {{-- Cara Superior --}}
-        <path @click="toggleFace('top')" :fill="getColor('top')" d="M10,10 L90,10 L70,30 L30,30 Z" stroke="#cbd5e1" stroke-width="2" class="cursor-pointer hover:opacity-80" />
+        <path data-face="top" @click="toggleFace('top')" :fill="getColor('top')" d="M10,10 L90,10 L70,30 L30,30 Z" stroke="#cbd5e1" stroke-width="2" class="cursor-pointer hover:opacity-80" />
 
         {{-- Cara Derecha --}}
-        <path @click="toggleFace('right')" :fill="getColor('right')" d="M90,10 L90,90 L70,70 L70,30 Z" stroke="#cbd5e1" stroke-width="2" class="cursor-pointer hover:opacity-80" />
+        <path data-face="right" @click="toggleFace('right')" :fill="getColor('right')" d="M90,10 L90,90 L70,70 L70,30 Z" stroke="#cbd5e1" stroke-width="2" class="cursor-pointer hover:opacity-80" />
 
         {{-- Cara Inferior --}}
-        <path @click="toggleFace('bottom')" :fill="getColor('bottom')" d="M10,90 L90,90 L70,70 L30,70 Z" stroke="#cbd5e1" stroke-width="2" class="cursor-pointer hover:opacity-80" />
+        <path data-face="bottom" @click="toggleFace('bottom')" :fill="getColor('bottom')" d="M10,90 L90,90 L70,70 L30,70 Z" stroke="#cbd5e1" stroke-width="2" class="cursor-pointer hover:opacity-80" />
 
         {{-- Cara Izquierda --}}
-        <path @click="toggleFace('left')" :fill="getColor('left')" d="M10,10 L10,90 L30,70 L30,30 Z" stroke="#cbd5e1" stroke-width="2" class="cursor-pointer hover:opacity-80" />
+        <path data-face="left" @click="toggleFace('left')" :fill="getColor('left')" d="M10,10 L10,90 L30,70 L30,30 Z" stroke="#cbd5e1" stroke-width="2" class="cursor-pointer hover:opacity-80" />
 
         {{-- Centro --}}
-        <rect @click="toggleFace('center')" :fill="getColor('center')" x="30" y="30" width="40" height="40" stroke="#cbd5e1" stroke-width="2" class="cursor-pointer hover:opacity-80" />
+        <rect data-face="center" @click="toggleFace('center')" :fill="getColor('center')" x="30" y="30" width="40" height="40" stroke="#cbd5e1" stroke-width="2" class="cursor-pointer hover:opacity-80" />
 
         {{-- Número del diente --}}
         <text x="50" y="55" font-family="Arial" font-size="12" font-weight="bold"

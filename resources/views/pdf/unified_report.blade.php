@@ -36,7 +36,7 @@
         .header-container {
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: 5px;
+            margin-bottom: 0px;
         }
 
         .ips-logo-cell {
@@ -67,7 +67,7 @@
             text-align: center;
             font-weight: bold;
             font-size: 12pt;
-            margin: 15px 0;
+            margin: 3px 0 6px;
             text-transform: uppercase;
             width: 100%;
             display: block;
@@ -230,6 +230,36 @@
 <body>
 
     @php
+        $publicRoots = [
+            public_path(),
+            base_path('public_html'),
+            dirname(base_path()) . DIRECTORY_SEPARATOR . 'public_html',
+        ];
+
+        $resolveFromPublicRoots = function (array $relativeCandidates) use ($publicRoots): ?string {
+            foreach ($relativeCandidates as $relativeCandidate) {
+                $relativePath = ltrim((string) $relativeCandidate, '/\\');
+                if ($relativePath === '') {
+                    continue;
+                }
+
+                $relativePath = str_replace(['/', '\\'], DIRECTORY_SEPARATOR, $relativePath);
+
+                foreach ($publicRoots as $root) {
+                    if (!is_string($root) || $root === '') {
+                        continue;
+                    }
+
+                    $absolutePath = rtrim($root, '/\\') . DIRECTORY_SEPARATOR . $relativePath;
+                    if (file_exists($absolutePath)) {
+                        return $absolutePath;
+                    }
+                }
+            }
+
+            return null;
+        };
+
         $titulosPersonalizados = [
             'audiometria' => 'TAMIZ AUDITIVO',
             'fonoaudiologia' => 'TAMIZ FONOAUDIOLOGÍA',
@@ -308,8 +338,10 @@
             <table class="header-container">
                 <tr>
                     <td class="ips-logo-cell">
-                        @php $logoSrc = public_path('LOGIN.png'); @endphp
-                        <img src="{{ $logoSrc }}" style="height: 120px; width: auto;">
+                        @php $logoSrc = $resolveFromPublicRoots(['LOGIN.png', 'login.png']); @endphp
+                        @if($logoSrc)
+                            <img src="{{ $logoSrc }}" style="height: 120px; width: auto;">
+                        @endif
                     </td>
                     <td class="ips-info">
                         <div class="ips-name">I.P.S CREAR INTEGRAL S.A.S</div>
@@ -443,10 +475,10 @@
                                         if (file_exists($storageAppPath)) {
                                             $audiogramImagePath = $storageAppPath;
                                         } elseif (!$audiogramImagePath) {
-                                            $publicStoragePath = public_path('storage/' . ltrim($audiogramPath, '/'));
-                                            if (file_exists($publicStoragePath)) {
-                                                $audiogramImagePath = $publicStoragePath;
-                                            }
+                                            $audiogramImagePath = $resolveFromPublicRoots([
+                                                'storage/' . ltrim($audiogramPath, '/'),
+                                                ltrim($audiogramPath, '/'),
+                                            ]);
                                         }
                                     }
                                 @endphp
@@ -478,10 +510,10 @@
                     }
                     // Fallback a public/storage
                     if (!$imagePath && $odontogramaPath) {
-                        $publicStoragePath = public_path('storage/' . ltrim($odontogramaPath, '/'));
-                        if (file_exists($publicStoragePath)) {
-                            $imagePath = $publicStoragePath;
-                        }
+                        $imagePath = $resolveFromPublicRoots([
+                            'storage/' . ltrim($odontogramaPath, '/'),
+                            ltrim($odontogramaPath, '/'),
+                        ]);
                     }
                 @endphp
                 @if($imagePath)
@@ -524,8 +556,20 @@
 
                 <div class="signature-block">
                     <div class="signature-line">
-                        @if ($result->specialist && $result->specialist->signature_path)
-                            <img src="{{ public_path('storage/'.$result->specialist->signature_path) }}" class="signature-img">
+                        @php
+                            $signatureImagePath = null;
+                            if ($result->specialist && $result->specialist->signature_path) {
+                                $signatureRelative = trim((string) $result->specialist->signature_path);
+                                if ($signatureRelative !== '' && strtolower($signatureRelative) !== 'signature_path') {
+                                    $signatureImagePath = $resolveFromPublicRoots([
+                                        'storage/' . ltrim($signatureRelative, '/'),
+                                        ltrim($signatureRelative, '/'),
+                                    ]);
+                                }
+                            }
+                        @endphp
+                        @if ($signatureImagePath)
+                            <img src="{{ $signatureImagePath }}" class="signature-img">
                         @endif
                         <strong>{{ strtoupper($result->specialist->name ?? 'Profesional de la Salud') }}</strong><br>
                         {{ strtoupper($result->specialist->specialty ?? 'Especialista') }}<br>
@@ -535,7 +579,7 @@
             </div>
 
             <div class="blue-footer">
-                Carrera 12 No 13-24 B/ Simón Bolívar - Jamundí (Valle) | Tel: 316 185 57 27
+                Carrera 12 No 13-19 B/ Simón Bolívar - Jamundí (Valle) | Tel: 316 185 57 27
             </div>
         </div>
     @endforeach

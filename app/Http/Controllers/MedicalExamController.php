@@ -351,6 +351,9 @@ class MedicalExamController extends Controller
 
                 $audioAllowedKeys = [
                     'oto_od', 'oto_oi',
+                    'oto_od_cae', 'oto_oi_cae',
+                    'oto_od_cerumen', 'oto_oi_cerumen',
+                    'oto_od_membrana', 'oto_oi_membrana',
                     'dB_od_250', 'dB_od_500', 'dB_od_1000', 'dB_od_2000', 'dB_od_4000', 'dB_od_8000',
                     'dB_oi_250', 'dB_oi_500', 'dB_oi_1000', 'dB_oi_2000', 'dB_oi_4000', 'dB_oi_8000',
                     'diagnostico', 'proteccion',

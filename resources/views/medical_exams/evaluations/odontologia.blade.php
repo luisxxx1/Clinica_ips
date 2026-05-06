@@ -8,8 +8,8 @@
         position: relative;
         isolation: isolate;
         background:
-            radial-gradient(circle at top right, rgba(29, 78, 216, 0.08), transparent 28%),
-            radial-gradient(circle at bottom left, rgba(15, 23, 42, 0.06), transparent 30%);
+            radial-gradient(circle at top right, rgba(16, 185, 129, 0.08), transparent 28%),
+            radial-gradient(circle at bottom left, rgba(15, 23, 42, 0.04), transparent 30%);
     }
 
     .tooth-container {
@@ -23,7 +23,7 @@
         transform: translateY(-6px) scale(1.04);
         z-index: 10;
         background: rgba(255, 255, 255, 0.65);
-        box-shadow: 0 14px 35px rgba(15, 23, 42, 0.08);
+        box-shadow: 0 14px 35px rgba(16, 185, 129, 0.10);
     }
 
     .tooth-label {
@@ -58,15 +58,12 @@
         {{-- Encabezado Profesional --}}
         <div class="mb-8 app-panel-strong rounded-[2.5rem] p-6 md:p-8 flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
             <div>
-                <span class="text-[10px] font-black text-blue-600 uppercase tracking-[0.35em] mb-2 block">Módulo de Salud Oral</span>
+                <span class="text-[10px] font-black text-emerald-600 uppercase tracking-[0.35em] mb-2 block">Módulo de Salud Oral</span>
                 <h2 class="app-display text-4xl md:text-5xl font-black text-slate-900 leading-none">
-                    Valoración: <span class="text-blue-600">Odontología</span>
+                    Valoración: <span class="text-emerald-700">Odontología</span>
                 </h2>
-                <p class="mt-3 text-sm text-slate-500 max-w-2xl leading-6">
-                    Captura el odontograma como una pieza visual limpia, legible y lista para reporte. Los cambios se guardan en base64 para mantener el flujo consistente con audiometría.
-                </p>
                 <div class="flex items-center mt-5">
-                    <div class="h-11 w-11 rounded-2xl bg-slate-900 text-white flex items-center justify-center font-black text-xs shadow-lg mr-3 uppercase">
+                    <div class="h-11 w-11 rounded-2xl bg-emerald-600 text-white flex items-center justify-center font-black text-xs shadow-lg shadow-emerald-200 mr-3 uppercase">
                         @php
                             $p_nombre = $exam->student->name ?? $exam->student->first_name ?? 'P';
                             $p_apellido = $exam->student->last_name ?? '';
@@ -75,18 +72,18 @@
                     </div>
                     <p class="text-slate-500 font-bold uppercase text-sm tracking-tight">
                         Paciente: <span class="text-slate-800">{{ $exam->student->name ?? ($exam->student->first_name . ' ' . $exam->student->last_name) }}</span>
-                        <span class="text-blue-600 ml-2">| CC: {{ $exam->student->document_number }}</span>
+                        <span class="text-emerald-700 ml-2">| CC: {{ $exam->student->document_number }}</span>
                     </p>
                 </div>
             </div>
 
             {{-- Leyenda de Colores --}}
-            <div class="flex flex-wrap gap-3 app-panel bg-white/80 p-4 rounded-[2rem] items-center justify-center md:justify-start">
-                <span class="text-[9px] font-black text-slate-400 uppercase tracking-widest mr-2 w-full md:w-auto text-center">Convenciones:</span>
-                <div class="legend-item bg-red-50 border-red-100"><span class="w-2.5 h-2.5 bg-red-500 rounded-full"></span><span class="text-[10px] font-black text-red-700 uppercase">Caries</span></div>
-                <div class="legend-item bg-green-50 border-green-100"><span class="w-2.5 h-2.5 bg-green-500 rounded-full"></span><span class="text-[10px] font-black text-green-700 uppercase">Sellante</span></div>
-                <div class="legend-item bg-blue-50 border-blue-100"><span class="w-2.5 h-2.5 bg-blue-500 rounded-full"></span><span class="text-[10px] font-black text-blue-700 uppercase">Restauración</span></div>
-                <div class="legend-item bg-slate-100 border-slate-200"><span class="w-2.5 h-2.5 bg-black rounded-full"></span><span class="text-[10px] font-black text-slate-700 uppercase">Ausente</span></div>
+            <div class="flex flex-wrap gap-3 app-panel bg-white/80 p-4 rounded-[2rem] items-center justify-center md:justify-start border border-emerald-100">
+                <span class="text-[9px] font-black text-emerald-500 uppercase tracking-widest mr-2 w-full md:w-auto text-center">Convenciones</span>
+                <div class="legend-item bg-emerald-50 border-emerald-100"><span class="w-2.5 h-2.5 bg-emerald-500 rounded-full"></span><span class="text-[10px] font-black text-emerald-700 uppercase">Caries</span></div>
+                <div class="legend-item bg-emerald-50 border-emerald-100"><span class="w-2.5 h-2.5 bg-emerald-400 rounded-full"></span><span class="text-[10px] font-black text-emerald-700 uppercase">Sellante</span></div>
+                <div class="legend-item bg-emerald-50 border-emerald-100"><span class="w-2.5 h-2.5 bg-emerald-600 rounded-full"></span><span class="text-[10px] font-black text-emerald-700 uppercase">Restauración</span></div>
+                <div class="legend-item bg-slate-50 border-slate-200"><span class="w-2.5 h-2.5 bg-slate-500 rounded-full"></span><span class="text-[10px] font-black text-slate-700 uppercase">Ausente</span></div>
             </div>
         </div>
 
@@ -120,39 +117,39 @@
 
                 {{-- Botón Explícito de Captura --}}
                 <div class="flex justify-center mt-6">
-                    <button type="button" id="btn-capture" class="bg-slate-900 hover:bg-blue-600 text-white px-8 py-4 rounded-2xl font-black uppercase text-xs tracking-[0.24em] transition-all shadow-[0_16px_30px_rgba(15,23,42,0.18)]">
+                    <button type="button" id="btn-capture" class="bg-emerald-600 hover:bg-emerald-700 text-white px-8 py-4 rounded-2xl font-black uppercase text-xs tracking-[0.24em] transition-all shadow-[0_16px_30px_rgba(16,185,129,0.18)]">
                         📸 Capturar Odontograma
                     </button>
                 </div>
 
                 {{-- Preview de la Captura --}}
-                <div id="capture-preview" style="display:none; margin-top: 20px; text-align: center;" class="app-panel rounded-[2rem] p-4 mt-6">
-                    <p class="text-sm font-black text-slate-700 mb-3 uppercase tracking-[0.2em]">Vista previa de lo que se guardará</p>
+                <div id="capture-preview" style="display:none; margin-top: 20px; text-align: center;" class="app-panel rounded-[2rem] p-4 mt-6 border border-emerald-100">
+                    <p class="text-sm font-black text-emerald-700 mb-3 uppercase tracking-[0.2em]">Vista previa</p>
                     <img id="preview-img" style="max-width: 100%; max-height: 300px; border: 1px solid rgba(148,163,184,0.35); border-radius: 1.25rem; box-shadow: 0 14px 30px rgba(15,23,42,0.08);">
                 </div>
             </div>
 
             {{-- Diagnóstico --}}
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-                <div class="app-panel p-6 rounded-[2rem]">
-                    <label class="text-[10px] font-black text-slate-400 uppercase mb-3 block tracking-[0.24em]">Higiene Oral</label>
-                    <select name="results[higiene]" class="w-full border-none bg-slate-50 rounded-2xl py-3 px-4 font-bold text-slate-700 shadow-inner focus:ring-4 focus:ring-blue-500/10">
-                        <option value="Buena">🟢 Buena Higiene</option>
-                        <option value="Regular">🟡 Regular Higiene</option>
-                        <option value="Mala">🔴 Mala Higiene</option>
+                <div class="app-panel p-6 rounded-[2rem] border border-emerald-100">
+                    <label class="text-[10px] font-black text-emerald-500 uppercase mb-3 block tracking-[0.24em]">Higiene Oral</label>
+                    <select name="results[higiene]" class="w-full border-none bg-slate-50 rounded-2xl py-3 px-4 font-bold text-slate-700 shadow-inner focus:ring-4 focus:ring-emerald-500/10">
+                        <option value="Buena">Buena Higiene</option>
+                        <option value="Regular">Higiene regular</option>
+                        <option value="Mala">Higiene deficiente</option>
                     </select>
                 </div>
-                <div class="app-panel p-6 rounded-[2rem]">
-                    <label class="text-[10px] font-black text-slate-400 uppercase mb-3 block tracking-[0.24em]">Tejidos Blandos</label>
-                    <input type="text" name="results[tejidos_blandos]" class="w-full border-none bg-slate-50 rounded-2xl py-3 px-4 font-bold text-slate-700 shadow-inner focus:ring-4 focus:ring-blue-500/10" placeholder="Describa hallazgos...">
+                <div class="app-panel p-6 rounded-[2rem] border border-emerald-100">
+                    <label class="text-[10px] font-black text-emerald-500 uppercase mb-3 block tracking-[0.24em]">Tejidos Blandos</label>
+                    <input type="text" name="results[tejidos_blandos]" class="w-full border-none bg-slate-50 rounded-2xl py-3 px-4 font-bold text-slate-700 shadow-inner focus:ring-4 focus:ring-emerald-500/10" placeholder="Observaciones clínicas">
                 </div>
             </div>
 
-            <div class="app-panel-strong p-8 rounded-[2.5rem]">
-                   <textarea name="notes" id="notes" rows="3" class="w-full bg-white border border-slate-200 rounded-[1.75rem] text-slate-800 p-5 shadow-inner placeholder:text-slate-400" placeholder="Observaciones...">Odontograma capturado y evaluado.</textarea>
+            <div class="app-panel-strong p-8 rounded-[2.5rem] border border-emerald-100">
+                   <textarea name="notes" id="notes" rows="3" class="w-full bg-white border border-slate-200 rounded-[1.75rem] text-slate-800 p-5 shadow-inner placeholder:text-slate-400" placeholder="Observaciones..."></textarea>
                 <div class="flex flex-col md:flex-row md:justify-between md:items-center gap-4 pt-8">
-                    <p class="text-slate-500 text-[9px] font-black uppercase tracking-[0.24em] max-w-xs">Se capturará el estado actual del odontograma.</p>
-                    <button type="submit" id="btn-save" class="bg-blue-600 text-white px-10 py-4 rounded-2xl font-black uppercase text-xs hover:bg-slate-900 transition-all shadow-[0_16px_32px_rgba(37,99,235,0.24)]">
+                    <p class="text-emerald-500 text-[9px] font-black uppercase tracking-[0.24em] max-w-xs">Registro clínico institucional</p>
+                    <button type="submit" id="btn-save" class="bg-emerald-600 text-white px-10 py-4 rounded-2xl font-black uppercase text-xs hover:bg-emerald-700 transition-all shadow-[0_16px_32px_rgba(16,185,129,0.20)]">
                         Finalizar Registro
                     </button>
                 </div>
@@ -199,8 +196,8 @@
                 return;
             }
 
-            // Buscar todos los elementos SVG (path/rect) dentro del contenedor
-            const svgElements = container.querySelectorAll('svg path, svg rect');
+            // Buscar todas las caras del SVG con su nombre explícito
+            const svgElements = container.querySelectorAll('svg [data-face]');
             const faces = {
                 top: 'white',
                 bottom: 'white',
@@ -209,19 +206,19 @@
                 center: 'white'
             };
 
-            // Mapear los elementos del SVG a las caras
-            svgElements.forEach((el, idx) => {
+            // Mapear cada elemento a su cara real, sin depender del orden del SVG
+            svgElements.forEach((el) => {
+                const faceName = el.dataset.face;
+                if (!faceName || !faces.hasOwnProperty(faceName)) {
+                    return;
+                }
+
                 const fill = window.getComputedStyle(el).fill;
                 const hexFill = fill.toLowerCase();
                 const colorName = colorHexToName[hexFill] || 'white';
 
-                // Asumir orden: top, bottom, left, right, center
-                const faceNames = ['top', 'bottom', 'left', 'right', 'center'];
-                if (faceNames[idx]) {
-                    faces[faceNames[idx]] = colorName;
-                }
-
-                console.log(`  ${faceNames[idx]}: ${fill} → ${colorName}`);
+                faces[faceName] = colorName;
+                console.log(`  ${faceName}: ${fill} → ${colorName}`);
             });
 
             toothStates[toothNum] = faces;
@@ -347,13 +344,13 @@
 
                 btn.disabled = false;
                 btn.innerHTML = `✅ ${originalText}`;
-                btn.classList.remove('bg-purple-600', 'hover:bg-purple-500');
-                btn.classList.add('bg-green-600', 'hover:bg-green-500');
+                btn.classList.remove('bg-emerald-600', 'hover:bg-emerald-700');
+                btn.classList.add('bg-emerald-700', 'hover:bg-emerald-600');
 
                 setTimeout(() => {
                     btn.innerHTML = originalText;
-                    btn.classList.remove('bg-green-600', 'hover:bg-green-500');
-                    btn.classList.add('bg-purple-600', 'hover:bg-purple-500');
+                    btn.classList.remove('bg-emerald-700', 'hover:bg-emerald-600');
+                    btn.classList.add('bg-emerald-600', 'hover:bg-emerald-700');
                 }, 2000);
             } catch (err) {
                 console.error('Error capturando odontograma:', err);

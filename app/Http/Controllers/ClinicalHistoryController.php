@@ -148,6 +148,25 @@ class ClinicalHistoryController extends Controller
             ->with('success', 'Entrada de historial clínico actualizada correctamente.');
     }
 
+    public function destroy(Request $request, Student $student, ClinicalHistory $clinical_history)
+    {
+        $this->ensureAccess();
+
+        if ((int) $clinical_history->student_id !== (int) $student->id) {
+            abort(404);
+        }
+
+        if (!$this->canEditEntry($clinical_history)) {
+            abort(403, 'No tienes permiso para eliminar esta nota clínica.');
+        }
+
+        $clinical_history->delete();
+
+        return redirect()
+            ->route('clinical_histories.show', $student)
+            ->with('success', 'Entrada de historial clínico eliminada correctamente.');
+    }
+
     public function downloadPdf(Student $student)
     {
         $this->ensurePdfAccess();

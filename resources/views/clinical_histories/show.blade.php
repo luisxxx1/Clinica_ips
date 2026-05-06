@@ -162,6 +162,14 @@
                                             Guardar Cambios
                                         </button>
                                     </form>
+
+                                    <form method="POST" action="{{ route('clinical_histories.destroy', [$student, $entry]) }}" class="mt-2" onsubmit="return confirm('¿Estás seguro de que deseas eliminar esta nota clínica? Esta acción no se puede deshacer.');">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="px-4 py-2 rounded-xl bg-red-500 text-white text-xs font-semibold uppercase tracking-[0.08em] hover:bg-red-600 transition w-full sm:w-auto">
+                                            Eliminar Nota
+                                        </button>
+                                    </form>
                                 </div>
                             </details>
                         @endif

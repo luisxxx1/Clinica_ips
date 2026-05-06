@@ -82,6 +82,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::get('/{student}/pdf', 'downloadPdf')->name('pdf');
             Route::post('/{student}', 'store')->name('store');
             Route::patch('/{student}/{clinical_history}', 'update')->name('update');
+            Route::delete('/{student}/{clinical_history}', 'destroy')->name('destroy');
         });
 });
 

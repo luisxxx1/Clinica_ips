@@ -1,32 +1,35 @@
 <x-app-layout>
     <div class="min-h-screen bg-slate-50/50">
-        <header class="bg-white border-b border-slate-100 p-6 flex items-center justify-between sticky top-0 z-40">
-            <h1 class="text-sm font-black text-slate-400 uppercase tracking-widest">Módulo de Evaluación</h1>
+        <header class="bg-white border-b border-emerald-100 p-6 flex items-center justify-between sticky top-0 z-40">
+            <div class="space-y-1">
+                <p class="text-[10px] font-black text-emerald-600 uppercase tracking-[0.35em]">Circuito clínico</p>
+                <h1 class="text-base md:text-lg font-black text-slate-900 uppercase tracking-tight">Evaluación clínica del paciente</h1>
+            </div>
             <div class="flex items-center gap-4">
-                <span class="text-[10px] font-bold bg-slate-100 text-slate-500 px-3 py-1 rounded-full uppercase">Estética SnakeDEV</span>
+                <span class="text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-100 px-3 py-1 rounded-full uppercase">Registro institucional</span>
                 <img src="https://i.ibb.co/XfRzV8R/logo-ips.png" class="h-10 w-auto" alt="Logo IPS">
             </div>
         </header>
 
         <div class="p-4 md:p-10">
             <div class="max-w-6xl mx-auto space-y-6">
-                <div class="app-panel-strong rounded-[2.5rem] p-6 md:p-8 overflow-hidden">
+                <div class="app-panel-strong rounded-[2.5rem] p-6 md:p-8 overflow-hidden border border-emerald-100">
                     <div class="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6">
                         <div class="space-y-3">
-                            <span class="inline-flex items-center app-accent-chip text-[10px] font-black text-blue-700 uppercase tracking-[0.28em] px-3 py-2 rounded-full">Circuito clínico</span>
+                            <span class="inline-flex items-center bg-emerald-50 text-emerald-700 border border-emerald-100 text-[10px] font-black uppercase tracking-[0.28em] px-3 py-2 rounded-full">Circuito clínico</span>
                             <h2 class="app-display text-3xl md:text-4xl font-black text-slate-900 tracking-tight">
-                                Evaluación <span class="text-blue-600">clínica</span> del paciente
+                                Evaluación <span class="text-emerald-700">clínica</span> del paciente
                             </h2>
                             <p class="max-w-2xl text-sm md:text-base text-slate-500 leading-6">
-                                Formulario unificado para registrar el examen con una composición más clara, premium y orientada a consulta rápida.
+                                Formulario institucional para registrar la valoración clínica, consultar hallazgos previos y consolidar el seguimiento del paciente.
                             </p>
                         </div>
                         <div class="flex items-center gap-3">
-                            <div class="px-4 py-3 rounded-2xl bg-white/90 border border-slate-200 shadow-sm">
+                            <div class="px-4 py-3 rounded-2xl bg-white/90 border border-emerald-100 shadow-sm">
                                 <span class="block text-[10px] font-black uppercase tracking-[0.24em] text-slate-400">Estado</span>
                                 <span class="block text-sm font-bold text-slate-800">Activo</span>
                             </div>
-                            <div class="px-4 py-3 rounded-2xl bg-white/90 border border-slate-200 shadow-sm">
+                            <div class="px-4 py-3 rounded-2xl bg-white/90 border border-emerald-100 shadow-sm">
                                 <span class="block text-[10px] font-black uppercase tracking-[0.24em] text-slate-400">Vista</span>
                                 <span class="block text-sm font-bold text-slate-800">{{ strtoupper($area ?? 'general') }}</span>
                             </div>

@@ -28,7 +28,7 @@
         span,
         p,
         a,
-        strong,
+        strong,700
         em,
         small,
         b,
@@ -59,7 +59,7 @@
 
         .section-title {
             font-size: 11px;
-            font-weight: 700;
+            font-weight: bold;
             background: #f8fafc;
             padding: 6px 10px;
             border-left: 4px solid #2563eb;
